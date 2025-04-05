@@ -23,6 +23,7 @@ const MenuHover = ({ menu }: { menu: MenuItem }) => {
     <div
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
+      
       className="relative"
     >
       <button

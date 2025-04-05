@@ -1,12 +1,12 @@
 
-import express, { json, urlencoded } from "express"
+import app from './app';
+import "dotenv/config"
 
-const port = process.env.PORT
+const PORT = process.env.PORT || 5000;
 
+const start = async () => {
+ 
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+};
 
-const app=express()
-app.use(urlencoded({extended:true}))
-app.use(json())
-
-app.listen(port,()=>console.log("Server started on port:",port))
-
+start();
