@@ -1,38 +1,35 @@
-"use client"
-import Link from 'next/link';
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { FaGoogle } from 'react-icons/fa';
-import { MdEmail } from 'react-icons/md';
+"use client";
+
+import React, { useState } from "react";
+
+import { motion } from "framer-motion";
+import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import Link from "next/link";
 
 const LoginPage: React.FC = () => {
-    const [isSignin,setIsSignin]=useState(false)
-    const toggleSignup=()=>{
-      setIsSignin(!isSignin)
-    }
+  const [isSignin, setIsSignin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleSignup = () => {
+    setIsSignin(true);
+  };
 
   return (
-    <motion.div initial={{
-      opacity:0,
-      y:"-10%",
-      
-      
-    }} 
-      animate={{
-        opacity:100,
-        y:"0%"
-        
-      }}
-      transition={{
-        duration:"0.3",
-        ease:"easeIn"
-      }}
-    className="flex min-h-screen bg-white">
-      
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="flex min-h-screen bg-white"
+    >
+      <Link href="/" className="absolute top-6 left-6">
+        <h1 className="text-2xl font-Nunito font-bold font-sans text-gray-900 hover:text-blue-600 transition-colors duration-200">
+          ProLink
+        </h1>
+      </Link>
+
       <div className="w-full flex items-center justify-center px-8">
-     
         <div className="w-full max-w-md">
-       
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Build Collaborate
           </h1>
@@ -40,38 +37,82 @@ const LoginPage: React.FC = () => {
             With ProLink
           </h2>
 
-          {/* Sign in buttons */}
           <div className="space-y-4">
             <button className="flex items-center justify-center gap-3 w-full bg-white border border-gray-300 rounded-lg py-3 px-4 hover:bg-gray-50 transition shadow-sm">
               <FaGoogle className="text-xl" />
               <span className="text-gray-700">Continue with Google</span>
-              <div className="flex-grow"></div>
-              <div className="flex items-center justify-center h-6 w-6 text-blue-500">
-                <svg width="24" height="24" viewBox="0 0 100 100" fill="currentColor">
-                  <path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 88C29 88 12 71 12 50S29 12 50 12s38 17 38 38-17 38-38 38z"/>
-                  <path d="M63 37c-1.6-1.6-4.2-1.6-5.8 0l-7.2 7.2-7.2-7.2c-1.6-1.6-4.2-1.6-5.8 0-1.6 1.6-1.6 4.2 0 5.8l7.2 7.2-7.2 7.2c-1.6 1.6-1.6 4.2 0 5.8 1.6 1.6 4.2 1.6 5.8 0l7.2-7.2 7.2 7.2c1.6 1.6 4.2 1.6 5.8 0 1.6-1.6 1.6-4.2 0-5.8L56 50l7.2-7.2c1.6-1.6 1.6-4.2-.2-5.8z"/>
-                </svg>
-              </div>
             </button>
-            <Link href="/auth/signup">
-            <button onClick={toggleSignup} className="flex items-center justify-center gap-3 w-full bg-white border border-gray-300 rounded-lg py-3 px-4 hover:bg-gray-50 transition shadow-sm">
-              <MdEmail className="text-xl" />
-              <span  className="text-gray-700">Continue with Email</span>
-              <div className="flex-grow"></div>
-              <div className="h-6 w-6 flex items-center justify-center text-gray-500">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </div>
-            </button>
-            </Link>
+
+            {!isSignin && (
+              <button
+                onClick={toggleSignup}
+                className="flex items-center justify-center gap-3 w-full bg-white border border-gray-300 rounded-lg py-3 px-4 hover:bg-gray-50 transition shadow-sm"
+              >
+                <MdEmail className="text-xl" />
+                <span className="text-gray-700">Continue with Email</span>
+              </button>
+            )}
+
+            {isSignin && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="space-y-4"
+              >
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 text-gray-800"
+                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 text-gray-800"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+
+                <button className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition font-semibold">
+                  Login
+                </button>
+
+                <p className="text-sm text-center text-gray-600">
+                  Don’t have an account?{" "}
+                  <Link href="/auth/signup">
+                    <span className="text-blue-600 hover:underline font-medium">
+                      Create one
+                    </span>
+                  </Link>
+                </p>
+              </motion.div>
+            )}
           </div>
 
           <p className="text-xs text-gray-500 mt-8">
             By signing in, you agree to ProLink
-            <a href="#" className="text-blue-600 hover:underline"> Terms of Service</a>,
-            <a href="#" className="text-blue-600 hover:underline"> Privacy Policy</a> and 
-            <a href="#" className="text-blue-600 hover:underline"> Data Usage Properties</a>.
+            <a href="#" className="text-blue-600 hover:underline">
+              {" "}
+              Terms of Service
+            </a>
+            ,
+            <a href="#" className="text-blue-600 hover:underline">
+              {" "}
+              Privacy Policy
+            </a>
+            , and
+            <a href="#" className="text-blue-600 hover:underline">
+              {" "}
+              Data Usage Properties
+            </a>
+            .
           </p>
         </div>
       </div>

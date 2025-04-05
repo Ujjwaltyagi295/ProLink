@@ -26,7 +26,7 @@ const MenuHover = ({ menu }: { menu: MenuItem }) => {
       className="relative"
     >
       <button
-        className="group  cursor-pointer inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-neutral-100"
+        className="group font-sans  cursor-pointer inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-neutral-100"
       >
         {menu.title}
        {hasSubMenu?  <motion.svg
