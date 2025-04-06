@@ -1,1 +1,0 @@
-ALTER TABLE "user" DROP CONSTRAINT "user_password_unique";
