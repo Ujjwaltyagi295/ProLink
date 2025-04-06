@@ -6,7 +6,10 @@ import { omitPassword } from "../../utils/omitPassword";
 import sessions, { NewSession } from "../../models/session.model";
 import { thirtyDaysFromNow } from "../../utils/date";
 import jwt from "jsonwebtoken";
-import { JWT_REFRESH_SECRET } from "../../constants/env";
+import { JWT_REFRESH_SECRET, JWT_SECRET } from "../../constants/env";
+import "dotenv/config"
+import appAssert from "../../utils/appAssert";
+import { CONFLICT } from "../../constants/http";
 type CreateAccountParams = {
   name: string;
   email: string;
@@ -18,9 +21,8 @@ export const createAccount = async (data: CreateAccountParams) => {
     .select()
     .from(users)
     .where(eq(users.email, data.email));
-  if (emailExists.length > 0) {
-    throw new Error("User already exists");
-  }
+  
+    appAssert(emailExists.length === 0,CONFLICT,"Email already in use")
 
   const hashedPassword = await hashValue(data.password, 10);
   const newUserData: NewUser = {
@@ -52,7 +54,7 @@ export const createAccount = async (data: CreateAccountParams) => {
       userId:newUser.id,
       sessionId: newSession.id,
     },
-    JWT_REFRESH_SECRET,
+    JWT_SECRET,
     { audience: ["user"], expiresIn: "15m" }
   );
   const user= omitPassword(newUser)

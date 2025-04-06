@@ -1,6 +1,6 @@
 import { CookieOptions, Response } from "express";
 import { fifteenDaysFromNow, thirtyDaysFromNow } from "./date";
-
+import "dotenv/config"
 type cookieParams = {
   res: Response;
   accessToken: string;
