@@ -1,8 +1,7 @@
-
 import app from './app';
 import "dotenv/config"
+import { PORT } from './constants/env';
 
-const PORT = process.env.PORT || 5000;
 
 const start = async () => {
  
