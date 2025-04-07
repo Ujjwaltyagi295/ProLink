@@ -1,28 +1,34 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../config/db";
-import { NewUser, User, users } from "../../models/user.model";
-import { hashValue } from "../../utils/bcrypt";
+import { NewUser, users } from "../../models/user.model";
+import { compareValue, hashValue } from "../../utils/bcrypt";
 import { omitPassword } from "../../utils/omitPassword";
 import sessions, { NewSession } from "../../models/session.model";
 import { thirtyDaysFromNow } from "../../utils/date";
-import jwt from "jsonwebtoken";
-import { JWT_REFRESH_SECRET, JWT_SECRET } from "../../constants/env";
-import "dotenv/config"
+
+import "dotenv/config";
 import appAssert from "../../utils/appAssert";
-import { CONFLICT } from "../../constants/http";
+import { CONFLICT, UNAUTHORIZED } from "../../constants/http";
+import { refreshTokenSignOptions, signToken } from "../../utils/jwt";
 type CreateAccountParams = {
   name: string;
   email: string;
   password: string;
   userAgent?: string;
 };
+type loginAccountParams = {
+  email: string;
+  password: string;
+  userAgent?: string;
+};
+
 export const createAccount = async (data: CreateAccountParams) => {
   const emailExists = await db
     .select()
     .from(users)
     .where(eq(users.email, data.email));
-  
-    appAssert(emailExists.length === 0,CONFLICT,"Email already in use")
+
+  appAssert(emailExists.length === 0, CONFLICT, "Email already in use");
 
   const hashedPassword = await hashValue(data.password, 10);
   const newUserData: NewUser = {
@@ -42,21 +48,53 @@ export const createAccount = async (data: CreateAccountParams) => {
     .insert(sessions)
     .values(NewSessionData)
     .returning();
-  const refreshToken = jwt.sign(
+  const refreshToken = signToken(
     {
       sessionId: newSession.id,
     },
-    JWT_REFRESH_SECRET,
-    { audience: ["user"], expiresIn: "30d" }
+    refreshTokenSignOptions
   );
-  const accessToken = jwt.sign(
-    {
-      userId:newUser.id,
-      sessionId: newSession.id,
-    },
-    JWT_SECRET,
-    { audience: ["user"], expiresIn: "15m" }
-  );
-  const user= omitPassword(newUser)
-  return{user,refreshToken,accessToken}
+
+  const accessToken = signToken({
+    userId: newUser.id,
+    sessionId: newSession.id,
+  });
+
+  const user = omitPassword(newUser);
+  return { user, refreshToken, accessToken };
 };
+
+export const loginAccount = async (data: loginAccountParams) => {
+  const usersFound = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, data.email));
+
+  appAssert(usersFound.length > 0, UNAUTHORIZED, "Invalid Email or Password");
+
+  const user = usersFound[0];
+
+  const isPasswordValid = compareValue(data.password, user.password);
+  appAssert(isPasswordValid, UNAUTHORIZED, "Invalid Email or Password");
+
+  const NewSessionData: NewSession = {
+    userId: user.id,
+    userAgent: data.userAgent,
+    expiresAt: thirtyDaysFromNow(),
+  };
+  const [session] = await db
+    .insert(sessions)
+    .values(NewSessionData)
+    .returning();
+  const sessionInfo = {
+    sessionId: session.id,
+  };
+  const refreshToken = signToken(sessionInfo, refreshTokenSignOptions);
+
+  const accessToken = signToken({ ...sessionInfo, userId: user.id });
+
+  const userData = omitPassword(user);
+  return { userData, refreshToken, accessToken };
+};
+
+

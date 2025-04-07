@@ -1,6 +1,6 @@
 import { CookieOptions, Response } from "express";
-import { fifteenDaysFromNow, thirtyDaysFromNow } from "./date";
-import "dotenv/config"
+import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
+import "dotenv/config";
 type cookieParams = {
   res: Response;
   accessToken: string;
@@ -15,7 +15,7 @@ const defaults: CookieOptions = {
 };
 const getAccessTokenCookiesOptions = (): CookieOptions => ({
   ...defaults,
-  expires: fifteenDaysFromNow(),
+  expires: fifteenMinutesFromNow(),
 });
 const getRefreshTokenCookiesOptions = (): CookieOptions => ({
   ...defaults,
@@ -27,8 +27,13 @@ export const setAuthCookies = ({
   res,
   accessToken,
   refreshToken,
-}: cookieParams) => 
+}: cookieParams) =>
   res
     .cookie("accesstoken", accessToken, getAccessTokenCookiesOptions())
     .cookie("refreshtoken", refreshToken, getRefreshTokenCookiesOptions());
 
+export const clearAuthCookies = (res: Response) => {
+ return res
+    .clearCookie("accesstoken")
+    .clearCookie("refreshtoken", { path: "/auth/refresh" });
+};
