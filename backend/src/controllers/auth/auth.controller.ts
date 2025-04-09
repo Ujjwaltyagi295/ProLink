@@ -1,12 +1,13 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../config/db";
-import { CREATED, OK } from "../../constants/http";
+import { CREATED, OK, UNAUTHORIZED } from "../../constants/http";
 import sessions from "../../models/session.model";
 import catchErrors from "../../utils/catchErrors";
-import { clearAuthCookies, setAuthCookies } from "../../utils/cookies";
+import { clearAuthCookies, getAccessTokenCookiesOptions, getRefreshTokenCookiesOptions, setAuthCookies } from "../../utils/cookies";
 import { verifyToken } from "../../utils/jwt";
 import { loginSchema, signupSchema } from "./auth.schema";
-import { createAccount, loginAccount } from "./auth.service";
+import { createAccount, loginAccount, refreshUserAccessToken } from "./auth.service";
+import appAssert from "../../utils/appAssert";
 
 export const signupHandler = catchErrors(async (req, res) => {
   const data = signupSchema.parse({
@@ -31,7 +32,7 @@ export const loginHandler = catchErrors(async (req, res) => {
 });
 
 export const logoutHandler = catchErrors(async (req, res) => {
-  const accessToken = req.cookies.accesstoken;
+  const accessToken = req.cookies.accessToken ;
   const { payload } = verifyToken(accessToken);
  
   if (payload) {
@@ -43,3 +44,14 @@ export const logoutHandler = catchErrors(async (req, res) => {
     .status(OK)
     .json({ message: "Logged out successfully" });
 });
+
+export const refreshHandler= catchErrors(async(req,res)=>{
+   const refreshToken = req.cookies.refreshToken as string | undefined;
+  
+   appAssert(refreshToken,UNAUTHORIZED,"Missing refresh token")
+   const {accessToken,newRefreshToken}= await refreshUserAccessToken(refreshToken)
+   if(newRefreshToken){
+      res.cookie("refreshToken",newRefreshToken,getRefreshTokenCookiesOptions())
+   }
+   return res.status(OK) .cookie("accessToken", accessToken, getAccessTokenCookiesOptions()).json({message:"Access token refreshed"})
+})

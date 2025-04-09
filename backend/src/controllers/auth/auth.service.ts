@@ -4,12 +4,17 @@ import { NewUser, users } from "../../models/user.model";
 import { compareValue, hashValue } from "../../utils/bcrypt";
 import { omitPassword } from "../../utils/omitPassword";
 import sessions, { NewSession } from "../../models/session.model";
-import { thirtyDaysFromNow } from "../../utils/date";
+import { ONE_DAY_MS, thirtyDaysFromNow } from "../../utils/date";
 
 import "dotenv/config";
 import appAssert from "../../utils/appAssert";
 import { CONFLICT, UNAUTHORIZED } from "../../constants/http";
-import { refreshTokenSignOptions, signToken } from "../../utils/jwt";
+import {
+  refreshTokenPayload,
+  refreshTokenSignOptions,
+  signToken,
+  verifyToken,
+} from "../../utils/jwt";
 type CreateAccountParams = {
   name: string;
   email: string;
@@ -97,4 +102,35 @@ export const loginAccount = async (data: loginAccountParams) => {
   return { userData, refreshToken, accessToken };
 };
 
+export const refreshUserAccessToken = async (refreshToken: string) => {
+  const { payload } = verifyToken<refreshTokenPayload>(refreshToken, {
+    secret: refreshTokenSignOptions.secret,
+  });
+  appAssert(payload, UNAUTHORIZED, "Invalid refresh token");
+  const [session] = await db
+    .select()
+    .from(sessions)
+    .where(eq(sessions.id, payload.sessionId));
+  const now = Date.now();
+  appAssert(session, UNAUTHORIZED, "Session expired");
+
+  const sessionNeedsRefresh = session.expiresAt.getTime() - now <= ONE_DAY_MS;
+  const sessionExpireDate: NewSession = {userId:session.id, expiresAt: thirtyDaysFromNow() };
+  if (sessionNeedsRefresh) {
+    await db
+    .update(sessions)
+    .set(sessionExpireDate)
+    .where(eq(sessions.id, session.id));
+  }
+  const newRefreshToken = sessionNeedsRefresh
+    ? signToken({ sessionId: session.id }, refreshTokenSignOptions)
+    : undefined;
+ 
+  const accessToken= signToken({userId:session.userId,sessionId:session.id})
+
+  return {
+    accessToken,
+    newRefreshToken,
+  };
+};
 

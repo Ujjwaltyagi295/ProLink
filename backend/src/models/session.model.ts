@@ -5,7 +5,8 @@ import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 const sessions=pgTable("session",{
     id:uuid().defaultRandom().primaryKey(),
-    userId:uuid().references(()=>users.id, { onDelete: "cascade" }),
+    userId: uuid().notNull().references(() => users.id, { onDelete: "cascade" }),
+
     userAgent:text(),
     createdAt: timestamp().notNull().defaultNow(),
     expiresAt: timestamp().notNull()

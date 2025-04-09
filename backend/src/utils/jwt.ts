@@ -4,11 +4,11 @@ import { Session } from "../models/session.model";
 import Audience from "../constants/audience";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env";
 
-type accessTokenPayload = {
+export type accessTokenPayload = {
   userId: User["id"];
   sessionId: Session["id"];
 };
-type refreshTokenPayload = {
+export type refreshTokenPayload = {
   sessionId: Session["id"];
 };
 type SignOptionsAndSecret = SignOptions & {

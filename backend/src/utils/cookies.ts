@@ -1,6 +1,7 @@
 import { CookieOptions, Response } from "express";
 import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
 import "dotenv/config";
+export const REFRESH_PATH = "/auth/refresh";
 type cookieParams = {
   res: Response;
   accessToken: string;
@@ -13,14 +14,14 @@ const defaults: CookieOptions = {
   httpOnly: true,
   secure,
 };
-const getAccessTokenCookiesOptions = (): CookieOptions => ({
+export const getAccessTokenCookiesOptions = (): CookieOptions => ({
   ...defaults,
   expires: fifteenMinutesFromNow(),
 });
-const getRefreshTokenCookiesOptions = (): CookieOptions => ({
+export const getRefreshTokenCookiesOptions = (): CookieOptions => ({
   ...defaults,
   expires: thirtyDaysFromNow(),
-  path: "/auth/refresh",
+  path: REFRESH_PATH
 });
 
 export const setAuthCookies = ({
@@ -29,11 +30,11 @@ export const setAuthCookies = ({
   refreshToken,
 }: cookieParams) =>
   res
-    .cookie("accesstoken", accessToken, getAccessTokenCookiesOptions())
-    .cookie("refreshtoken", refreshToken, getRefreshTokenCookiesOptions());
+    .cookie("accessToken", accessToken, getAccessTokenCookiesOptions())
+    .cookie("refreshToken", refreshToken, getRefreshTokenCookiesOptions());
 
 export const clearAuthCookies = (res: Response) => {
  return res
-    .clearCookie("accesstoken")
-    .clearCookie("refreshtoken", { path: "/auth/refresh" });
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken", { path: REFRESH_PATH });
 };
