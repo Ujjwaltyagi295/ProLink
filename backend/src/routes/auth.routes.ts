@@ -4,9 +4,9 @@ import { loginHandler, logoutHandler, refreshHandler, signupHandler } from "../c
 
 const router = express.Router()
 router.post("/signup",signupHandler)
-router.get("/logout",logoutHandler)
+router.post("/logout",logoutHandler)
 router.get("/refresh",refreshHandler)
-router.get("/login",loginHandler)
+router.post("/login",loginHandler)
 
 
 
