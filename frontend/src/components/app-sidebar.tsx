@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -11,28 +12,36 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { File, GalleryVerticalEnd, BookText, PencilLine } from "lucide-react";
+import { File, GalleryVerticalEnd, BookText, PencilLine, SettingsIcon, HelpCircleIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { ExploreIcon, ProjectIcon } from "@/assets/icons/icons";
+import {  ExploreIcon, ProjectIcon } from "@/assets/icons/icons";
 import { motion } from "framer-motion";
+import { NavUser } from "./nav-user";
+import { NavSecondary } from "./nav-secondary";
 
-// data remains the same
 const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
   navMain: [
     {
       title: "Projects",
       url: "",
       items: [
         {
-          title: "Explore Projects",
-          url: "/dashboard/projects/find",
-          icon: (hovered: boolean) => <ExploreIcon isHover={hovered} />,
-        },
-        {
           title: "My Projects",
           url: "/dashboard/projects",
           icon: (hovered: boolean) => <ProjectIcon isHover={hovered} />,
         },
+        {
+          title: "Explore Projects",
+          url: "/dashboard/projects/find",
+          icon: (hovered: boolean) => <ExploreIcon isHover={hovered} />,
+        },
+       
+       
       ],
     },
     {
@@ -55,10 +64,23 @@ const data = {
           icon: () => <PencilLine className="size-4 mr-2" />,
         },
       ],
+     
     },
   ],
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "#",
+      icon: SettingsIcon,
+    },
+    {
+      title: "Get Help",
+      url: "#",
+      icon: HelpCircleIcon,
+    },
+    
+  ],
 };
-
 function SidebarMenuItemWithHover({
   item,
   currentPath,
@@ -70,20 +92,22 @@ function SidebarMenuItemWithHover({
   };
   currentPath: string;
 }) {
-  const [isHover, setIsHover] = React.useState(false);
+  const [isHovering, setIsHovering] = React.useState(false);
+  const isActive = currentPath === item.url;
+  const isHover = isHovering || isActive;
 
   return (
     <SidebarMenuItem>
       <motion.div
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
       >
         <SidebarMenuButton
           asChild
-          isActive={currentPath === item.url}
-          className="flex items-center gap-2 "
+          isActive={isActive}
+          className="flex items-center gap-2"
         >
-          <Link to={item.url} className="flex  items-center gap-2">
+          <Link to={item.url} className="flex items-center gap-2">
             {item.icon?.(isHover)}
             <span>{item.title}</span>
           </Link>
@@ -118,8 +142,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
               <span className="inline-block h-px flex-1 bg-muted" />
             </div>
-            <SidebarGroupContent>
-              <SidebarMenu>
+            <SidebarGroupContent >
+              <SidebarMenu className=" gap-2">
                 {group.items.map((item) => (
                   <SidebarMenuItemWithHover
                     key={item.title}
@@ -130,10 +154,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          
         ))}
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
 
       <SidebarRail />
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

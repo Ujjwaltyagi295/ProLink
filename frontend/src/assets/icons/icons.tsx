@@ -93,3 +93,50 @@ export const ProjectIcon = ({ isHover }: ExploreIconProps) => {
     </motion.svg>
   );
 };
+
+export const CreateIcon = ({ isHover }: ExploreIconProps) => {
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isHover) {
+      controls.start({
+        pathLength: [0, 1],
+        transition: {
+          duration: 0.6,
+          ease: "easeInOut",
+        },
+      });
+    }
+  }, [isHover, controls]);
+
+  return (
+    <motion.svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill={isHover ? "oklch(90.5% 0.182 98.111)" : "none"}
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-square-plus-icon lucide-square-plus"
+      animate={{ scale: isHover ? 1.2 : 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <motion.path
+        initial={{ pathLength: 1 }}
+        animate={controls}
+        transition={{ delay: 0.1 }}
+        d="M8 12h8"
+      />
+      <motion.path
+        initial={{ pathLength: 1 }}
+        animate={controls}
+        transition={{ delay: 0.1 }}
+        d="M12 8v8"
+      />
+    </motion.svg>
+  );
+};

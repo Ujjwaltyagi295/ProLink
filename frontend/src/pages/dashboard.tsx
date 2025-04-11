@@ -10,6 +10,7 @@ import {
 import { SearchForm } from "@/components/search-form";
 import { ProjectsPage } from "./projectsPage";
 import { MyProjectsPage } from "./myProjectsPage";
+import { CreateProjectPage } from "./createProjectPage";
 
 
 function DashboardLayout() {
@@ -39,6 +40,7 @@ export default function DashboardPage() {
       <Route element={<DashboardLayout />}>
         <Route index path="/projects/find" element={<ProjectsPage />} />
         <Route path="/projects" element={<MyProjectsPage/>}/>
+        <Route path="/projects/create" element={<CreateProjectPage/>}/>
       </Route>
     </Routes>
   );

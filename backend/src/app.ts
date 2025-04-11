@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import errorHandler from "./middlewares/errorHandle";
 import authenticate from "./middlewares/authenticate";
 import userRoutes from "./routes/user.routes";
+import sessionRoutes from "./routes/session.route";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cookieParser())
 
 app.use("/auth", authRoutes);
 app.use("/user",authenticate,userRoutes)
+app.use("/sessions", authenticate, sessionRoutes);
 app.use(errorHandler);
 
 export default app;
