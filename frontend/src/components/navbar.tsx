@@ -5,32 +5,18 @@ import MenuHover from "./navbar-menu";
 
 export const Navbar = () => {
   const menu = [
-    {
-      title: "Teams",
-      submenu: [
-        {
-          subTitle: "My Teams",
-          path: "/teams",
-          description: "View and manage your current teams",
-        },
-        {
-          subTitle: "Create Team",
-          path: "/teams/new",
-          description: "Start a new team for your project",
-        },
-      ],
-    },
+    
     {
       title: "Projects",
       submenu: [
         {
-          subTitle: "My Projects",
-          path: "/projects",
+          subTitle: "Explore Projects",
+          path: "/dashboard/projects/find",
           description: "Access and manage your projects",
         },
         {
-          subTitle: "Create Project",
-          path: "/projects/new",
+          subTitle: "My Project",
+          path: "/dashboard/projects",
           description: "Start building something new",
         },
       ],
