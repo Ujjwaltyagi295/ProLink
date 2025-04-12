@@ -9,33 +9,64 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
-
-
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { register } from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const setAuth= useAuthStore((s)=>s.setAuth)
+  const {
+    mutate: signup,
+    isError,
+    
+    error,
+  } = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      setAuth(true)
+      navigate("/", {
+        
+        replace: true,
+      });
+    },
+  });
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create Account</CardTitle>
           <CardDescription>
-          Let’s build something great together.
+            Let’s build something great together.
           </CardDescription>
         </CardHeader>
+        {isError && <CardTitle>{error?.message || "Signup failed"}</CardTitle>}
         <CardContent>
-          <form>
+          <form onSubmit={(e)=>{
+            e.preventDefault()
+            signup({name,email,password,confirmPassword})
+          }}>
             <div className="grid gap-6">
               <div className="grid gap-6">
-              <div className="grid gap-2">
-                  <Label  htmlFor="username">Username</Label>
+                <div className="grid gap-2">
+                  <Label htmlFor="username">Username</Label>
                   <Input
                     id="username"
                     type="name"
                     placeholder="frosty"
                     required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -45,28 +76,44 @@ export function SignupForm({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
                   </div>
-                  <Input id="password" type="password"   placeholder="***********" required />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="***********"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Confirm Password</Label>
                   </div>
-                  <Input id="password" type="password"   placeholder="***********" required />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="***********"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
                 </div>
                 <Button type="submit" className="w-full" variant="blue1">
-                  Login
+                  Create Account
                 </Button>
               </div>
               <div className="text-center text-sm">
-              Already have an account?{" "}
+                Already have an account?{" "}
                 <a href="/login" className="underline underline-offset-4">
-                 Login
+                  Login
                 </a>
               </div>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

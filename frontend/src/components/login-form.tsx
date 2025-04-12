@@ -1,25 +1,50 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Label } from "@radix-ui/react-label"
-import { Input } from "./ui/input"
-
+} from "@/components/ui/card";
+import { Label } from "@radix-ui/react-label";
+import { Input } from "./ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "@/lib/api";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
- 
- 
+  const [email,setEmail]=useState("")
+  const [password,setPassword]=useState("")
+  const location = useLocation();
+  const redirectUrl = location.state?.redirectUrl || "/";
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  const navigate = useNavigate();
+ const {
+    mutate: signin,
+    isPending,
+   
+    isError,
+  } = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      setAuth(true)
+      navigate(redirectUrl, {
+       
+        replace: true,
+      });
+    },
+  });
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -29,18 +54,21 @@ export function LoginForm({
             Let’s build something great together.
           </CardDescription>
         </CardHeader>
+        {isError && (
+          <CardHeader className=" text-red-600 font-semibold text-center">Invalid email or passowrd</CardHeader>
+        )}
         <CardContent>
-          <form >
+          <form onSubmit={(e)=>{e.preventDefault(); signin({email,password})}}>
             <div className="grid gap-6">
               <div className="grid gap-6">
-             
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
+                    value={email}
+                    onChange={(e)=>setEmail(e.target.value)}
                     placeholder="m@example.com"
-                    
                     required
                   />
                 </div>
@@ -58,14 +86,18 @@ export function LoginForm({
                     id="password"
                     type="password"
                     placeholder="***********"
-                   
                     required
+                    value={password}
+                    onChange={(e)=>setPassword(e.target.value)}
                   />
                 </div>
 
-              
-                <Button type="submit" className="w-full" variant="blue1" >
-                  Login
+                <Button
+                  type="submit"
+                  className="w-full"
+                  variant="blue1"
+                >
+                  {isPending?"..loading":"Login"}
                 </Button>
               </div>
 
@@ -100,10 +132,9 @@ export function LoginForm({
       </Card>
 
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-        By clicking continue, you agree to our{" "}
-        <a href="#">Terms of Service</a> and{" "}
-        <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }

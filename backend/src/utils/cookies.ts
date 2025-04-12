@@ -1,7 +1,7 @@
 import { CookieOptions, Response } from "express";
 import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
 import "dotenv/config";
-export const REFRESH_PATH = "/auth/refresh";
+export const REFRESH_PATH = "/api/auth/refresh";
 type cookieParams = {
   res: Response;
   accessToken: string;

@@ -1,8 +1,20 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { User, Settings, LogOut } from "lucide-react";
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "framer-motion";
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { logout } from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface SubmenuItem {
   subTitle: string;
@@ -15,7 +27,7 @@ interface MenuItem {
   submenu: SubmenuItem[];
 }
 
-const MenuHover = ({ menu }: { menu: MenuItem }) => {
+export const MenuHover = ({ menu }: { menu: MenuItem }) => {
   const [isHover, setIsHover] = useState(false);
   const hasSubMenu = menu?.submenu?.length > 0;
 
@@ -23,30 +35,31 @@ const MenuHover = ({ menu }: { menu: MenuItem }) => {
     <div
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      
       className="relative"
     >
-      <button
-        className="group font-sans  cursor-pointer inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-neutral-100"
-      >
+      <button className="group font-sans  cursor-pointer inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-neutral-100">
         {menu.title}
-       {hasSubMenu?  <motion.svg
-          initial={{ rotate: 0 }}
-          animate={{ rotate: isHover ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="lucide lucide-chevron-down"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </motion.svg>:""}
+        {hasSubMenu ? (
+          <motion.svg
+            initial={{ rotate: 0 }}
+            animate={{ rotate: isHover ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-chevron-down"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </motion.svg>
+        ) : (
+          ""
+        )}
       </button>
 
       <AnimatePresence>
@@ -62,9 +75,13 @@ const MenuHover = ({ menu }: { menu: MenuItem }) => {
               {menu.submenu.map((item, index) => (
                 <Link key={index} to={item.path}>
                   <div className="flex flex-col hover:bg-gray-100 rounded-md p-2 cursor-pointer transition">
-                    <span className="text-sm font-medium text-gray-800">{item.subTitle}</span>
+                    <span className="text-sm font-medium text-gray-800">
+                      {item.subTitle}
+                    </span>
                     {item.description && (
-                      <span className="text-xs text-gray-500">{item.description}</span>
+                      <span className="text-xs text-gray-500">
+                        {item.description}
+                      </span>
                     )}
                   </div>
                 </Link>
@@ -77,4 +94,44 @@ const MenuHover = ({ menu }: { menu: MenuItem }) => {
   );
 };
 
-export default MenuHover;
+export function ProfileDropdown() {
+  const navigate= useNavigate()
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const queryClient = useQueryClient();
+  const { mutate: signOut } = useMutation({
+    mutationFn: logout,
+    onSettled: () => {
+      setAuth(false)
+      queryClient.clear();
+      navigate("/login", { replace: true });
+    },
+  });
+  
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="default" className="rounded-full  w-9 h-9 p-0">
+          <span className="text-md font-semibold">U</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44 ">
+        <DropdownMenuItem>
+          <User className="w-4 h-4 mr-2" />
+          Profile
+        </DropdownMenuItem>
+
+        <DropdownMenuItem>
+          <Settings className="w-4 h-4 mr-2" />
+          Settings
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem onClick={()=>signOut()} className="text-red-500 focus:text-red-500">
+          <LogOut className="w-4 h-4 mr-2" />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

@@ -18,9 +18,9 @@ app.use(cors({ origin: APP_ORIGIN, credentials: true }));
 app.use(cookieParser())
 
 
-app.use("/auth", authRoutes);
-app.use("/user",authenticate,userRoutes)
-app.use("/sessions", authenticate, sessionRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user",authenticate,userRoutes)
+app.use("/api/sessions", authenticate, sessionRoutes);
 app.use(errorHandler);
 
 export default app;
