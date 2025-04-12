@@ -8,6 +8,7 @@ import errorHandler from "./middlewares/errorHandle";
 import authenticate from "./middlewares/authenticate";
 import userRoutes from "./routes/user.routes";
 import sessionRoutes from "./routes/session.route";
+import projectRoutes from "./routes/project.routes";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cookieParser())
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user",authenticate,userRoutes)
+app.use("/api/projects",authenticate,projectRoutes)
 app.use("/api/sessions", authenticate, sessionRoutes);
 app.use(errorHandler);
 

@@ -6,7 +6,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 
 
-export const AppContainer = () => {
+export const ProtectedRoutes = () => {
   const { user, isLoading } = useAuth();
   
   

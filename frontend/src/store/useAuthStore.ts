@@ -13,7 +13,7 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (auth) => set({ isAuthenticated: auth }),
     }),
     {
-      name: "auth-storage", // unique name for localStorage key
+      name: "auth-storage",
     }
   )
 );
