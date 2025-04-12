@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1743941097864,
-      "tag": "0000_smart_junta",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1743944076156,
-      "tag": "0001_heavy_maddog",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1744026686435,
-      "tag": "0002_sleepy_harry_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1744459459803,
-      "tag": "0003_modern_betty_ross",
+      "when": 1744493689111,
+      "tag": "0000_bright_raider",
       "breakpoints": true
     }
   ]

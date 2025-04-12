@@ -2,7 +2,7 @@
  
  
 import express from "express"
-import { createProjectHandler } from "../controllers/project.controller"
+import { createProjectHandler } from "../controllers/project/project.controller"
 
 const projectRoutes= express.Router()
 

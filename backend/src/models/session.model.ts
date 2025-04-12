@@ -3,7 +3,7 @@ import { users } from "./user.model";
 
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
-const sessions=pgTable("session",{
+const sessions=pgTable("sessions",{
     id:uuid().defaultRandom().primaryKey(),
     userId: uuid().notNull().references(() => users.id, { onDelete: "cascade" }),
 
