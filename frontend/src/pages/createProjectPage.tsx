@@ -6,7 +6,7 @@ export const CreateProjectPage = () => {
     const navigate = useNavigate();
   return (
     <div className="max-w-3xl mx-auto space-y-6 py-10 px-4 sm:px-6 lg:px-8">
-    {/* Back Button */}
+  
     <div>
       <Button
         variant="ghost"
@@ -19,7 +19,6 @@ export const CreateProjectPage = () => {
       </Button>
     </div>
 
-    {/* Heading & Description */}
     <div className="space-y-1">
       <h1 className="text-3xl font-bold">Create a New Project</h1>
       <p className="text-muted-foreground text-sm">

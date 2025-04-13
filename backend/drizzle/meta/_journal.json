@@ -8,6 +8,13 @@
       "when": 1744493689111,
       "tag": "0000_bright_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1744494142062,
+      "tag": "0001_brown_starbolt",
+      "breakpoints": true
     }
   ]
 }

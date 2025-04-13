@@ -41,6 +41,7 @@ export default function DashboardPage() {
         <Route index path="/projects/find" element={<ProjectsPage />} />
         <Route path="/projects" element={<MyProjectsPage/>}/>
         <Route path="/projects/create" element={<CreateProjectPage/>}/>
+        
       </Route>
     </Routes>
   );

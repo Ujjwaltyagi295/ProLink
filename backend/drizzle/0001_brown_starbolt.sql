@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ALTER COLUMN "live_url" SET NOT NULL;
