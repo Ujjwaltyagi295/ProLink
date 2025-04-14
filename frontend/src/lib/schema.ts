@@ -1,5 +1,10 @@
 // Enums for filterable properties
-export const projectStageEnum = ["idea", "planning", "development", "testing", "deployment", "maintenance"] as const
+export const projectStageEnum = [ "Idea",
+  "Planning",
+  "Development",
+  "Testing",
+  "Deployment",
+  "Maintenance",] as const
 
 export const projectCategoryEnum = [
   "web_app",
@@ -18,27 +23,13 @@ export const projectStatusEnum = ["draft", "published", "completed", "archived"]
 
 // Developer-centric roles
 export const roleEnum = [
-  "frontend_developer",
-  "backend_developer",
-  "fullstack_developer",
-  "mobile_developer",
-  "ui_ux_designer",
-  "devops_engineer",
-  "cloud_engineer",
-  "data_engineer",
-  "data_scientist",
-  "ml_engineer",
-  "qa_engineer",
-  "security_engineer",
-  "blockchain_developer",
-  "game_developer",
-  "technical_product_manager",
-  "technical_writer",
-  "other",
+  "frontend_developer", "backend_developer", "fullstack_developer", "mobile_developer",
+  "ui_ux_designer", "devops_engineer", "cloud_engineer", "data_engineer", "data_scientist",
+  "ml_engineer", "qa_engineer", "security_engineer", "blockchain_developer", "game_developer",
+  "technical_product_manager", "technical_writer", "other"
 ] as const
 
 export const techStackEnum = [
-  // Frontend
   "react",
   "vue",
   "angular",
@@ -46,7 +37,7 @@ export const techStackEnum = [
   "next_js",
   "tailwind",
   "typescript",
-  // Backend
+
   "node_js",
   "express",
   "django",
@@ -54,18 +45,18 @@ export const techStackEnum = [
   "spring",
   "laravel",
   "ruby_rails",
-  // Mobile
+
   "react_native",
   "flutter",
   "swift",
   "kotlin",
-  // Database
+
   "postgresql",
   "mongodb",
   "mysql",
   "redis",
   "dynamodb",
-  // Cloud/DevOps
+
   "aws",
   "azure",
   "gcp",
@@ -73,7 +64,7 @@ export const techStackEnum = [
   "kubernetes",
   "terraform",
   "ci_cd",
-  // Other
+
   "graphql",
   "rest",
   "websockets",
@@ -83,19 +74,10 @@ export const techStackEnum = [
 ] as const
 
 export const ecosystemEnum = [
-  "web",
-  "mobile",
-  "cloud",
-  "data",
-  "devops",
-  "ai_ml",
-  "blockchain",
-  "iot",
-  "gaming",
-  "other",
+ 'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other'
 ] as const
 
-export const experienceLevelEnum = ["junior", "mid", "senior"] as const
+export const experienceLevelEnum = ["beginner", "intermediate", "advanced"] as const
 
 // Types based on enums
 export type ProjectStage = (typeof projectStageEnum)[number]
@@ -109,6 +91,7 @@ export type ExperienceLevel = (typeof experienceLevelEnum)[number]
 // Project form type
 export type ProjectFormData = {
   // Basic Info
+  id:string
   name: string
   description: string
   banner: string
@@ -121,8 +104,8 @@ export type ProjectFormData = {
   stage: ProjectStage | ""
   repoUrl: string
   liveUrl: string
-  prizeMoney?: number // Made optional
-  inviteCode?: string // Made optional
+
+ 
 
   // Tech Stack
   techStack: TechStack[]

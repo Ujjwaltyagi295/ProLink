@@ -1,8 +1,9 @@
-import ProjectForm from "@/components/project-form";
+import  ProjectForm  from "@/components/project-form";
+
 
 export default function ProjectFormPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-slate-900 mb-4">Create Your Project</h1>
@@ -12,6 +13,6 @@ export default function ProjectFormPage() {
         </div>
         <ProjectForm/>
       </div>
-    </main>
+    </div>
   )
 }

@@ -1,118 +1,138 @@
-"use client"
-
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, Save, Loader2, FileDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import type { ProjectFormData } from "@/lib/schema"
-import BasicInfoStep from "./project-form/initial-info"
-import ProjectDetailsStep from "./project-form/project-details"
-import TechStackStep from "./project-form/tech-stack"
-import ProjectRolesStep from "./project-form/project-roles"
-import { cn } from "@/lib/utils"
-
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Loader2, FileDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import BasicInfoStep from "./project-form/initial-info";
+import ProjectDetailsStep from "./project-form/project-details";
+import TechStackStep from "./project-form/tech-stack";
+import ProjectRolesStep from "./project-form/project-roles";
+import { useMutation } from "@tanstack/react-query";
+import { publishProject } from "@/lib/api";
+import { useFormStore } from "@/store/useProjectStore";
+import { useParams } from "react-router-dom";
+import { navigate } from "@/lib/navigation";
+import { useToast } from "@/hooks/use-toast"
 const steps = [
   { id: "basic-info", title: "Basic Information" },
   { id: "project-details", title: "Project Details" },
   { id: "tech-stack", title: "Tech Stack" },
   { id: "project-roles", title: "Project Roles" },
-]
-
-const initialFormData: ProjectFormData = {
-  name: "",
-  description: "",
-  banner: "",
-  avatar: "",
-  category: "",
-  ecosystem: "",
-  status: "draft",
-  stage: "",
-  repoUrl: "",
-  liveUrl: "",
-  techStack: [],
-  roles: [],
-}
+];
 
 export default function ProjectForm() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [formData, setFormData] = useState<ProjectFormData>(initialFormData)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const { toast } = useToast()
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
 
-  const updateFormData = (data: Partial<ProjectFormData>) => {
-    setFormData((prev) => ({ ...prev, ...data }))
-  }
+  const { projectData, setFormData, clearForm } = useFormStore();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      setFormData({ id: id });
+    }
+  }, [id, setFormData]);
+
+  const { mutate: publish } = useMutation({
+    mutationFn: publishProject,
+    mutationKey: ["publish"],
+    onError: () => {
+      toast({
+        title: "Cannot publish project",
+        description: "Please fill required fields",
+        type: "error",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Project published successfully!",
+        type: "success",
+      });
+      clearForm();
+      navigate("/dashboard/projects/find");
+    },
+  });
+
+  const { mutate: saveDraft } = useMutation({
+    mutationFn: publishProject,
+    mutationKey: ["save-draft"],
+    onMutate: () => setIsSavingDraft(true),
+    onError: (error) => {
+      setIsSavingDraft(false);
+      toast({
+        title: "Failed to save draft",
+        description: String(error.message),
+        type: "error",
+      });
+    },
+    onSuccess: () => {
+      setIsSavingDraft(false);
+      toast({
+        title: "Draft Saved",
+        description: "Your project has been saved as a draft.",
+        type: "success",
+      });
+    },
+  });
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1)
+      setCurrentStep((prev) => prev + 1);
     }
-  }
+  };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1)
+      setCurrentStep((prev) => prev - 1);
     }
-  }
+  };
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true)
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      console.log("Form submitted:", formData)
-
-      // Reset form after successful submission
-      setFormData(initialFormData)
-      setCurrentStep(0)
-
-      // Show success message or redirect
-      alert("Project created successfully!")
-    } catch (error) {
-      console.error("Error submitting form:", error)
-      alert("Failed to create project. Please try again.")
-    } finally {
-      setIsSubmitting(false)
+  const handleSaveDraft = () => {
+    if (!projectData?.id) {
+      toast({
+        title: "Missing Project ",
+        description: "Please create the project first to save it.",
+        type: "error",
+      });
+      return;
     }
-  }
+    setFormData({ status: "draft" });
+    saveDraft(projectData);
+  };
 
-  const handleSaveDraft = async () => {
-    setIsSavingDraft(true)
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      console.log("Draft saved:", formData)
-
-      // Show success message
-      alert("Draft saved successfully!")
-    } catch (error) {
-      console.error("Error saving draft:", error)
-      alert("Failed to save draft. Please try again.")
-    } finally {
-      setIsSavingDraft(false)
+  const handlePublish = () => {
+    if (!projectData?.id) {
+      toast({
+        title: "Missing Project ",
+        description: "Cannot publish without a project ID.",
+        type: "error",
+      });
+      return;
     }
-  }
+    setFormData({ status: "published" });
+    publish(projectData);
+  };
 
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <BasicInfoStep formData={formData} updateFormData={updateFormData} />
+        return <BasicInfoStep />;
       case 1:
-        return <ProjectDetailsStep formData={formData} updateFormData={updateFormData} />
+        return <ProjectDetailsStep />;
       case 2:
-        return <TechStackStep formData={formData} updateFormData={updateFormData} />
+        return <TechStackStep />;
       case 3:
-        return <ProjectRolesStep formData={formData} updateFormData={updateFormData} />
+        return <ProjectRolesStep />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
-  const isLastStep = currentStep === steps.length - 1
-  const isFirstStep = currentStep === 0
+  const isLastStep = currentStep === steps.length - 1;
+  const isFirstStep = currentStep === 0;
 
   return (
     <div className="space-y-8">
@@ -123,7 +143,9 @@ export default function ProjectForm() {
             <motion.div
               className={cn(
                 "flex items-center justify-center w-10 h-10 rounded-full border-2 font-medium text-sm",
-                index <= currentStep ? "border-blue-500 bg-blue-500 text-white" : "border-slate-300 text-slate-500",
+                index <= currentStep
+                  ? "border-blue-500 bg-blue-500 text-white"
+                  : "border-slate-300 text-slate-500"
               )}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -132,7 +154,9 @@ export default function ProjectForm() {
             >
               {index + 1}
             </motion.div>
-            <span className="ml-2 hidden sm:block text-sm font-medium text-slate-700">{step.title}</span>
+            <span className="ml-2 hidden sm:block text-sm font-medium text-slate-700">
+              {step.title}
+            </span>
             {index < steps.length - 1 && (
               <div className="w-12 sm:w-24 h-1 mx-2 bg-slate-200">
                 <motion.div
@@ -173,7 +197,10 @@ export default function ProjectForm() {
           variant="outline"
           onClick={handlePrevious}
           disabled={isFirstStep}
-          className={cn("flex items-center gap-2", isFirstStep ? "opacity-50" : "")}
+          className={cn(
+            "flex items-center gap-2",
+            isFirstStep ? "opacity-50" : ""
+          )}
         >
           <ChevronLeft size={16} />
           Previous
@@ -201,24 +228,17 @@ export default function ProjectForm() {
 
           {isLastStep ? (
             <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={!projectData?.id}
+              onClick={handlePublish}
               className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <Save size={16} />
-                  Create Project
-                </>
-              )}
+              Publish
             </Button>
           ) : (
-            <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
+            <Button
+              onClick={handleNext}
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+            >
               Next
               <ChevronRight size={16} />
             </Button>
@@ -226,5 +246,5 @@ export default function ProjectForm() {
         </div>
       </div>
     </div>
-  )
+  );
 }

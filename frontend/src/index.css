@@ -3,6 +3,32 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation-duration: 300ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
+  }
+
+  .slide-in-from-right-5 {
+    animation-name: slideInFromRight;
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(1.25rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
 @theme inline {
   --shadow-input:
   0px 2px 3px -1px rgba(0, 0, 0, 0.1),

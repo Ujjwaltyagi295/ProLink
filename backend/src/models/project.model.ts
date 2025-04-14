@@ -3,6 +3,7 @@ import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { users } from "./user.model";
 import {
+  ecosystemEnum,
   projectCategoryEnum,
   projectStageEnum,
   projectStatusEnum,
@@ -19,10 +20,12 @@ export const projects = pgTable("projects", {
   avatar: text("avatar"),
   category: projectCategoryEnum("category"),
   status: projectStatusEnum("status").default("draft").notNull(),
+  
+  ecosystem:ecosystemEnum("ecosystem"),
   stage: projectStageEnum("stage"),
-  repoUrl: text("repo_url"),
+  
   liveUrl: text("live_url"),
-  inviteCode: varchar("invite_code", { length: 32 }).unique(),
+  inviteCode: text().unique(),
   joinLink: text("join_link").unique().notNull(),
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

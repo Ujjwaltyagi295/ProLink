@@ -27,6 +27,9 @@ import { Label } from "@radix-ui/react-label";
 import { useMutation } from "@tanstack/react-query";
 import { createProject } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import { useFormStore } from "@/store/useProjectStore";
+import { showAppToast } from "@/lib/toastUtils";
+
 
 export function CreateJoinDialog() {
   const [open, setOpen] = React.useState(false);
@@ -114,15 +117,21 @@ export function CreateJoinDialog() {
 
 function CreateForm({ className }: React.ComponentProps<"form">) {
   const [name, setName] = React.useState("");
+  const {setFormData}=useFormStore()
   const navigate = useNavigate();
-  const { mutate: create} = useMutation({
+  const { mutate: create } = useMutation({
     mutationKey: ["create"],
     mutationFn: createProject,
     onSuccess: (data) => {
-      navigate(`/project/edit/${data.id}`, {
+      showAppToast({title:"Project created",description:"",type:"success"})
+     setFormData({name:data.name})
+      navigate(`/dashboard/projects/edit/${data.id}`, {
         replace: true,
       });
     },
+    onError:()=>{
+      showAppToast({title:"Project name required",description:"Please fill project name field",type:"error"})
+    }
   });
   return (
     <form

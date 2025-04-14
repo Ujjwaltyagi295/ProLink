@@ -28,19 +28,10 @@ export const projectStatusEnum = pgEnum("project_status", [
   "archived",
 ]);
 export const roleEnum = pgEnum("role", [
-  "frontend_developer",
-  "backend_developer",
-  "fullstack_developer",
-  "mobile_developer",
-  "ui_ux_designer",
-  "devops_engineer",
-  "cloud_engineer",
-  "data_engineer",
-  "data_scientist",
-  "ml_engineer",
-  "blockchain_developer",
-  "game_developer",
-  "other",
+  "frontend_developer", "backend_developer", "fullstack_developer", "mobile_developer",
+  "ui_ux_designer", "devops_engineer", "cloud_engineer", "data_engineer", "data_scientist",
+  "ml_engineer", "qa_engineer", "security_engineer", "blockchain_developer", "game_developer",
+  "technical_product_manager", "technical_writer", "other"
 ]);
 export const techStackEnum = pgEnum("tech_stack", [
   "react",
@@ -86,9 +77,12 @@ export const techStackEnum = pgEnum("tech_stack", [
   "other",
 ]);
 export const ecosystemEnum = pgEnum('ecosystem', [
-    'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other'
+  'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other'
   ]);
   export const applicationStatusEnum = pgEnum('application_status', [
     'pending', 'accepted', 'rejected'
   ]);
-    
+ 
+  export const experienceLevelEnum=pgEnum('experienceLevel',[
+    "beginner", "intermediate", "advanced"
+  ])

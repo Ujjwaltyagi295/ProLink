@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../config/db";
-import { CREATED, NOT_FOUND, OK, UNAUTHORIZED } from "../../constants/http";
+import { BAD_REQUEST, CREATED, NOT_FOUND, OK, UNAUTHORIZED } from "../../constants/http";
 import sessions from "../../models/session.model";
 import catchErrors from "../../utils/catchErrors";
 import { clearAuthCookies, getAccessTokenCookiesOptions, getRefreshTokenCookiesOptions, setAuthCookies } from "../../utils/cookies";
@@ -18,6 +18,7 @@ export const signupHandler = catchErrors(async (req, res) => {
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
+  appAssert(data.password===data.confirmPassword,BAD_REQUEST,"Confirm Password dont match")
   const { user, accessToken, refreshToken } = await createAccount(data);
   return setAuthCookies({ res, accessToken, refreshToken })
     .status(CREATED)

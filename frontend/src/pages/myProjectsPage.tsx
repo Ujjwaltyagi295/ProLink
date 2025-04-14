@@ -1,5 +1,5 @@
 import { CreateJoinDialog } from "@/components/create-dialog";
-import { DraftCard } from "@/components/draf-cards";
+import { DraftCard } from "@/components/draft-cards";
 import {
   Carousel,
   CarouselContent,
@@ -18,21 +18,12 @@ interface DraftCardProps {
 }
 
 export const MyProjectsPage = () => {
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["draftcards"],
     queryFn: getMyProject,
-  });
-
-  if (isLoading) {
-    return <div className="p-6">Loading projects...</div>;
-  }
-
-  if (isError) {
-    return (
-      <div className="p-6 text-red-500">Failed to load your projects.</div>
-    );
-  }
-
+    
+  } );
+console.log(data?.data)
   return (
     <section className="w-full px-4 md:px-6 overflow-hidden">
       <div className="flex justify-between items-center mb-4">
@@ -46,7 +37,7 @@ export const MyProjectsPage = () => {
               <CreateJoinDialog />
             </CarouselItem>
 
-            {data?.data.map((project: DraftCardProps) => (
+            {data &&data?.data.map((project: DraftCardProps) => (
               <CarouselItem
                 key={project.id}
                 className="pl-4 md:basis-full lg:basis-1/3"

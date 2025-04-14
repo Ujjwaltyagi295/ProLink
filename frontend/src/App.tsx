@@ -5,7 +5,6 @@ import { HomePage } from "./pages/home";
 import DashboardPage from "./pages/dashboard";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { setNavigate } from "./lib/navigation";
-import ProjectFormPage from "./pages/projectFormPage";
 
 function App() {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ function App() {
       {/* PROTECTED ROUTES */}
       <Route element={<ProtectedRoutes />}>
         <Route path="/dashboard/*" element={<DashboardPage />} />
-        <Route path="/projects/edit/:id" element={<ProjectFormPage/>}/>
+       
       </Route>
     </Routes>
   );

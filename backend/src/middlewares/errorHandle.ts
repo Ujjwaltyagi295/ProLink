@@ -4,42 +4,68 @@ import { z } from "zod";
 import AppError from "../utils/AppError";
 import { clearAuthCookies, getAccessTokenCookiesOptions, REFRESH_PATH } from "../utils/cookies";
 
-
-
+// Helper function to handle Zod validation errors
 const handleZodError = (res: Response, error: z.ZodError) => {
-  const errors = error.issues.map((err) => ({
-    path: err.path.join("."),
-    message: err.message,
-  }));
+  const errors = error.issues.map((err) => {
+    // Handling each error issue, creating user-friendly messages
+    let errorMessage = "";
+
+    switch (err.code) {
+      case "too_small":
+        errorMessage = `${err.path.join(".")} must contain at least ${err.minimum} character(s)`;
+        break;
+      case "invalid_enum_value":
+        errorMessage = `${err.path.join(".")} must be one of the following values: ${err.options.join(", ")}`;
+        break;
+      case "invalid_string":
+        errorMessage = `${err.path.join(".")} is not a valid string`;
+        break;
+      default:
+        errorMessage = err.message || "Invalid input";
+        break;
+    }
+
+    return {
+      path: err.path.join("."),
+      message: errorMessage,
+    };
+  });
 
   return res.status(BAD_REQUEST).json({
     errors,
-    message: error.message,
+    message: "Validation failed",
   });
 };
 
-
-const handleAppError=(res:Response,error:AppError)=>{
+// Helper function to handle custom app errors
+const handleAppError = (res: Response, error: AppError) => {
   return res.status(error.statusCode).json({
     message: error.message,
     errorCode: error.errorCode,
   });
-}
+};
 
+// Main error handler
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   console.log(`PATH ${req.path}`, error);
-  if(req.path==REFRESH_PATH){
-      clearAuthCookies(res)
+
+  // Clear auth cookies on refresh path
+  if (req.path === REFRESH_PATH) {
+    clearAuthCookies(res);
   }
+
+  // Handle specific error types
   if (error instanceof z.ZodError) {
     handleZodError(res, error);
     return;
   }
-  if(error instanceof AppError){
-    handleAppError(res,error)
-    return
+
+  if (error instanceof AppError) {
+    handleAppError(res, error);
+    return;
   }
 
+  // Default internal server error for unknown issues
   res.status(INTERNAL_SERVER_ERROR).send("Internal server error");
 };
 

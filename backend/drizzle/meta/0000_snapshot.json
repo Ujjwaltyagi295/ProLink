@@ -1,5 +1,5 @@
 {
-  "id": "b0f2ac4c-ec01-473b-afde-fe5a914d2b84",
+  "id": "e86af264-8cc9-4fe0-b141-0093ea3cf264",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -179,6 +179,13 @@
           "notNull": true,
           "default": "'draft'"
         },
+        "ecosystem": {
+          "name": "ecosystem",
+          "type": "ecosystem",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "stage": {
           "name": "stage",
           "type": "project_stage",
@@ -198,9 +205,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "invite_code": {
-          "name": "invite_code",
-          "type": "varchar(32)",
+        "inviteCode": {
+          "name": "inviteCode",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -256,11 +263,11 @@
             "id"
           ]
         },
-        "projects_invite_code_unique": {
-          "name": "projects_invite_code_unique",
+        "projects_inviteCode_unique": {
+          "name": "projects_inviteCode_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "invite_code"
+            "inviteCode"
           ]
         },
         "projects_join_link_unique": {
@@ -604,6 +611,15 @@
         "other"
       ]
     },
+    "public.experienceLevel": {
+      "name": "experienceLevel",
+      "schema": "public",
+      "values": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
     "public.project_category": {
       "name": "project_category",
       "schema": "public",
@@ -656,8 +672,12 @@
         "data_engineer",
         "data_scientist",
         "ml_engineer",
+        "qa_engineer",
+        "security_engineer",
         "blockchain_developer",
         "game_developer",
+        "technical_product_manager",
+        "technical_writer",
         "other"
       ]
     },

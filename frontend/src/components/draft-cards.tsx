@@ -18,7 +18,7 @@ export const DraftCard = ({ project }: DraftCardProps) => {
   const navigate=useNavigate()
   return (
   
-    <Card onClick={()=>navigate(`/projects/edit/${project.id}`)} className="rounded-2xl p-4 shadow-sm space-y-4 hover:bg-neutral-100 cursor-pointer">
+    <Card onClick={()=>navigate(`/dashboard/projects/edit/${project.id}`)} className="rounded-2xl p-4 shadow-sm space-y-4 hover:bg-neutral-100 cursor-pointer">
    
    <div className="flex justify-between items-start">
      <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">

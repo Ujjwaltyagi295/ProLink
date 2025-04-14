@@ -1,9 +1,10 @@
 CREATE TYPE "public"."application_status" AS ENUM('pending', 'accepted', 'rejected');--> statement-breakpoint
 CREATE TYPE "public"."ecosystem" AS ENUM('web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other');--> statement-breakpoint
+CREATE TYPE "public"."experienceLevel" AS ENUM('beginner', 'intermediate', 'advanced');--> statement-breakpoint
 CREATE TYPE "public"."project_category" AS ENUM('web_app', 'mobile_app', 'desktop_app', 'api', 'data_engineering', 'machine_learning', 'devops', 'blockchain', 'game_development', 'other');--> statement-breakpoint
 CREATE TYPE "public"."project_stage" AS ENUM('Idea', 'Planning', 'Development', 'Testing', 'Deployment', 'Maintenance');--> statement-breakpoint
 CREATE TYPE "public"."project_status" AS ENUM('draft', 'published', 'completed', 'archived');--> statement-breakpoint
-CREATE TYPE "public"."role" AS ENUM('frontend_developer', 'backend_developer', 'fullstack_developer', 'mobile_developer', 'ui_ux_designer', 'devops_engineer', 'cloud_engineer', 'data_engineer', 'data_scientist', 'ml_engineer', 'blockchain_developer', 'game_developer', 'other');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('frontend_developer', 'backend_developer', 'fullstack_developer', 'mobile_developer', 'ui_ux_designer', 'devops_engineer', 'cloud_engineer', 'data_engineer', 'data_scientist', 'ml_engineer', 'qa_engineer', 'security_engineer', 'blockchain_developer', 'game_developer', 'technical_product_manager', 'technical_writer', 'other');--> statement-breakpoint
 CREATE TYPE "public"."tech_stack" AS ENUM('react', 'vue', 'angular', 'svelte', 'next_js', 'tailwind', 'typescript', 'node_js', 'express', 'django', 'flask', 'spring', 'laravel', 'ruby_rails', 'react_native', 'flutter', 'swift', 'kotlin', 'postgresql', 'mongodb', 'mysql', 'redis', 'dynamodb', 'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'terraform', 'ci_cd', 'graphql', 'rest', 'websockets', 'blockchain', 'ai_ml', 'other');--> statement-breakpoint
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
@@ -32,16 +33,17 @@ CREATE TABLE "projects" (
 	"avatar" text,
 	"category" "project_category",
 	"status" "project_status" DEFAULT 'draft' NOT NULL,
+	"ecosystem" "ecosystem",
 	"stage" "project_stage",
 	"repo_url" text,
 	"live_url" text,
-	"invite_code" varchar(32),
+	"inviteCode" text,
 	"join_link" text NOT NULL,
 	"created_by" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "projects_id_unique" UNIQUE("id"),
-	CONSTRAINT "projects_invite_code_unique" UNIQUE("invite_code"),
+	CONSTRAINT "projects_inviteCode_unique" UNIQUE("inviteCode"),
 	CONSTRAINT "projects_join_link_unique" UNIQUE("join_link")
 );
 --> statement-breakpoint
