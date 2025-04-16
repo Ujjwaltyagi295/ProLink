@@ -21,13 +21,15 @@ import { NewRole, projectRoles } from "../../models/projectRoles";
 import { Request, Response } from "express";
 import appAssert from "../../utils/appAssert";
 import slugify from "slugify"; // Make sure to install: npm i slugify
+import { NewTechStack, projectTechStack } from "../../models/projectTechStack";
+import { NewMember, projectMembers } from "../../models/projectMembers";
 
 // Create Project
 export const createProjectHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const { name } = req.body;
+    const { name, summary } = req.body;
 
-    appAssert(name, UNPROCESSABLE_CONTENT, "Project name required");
+    appAssert(name && summary, UNPROCESSABLE_CONTENT, "Project name required");
 
     const userId = req.userId;
     const [user] = await db.select().from(users).where(eq(users.id, userId));
@@ -37,6 +39,7 @@ export const createProjectHandler = catchErrors(
 
     const projectData: NewProject = {
       name: name.trim(),
+      summary: summary.trim(),
       ownerId: userId,
       joinLink: genJoinLink,
       createdBy: user.name,
@@ -49,7 +52,7 @@ export const createProjectHandler = catchErrors(
 );
 
 // Get Projects by User
-export const getProjectsById = catchErrors(
+export const getAllProjects = catchErrors(
   async (req: Request, res: Response) => {
     const userId = String(req.userId);
 
@@ -57,16 +60,7 @@ export const getProjectsById = catchErrors(
       where: eq(projects.ownerId, userId),
     });
 
-    const projectData = allProjects.map((project) => ({
-      id: project.id,
-      name: project.name,
-      createdBy: project.createdBy,
-      lastUpdated: project.updatedAt,
-    }));
-
-    return res.status(OK).json(
-      projectData
-    );
+    return res.status(OK).json(allProjects);
   }
 );
 
@@ -82,7 +76,11 @@ export const publishProject = catchErrors(
     });
 
     appAssert(existingProject, NOT_FOUND, "Project not found");
-    appAssert(existingProject.ownerId === userId, FORBIDDEN, "You don't have permission to update this project");
+    appAssert(
+      existingProject.ownerId === userId,
+      FORBIDDEN,
+      "You don't have permission to update this project"
+    );
 
     let data;
     try {
@@ -93,14 +91,23 @@ export const publishProject = catchErrors(
     }
 
     if (data.status === "published") {
-      appAssert(data.roles && data.roles.length > 0, UNPROCESSABLE_CONTENT, "At least one role is required to publish");
-      appAssert(data.techStack && data.techStack.length > 0, UNPROCESSABLE_CONTENT, "At least one tech stack item is required to publish");
+      appAssert(
+        data.roles && data.roles.length > 0,
+        UNPROCESSABLE_CONTENT,
+        "At least one role is required to publish"
+      );
+      appAssert(
+        data.techStack && data.techStack.length > 0,
+        UNPROCESSABLE_CONTENT,
+        "At least one tech stack item is required to publish"
+      );
     }
 
     const slug = slugify(data.name, { lower: true });
 
     const updatedProjectData: Partial<NewProject> = {
       name: data.name,
+      summary: data.summary,
       description: data.description,
       banner: data.banner,
       avatar: data.avatar,
@@ -121,7 +128,9 @@ export const publishProject = catchErrors(
         .returning();
 
       if (data.roles && data.roles.length > 0) {
-        await tx.delete(projectRoles).where(eq(projectRoles.projectId, projectId));
+        await tx
+          .delete(projectRoles)
+          .where(eq(projectRoles.projectId, projectId));
 
         const rolesData: NewRole[] = data.roles.map((role) => ({
           projectId,
@@ -134,13 +143,54 @@ export const publishProject = catchErrors(
 
         await tx.insert(projectRoles).values(rolesData);
       }
+      if (data.techStack && data.techStack.length > 0) {
+        const techStackData: NewTechStack[] = data.techStack.map((t) => ({
+          projectId: projectId,
+          techStack: t,
+        }));
+        const techData= await tx.insert(projectTechStack).values(techStackData).returning()
+      }
+      const newMember:NewMember={
+        userId:req.userId,
+        username:updatedProject.createdBy,
+        projectId:projectId,
+        isOwner:true,
+
+      }
+      const techMembers= await tx.insert(projectMembers).values(newMember).returning()
 
       return updatedProject;
+      
     });
 
-    return res.status(OK).json({
-      project: result,
-      message: data.status === "published" ? "Project published successfully" : "Project updated successfully",
-    });
+    return res.status(OK).json(updatedProjectData);
   }
 );
+export const getProjectsById= catchErrors(async(req,res)=>{
+  const projectID= req.params.id
+  const rawResults = await db
+  .select({
+    project: projects,
+    role: projectRoles,
+    techStack: projectTechStack,
+    members: projectMembers
+  })
+  .from(projects)
+  .leftJoin(projectRoles, eq(projectRoles.projectId, projectID))
+  .leftJoin(projectMembers, eq(projectMembers.projectId, projectID))
+  .leftJoin(projectTechStack, eq(projectTechStack.projectId, projectID))
+  .where(eq(projects.id, projectID));
+
+// Assuming all rows have same project, role, techStack
+const firstRow = rawResults[0];
+
+const grouped = {
+  project: firstRow.project,
+  role: firstRow.role,
+  techStack: firstRow.techStack,
+  members: rawResults.map((row) => row.members).filter(Boolean), // remove nulls
+};
+
+
+return res.status(OK).json(grouped)
+})

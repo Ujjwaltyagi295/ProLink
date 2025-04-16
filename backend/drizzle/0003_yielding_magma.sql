@@ -1,0 +1,1 @@
+ALTER TABLE "project_member" ADD COLUMN "username" text NOT NULL;

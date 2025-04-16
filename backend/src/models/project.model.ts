@@ -15,6 +15,7 @@ export const projects = pgTable("projects", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
+  summary:text("summary").notNull(),
   description: text("description"),
   banner: text("banner"),
   avatar: text("avatar"),

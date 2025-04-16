@@ -1,5 +1,5 @@
 import API from "@/config/apiClient";
-import { ProjectDataType } from "@/store/useProjectStore";
+import { ProjectDataType} from "@/store/useProjectStore";
 
 export const login = async (data: object) => API.post("/auth/login", data);
 
@@ -11,8 +11,9 @@ export const createProject = async (data: object) => {
   return response.data;
 };
 export const getMyProject = async () => API.get("/projects");
-
+export const getProjectsById= async(id:string)=>API.get(`/projects/${id}`)
 export const publishProject = async (data: ProjectDataType) => {
+ 
     const response = await API.put(`/projects/${data.id}`, data);
     return response.data;
  

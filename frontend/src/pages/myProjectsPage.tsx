@@ -1,57 +1,186 @@
-import { CreateJoinDialog } from "@/components/create-dialog";
-import { DraftCard } from "@/components/draft-cards";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
-import { getMyProject } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+"use client"
 
-interface DraftCardProps {
-  id: string;
-  name: string;
-  lastUpdated: string;
-  createdBy: string;
+import * as React from "react"
+import { ProjectCard } from "@/components/project-card"
+import { ProjectSidebar } from "@/components/project-sidebar"
+import { Button } from "@/components/ui/button"
+import { PlusCircle } from "lucide-react"
+import ProjectDialog from "@/components/project-createDialog"
+import { useQuery } from "@tanstack/react-query"
+import { getMyProject, getProjectsById } from "@/lib/api"
+import { useMyProjectStore } from "@/store/useProjectStore"
+import { TechStack } from "@/lib/schema"
+
+interface projectCardProps {
+  id: string
+  name: string
+  summary: string
+  createdBy: string
+  updatedAt: string
 }
 
-export const MyProjectsPage = () => {
-  const { data } = useQuery({
-    queryKey: ["draftcards"],
+export interface ProjectData {
+  project: {
+    id: string
+    ownerId: string
+    name: string
+    summary: string
+    description: string
+    banner: string
+    avatar: string
+    category: string
+    status: string
+    ecosystem: string
+    stage: string
+    liveUrl: string
+    inviteCode: string
+    joinLink: string
+    createdBy: string
+    createdAt: string
+    updatedAt: string
+  },
+  role: {
+    id: string
+    projectId: string
+    role: string
+    description: string
+    count: number
+    isRemote: boolean
+    experienceLevel: string
+  },
+  techStack: TechStack,
+  members: {
+    id: string
+    name:string
+    projectId: string
+    userId: string
+    roleId: string | null
+    isOwner: boolean
+    joinedAt: string
+  }[]
+}
+
+// From the ProjectSidebar component
+type TeamMemberStatus = "online" | "offline" | "away";
+
+export function MyProjectsPage() { 
+   const { isOpen, projectId, onClose } = useMyProjectStore();
+  
+  const { data: singleProjectQuery,isLoading: projectLoading } = useQuery({
+    queryKey: ["getProjectData", projectId],
+    queryFn: () => getProjectsById(projectId),
+    enabled: !!projectId,
+    staleTime: Infinity, // Never consider data stale automatically
+    gcTime: 1000 * 60 * 30,
+  })
+ 
+  const { data: allProjects, isLoading } = useQuery({
+    queryKey: ["datacards"],
     queryFn: getMyProject,
-    
-  } );
-console.log(data?.data)
+  })
+ 
+  const selectedProject = singleProjectQuery?.data as ProjectData | undefined;
+  
+
+  const [open, setOpen] = React.useState(false)
+
+  // Generate a valid status for the team members
+  const getRandomStatus = (): TeamMemberStatus => {
+    const statuses: TeamMemberStatus[] = ["online", "offline", "away"];
+    return statuses[Math.floor(Math.random() * statuses.length)];
+  }
+  
   return (
-    <section className="w-full px-4 md:px-6 overflow-hidden">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">My Projects</h2>
+    <div className="relative">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">My Projects</h1>
+        <Button onClick={() => setOpen(true)}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          New Project
+        </Button>
+      </div>
+      
+      <ProjectDialog open={open} onOpenChange={setOpen} />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {isLoading ? (
+          <div>Loading projects...</div>
+        ) : (
+          allProjects?.data?.map((project: projectCardProps) => (
+            <div key={project.id}>
+              <ProjectCard project={project} />
+            </div>
+          ))
+        )}
       </div>
 
-      <div className="relative">
-        <Carousel className="w-full">
-          <CarouselContent className="-ml-4">
-            <CarouselItem className="pl-4 md:basis-full lg:basis-1/3">
-              <CreateJoinDialog />
-            </CarouselItem>
+      <ProjectSidebar
+        isOpen={isOpen}
+        isLoading={projectLoading}
+        onClose={onClose}
 
-            {data &&data?.data.map((project: DraftCardProps) => (
-              <CarouselItem
-                key={project.id}
-                className="pl-4 md:basis-full lg:basis-1/3"
-              >
-                <DraftCard project={project} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="absolute -top-6 mr-10 right-0 hidden lg:flex gap-2 z-10">
-            <CarouselPrevious className="h-8 w-8 rounded-full border shadow bg-white hover:bg-gray-50" />
-            <CarouselNext className="h-8 w-8 rounded-full border shadow bg-white hover:bg-gray-50" />
-          </div>
-        </Carousel>
-      </div>
-    </section>
-  );
-};
+        project={
+          selectedProject
+            ? {
+                id: selectedProject.project.id,
+                name: selectedProject.project.name,
+                description: selectedProject.project.description,
+                startDate: selectedProject.project.createdAt,
+                endDate: selectedProject.project.updatedAt,
+                teamMembers:  selectedProject.members.map((member) => ({
+                  id: member.id,
+                  name: member.name,
+                  role: selectedProject.role.role,
+                  avatar: "/placeholder.svg?height=40&width=40",
+                  status: getRandomStatus(),
+                  ...(Math.random() > 0.5 && {
+                    lastActive: ["5 min ago", "1 hour ago", "2 hours ago"][Math.floor(Math.random() * 3)],
+                  }),
+                })),
+                applications: [
+                  {
+                    id: "a1",
+                    userId: "u1",
+                    name: "Alex Johnson",
+                    role: "Frontend Developer",
+                    avatar: "/placeholder.svg?height=40&width=40",
+                    appliedDate: "2023-07-15",
+                    status: "pending",
+                    experience: "3 years",
+                  },
+                  {
+                    id: "a2",
+                    userId: "u2",
+                    name: "Maria Garcia",
+                    role: "UI/UX Designer",
+                    avatar: "/placeholder.svg?height=40&width=40",
+                    appliedDate: "2023-07-12",
+                    status: "pending",
+                    experience: "5 years",
+                  },
+                  {
+                    id: "a3",
+                    userId: "u3",
+                    name: "Thomas Lee",
+                    role: "Backend Developer",
+                    avatar: "/placeholder.svg?height=40&width=40",
+                    appliedDate: "2023-07-10",
+                    status: "accepted",
+                    experience: "4 years",
+                  },
+                ],
+                analytics: {
+                  views: 845,
+                  applications: 18,
+                  rolesFilled: 3,
+                  totalRoles: 5,
+                  viewsHistory: [90, 105, 125, 115, 150, 180, 200],
+                  applicationsHistory: [2, 3, 3, 1, 4, 3, 2],
+                },
+              }
+            : null
+        }
+      />
+    </div>
+  )
+}

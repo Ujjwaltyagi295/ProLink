@@ -103,7 +103,7 @@ export default function ProjectForm() {
     saveDraft(projectData);
   };
 
-  const handlePublish = () => {
+  const handlePublish =async () => {
     if (!projectData?.id) {
       toast({
         title: "Missing Project ",
@@ -112,7 +112,7 @@ export default function ProjectForm() {
       });
       return;
     }
-    setFormData({ status: "published" });
+   await setFormData({ status: "published" });
     publish(projectData);
   };
 

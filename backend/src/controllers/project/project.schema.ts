@@ -37,6 +37,7 @@ export const projectMembersSchema = z.object({
 export const projectSchema = z.object({
   name: nameSchema,
   description: z.string().optional(),
+  summary:z.string().min(10).max(500),
   banner: z.string().optional(),
   avatar: z.string().optional(),
   category: z.enum([

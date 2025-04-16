@@ -148,3 +148,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.editable-div:empty::before {
+  content: attr(data-placeholder);
+  color: #6b7280; /* placeholder text color */
+  pointer-events: none;
+  display: block;
+  font-size: 1.1rem; /* adjust size here, e.g., text-xl */
+}
+
+.editable-div:focus:empty::before {
+  color: #6b7280;
+}
+
+/* Ensure no invisible <br> tags ruin it */
+.editable-div:empty:not(:focus)::before {
+  content: attr(data-placeholder);
+}

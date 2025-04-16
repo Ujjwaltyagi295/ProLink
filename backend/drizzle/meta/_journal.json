@@ -15,6 +15,20 @@
       "when": 1744662145124,
       "tag": "0001_nasty_tempest",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744805513430,
+      "tag": "0002_sour_earthquake",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744823552784,
+      "tag": "0003_yielding_magma",
+      "breakpoints": true
     }
   ]
 }

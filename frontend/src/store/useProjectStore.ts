@@ -11,6 +11,7 @@ interface RoleFormData {
 export interface ProjectDataType {
     id:string | undefined,
     name: string;
+    summary:string,
     description:string;
     banner: string;
     avatar: string;
@@ -35,6 +36,7 @@ export const useFormStore= create<FormStore>((set)=>({
     projectData:{
         id:"",
         name:"",
+        summary:"",
         description:"",
         banner:"",
         avatar:"",
@@ -57,6 +59,7 @@ export const useFormStore= create<FormStore>((set)=>({
         projectData: {
             id:"",
           name: '',
+          summary:"",
           description:"",
           banner: '',
           avatar: '',
@@ -72,4 +75,23 @@ export const useFormStore= create<FormStore>((set)=>({
          
         },
       })),
+}))
+type ProjectSidebarState = {
+  isOpen: boolean
+  projectId: string
+  setIsOpen: (data: boolean) => void
+  setProjectId: (id: string) => void
+  onClose: () => void
+  // Add a combined action for better reliability
+  openProject: (id: string) => void
+}
+
+export const useMyProjectStore = create<ProjectSidebarState>((set) => ({
+  isOpen: false,
+  projectId: "",
+  setIsOpen: (data) => set({ isOpen: data }),
+  setProjectId: (id) => set({ projectId: id }),
+  onClose: () => set({ isOpen: false }),
+  // Combined action to ensure both state changes happen together
+  openProject: (id) => set({ projectId: id, isOpen: true })
 }))
