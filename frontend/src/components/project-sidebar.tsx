@@ -151,7 +151,7 @@ const sampleProject: ProjectData = {
 
 export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: ProjectSidebarProps) {
   const [isFullScreen, setIsFullScreen] = React.useState(false)
-  
+
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen)
   }
@@ -261,7 +261,7 @@ export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: Proj
 
   // Regular rendering when we have project data
   if (!project) {
-    console.error("ProjectSidebar received isOpen=true but no project data");
+   
     return null;
   }
   return (

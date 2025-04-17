@@ -13,14 +13,14 @@ import {
 import { createId } from "@paralleldrive/cuid2";
 import AppError from "../../utils/AppError";
 
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { users } from "../../models/user.model";
 import { z } from "zod";
 import { projectSchema } from "./project.schema";
 import { NewRole, projectRoles } from "../../models/projectRoles";
 import { Request, Response } from "express";
 import appAssert from "../../utils/appAssert";
-import slugify from "slugify"; // Make sure to install: npm i slugify
+import slugify from "slugify";
 import { NewTechStack, projectTechStack } from "../../models/projectTechStack";
 import { NewMember, projectMembers } from "../../models/projectMembers";
 
@@ -51,20 +51,51 @@ export const createProjectHandler = catchErrors(
   }
 );
 
-// Get Projects by User
-export const getAllProjects = catchErrors(
-  async (req: Request, res: Response) => {
-    const userId = String(req.userId);
-
-    const allProjects = await db.query.projects.findMany({
-      where: eq(projects.ownerId, userId),
-    });
-
-    return res.status(OK).json(allProjects);
+export const getAllProjects = catchErrors(async (req: Request, res: Response) => {
+  const userId = String(req.userId);
+  
+  // 1. Get all projects for this user
+  const userProjects = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.ownerId, userId));
+    
+  if (userProjects.length === 0) {
+    return res.status(OK).json([]);
   }
-);
+  
+  const projectIds = userProjects.map(project => project.id);
+  
+  // 2. Get related data with simple queries
+  const roles = await db
+    .select()
+    .from(projectRoles)
+    .where(inArray(projectRoles.projectId, projectIds));
+    
+  const techStack = await db
+    .select()
+    .from(projectTechStack)
+    .where(inArray(projectTechStack.projectId, projectIds));
+    
+  const members = await db
+    .select()
+    .from(projectMembers)
+    .where(inArray(projectMembers.projectId, projectIds));
+    
+  // 3. Construct the result
+  const result = userProjects.map(project => ({
+    ...project,
+    
+    roles: roles.filter(role => role.projectId === project.id),
+    techStack: techStack
+      .filter(tech => tech.projectId === project.id)
+      .map(tech => tech.techStack),
+    members: members.filter(member => member.projectId === project.id)
+  }));
+  
+  return res.status(OK).json(result);
+});
 
-// Publish or Update Project
 export const publishProject = catchErrors(
   async (req: Request, res: Response) => {
     const projectId = String(req.params.id);
@@ -112,26 +143,27 @@ export const publishProject = catchErrors(
       banner: data.banner,
       avatar: data.avatar,
       category: data.category,
-      liveUrl: data?.liveUrl,
+      liveUrl: String(data.liveUrl),
+      teamSize:data.teamSize,
       stage: data.stage,
       status: data.status,
       ecosystem: data.ecosystem,
       inviteCode: `https://localhost:5132/${slug}`,
       updatedAt: new Date(),
     };
-
+    
     const result = await db.transaction(async (tx) => {
       const [updatedProject] = await tx
         .update(projects)
         .set(updatedProjectData)
         .where(eq(projects.id, projectId))
         .returning();
-
+    
       if (data.roles && data.roles.length > 0) {
         await tx
           .delete(projectRoles)
           .where(eq(projectRoles.projectId, projectId));
-
+    
         const rolesData: NewRole[] = data.roles.map((role) => ({
           projectId,
           role: role.role,
@@ -140,57 +172,69 @@ export const publishProject = catchErrors(
           description: role.description,
           isRemote: role.isRemote,
         }));
-
+    
         await tx.insert(projectRoles).values(rolesData);
       }
+    
       if (data.techStack && data.techStack.length > 0) {
         const techStackData: NewTechStack[] = data.techStack.map((t) => ({
           projectId: projectId,
           techStack: t,
         }));
-        const techData= await tx.insert(projectTechStack).values(techStackData).returning()
+    
+        await tx.insert(projectTechStack).values(techStackData);
       }
-      const newMember:NewMember={
-        userId:req.userId,
-        username:updatedProject.createdBy,
-        projectId:projectId,
-        isOwner:true,
-
-      }
-      const techMembers= await tx.insert(projectMembers).values(newMember).returning()
-
+    
+      const newMember: NewMember = {
+        userId: req.userId,
+        username: updatedProject.createdBy,
+       
+        projectId: projectId,
+        isOwner: true,
+      };
+    
+      await tx.insert(projectMembers).values(newMember);
+    
       return updatedProject;
-      
     });
-
-    return res.status(OK).json(updatedProjectData);
+    
+    return res.status(OK).json(result);
+    
   }
 );
-export const getProjectsById= catchErrors(async(req,res)=>{
-  const projectID= req.params.id
-  const rawResults = await db
-  .select({
-    project: projects,
-    role: projectRoles,
-    techStack: projectTechStack,
-    members: projectMembers
-  })
-  .from(projects)
-  .leftJoin(projectRoles, eq(projectRoles.projectId, projectID))
-  .leftJoin(projectMembers, eq(projectMembers.projectId, projectID))
-  .leftJoin(projectTechStack, eq(projectTechStack.projectId, projectID))
-  .where(eq(projects.id, projectID));
-
-// Assuming all rows have same project, role, techStack
-const firstRow = rawResults[0];
-
-const grouped = {
-  project: firstRow.project,
-  role: firstRow.role,
-  techStack: firstRow.techStack,
-  members: rawResults.map((row) => row.members).filter(Boolean), // remove nulls
-};
-
-
-return res.status(OK).json(grouped)
+export const getProjectsById = catchErrors(async (req, res) => {
+  const projectId = req.params.id;
+  
+  // First, check if the project exists
+  const projectData = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+    
+  if (projectData.length === 0) {
+    return res.status(NOT_FOUND).json({ message: "Project not found" });
+  }
+  
+  // Get all related data in parallel
+  const [roles, techStack, members] = await Promise.all([
+    db.select().from(projectRoles).where(eq(projectRoles.projectId, projectId)),
+    db.select().from(projectTechStack).where(eq(projectTechStack.projectId, projectId)),
+    db.select().from(projectMembers).where(eq(projectMembers.projectId, projectId))
+  ]);
+  
+  // Construct the response
+  const result = {
+    project: projectData[0],
+    roles: roles,
+    techStack: techStack.map(tech => tech.techStack),
+    members: members
+  };
+  
+  return res.status(OK).json(result);
+});
+export const projectDelete= catchErrors(async(req,res)=>{
+  const projectId= req.params.id
+  await db.delete(projects).where(eq(projects.id,projectId))
+  res.status(OK).json({message:"deleted"})
 })

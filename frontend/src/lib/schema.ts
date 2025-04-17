@@ -98,6 +98,7 @@ export type ProjectFormData = {
   avatar: string
 
   // Project Details
+  teamSize:number,
   category: ProjectCategory | ""
   ecosystem: Ecosystem | ""
   status: ProjectStatus

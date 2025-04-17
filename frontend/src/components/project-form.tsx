@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Loader2, FileDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, FileDown, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -8,12 +8,13 @@ import BasicInfoStep from "./project-form/initial-info";
 import ProjectDetailsStep from "./project-form/project-details";
 import TechStackStep from "./project-form/tech-stack";
 import ProjectRolesStep from "./project-form/project-roles";
-import { useMutation } from "@tanstack/react-query";
-import { publishProject } from "@/lib/api";
-import { useFormStore } from "@/store/useProjectStore";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getProjectsById, publishProject, uploadImage } from "@/lib/api";
+import { useFormStore, useMyProjectStore } from "@/store/useProjectStore";
 import { useParams } from "react-router-dom";
 import { navigate } from "@/lib/navigation";
 import { useToast } from "@/hooks/use-toast"
+import LoadingSpinner from "./loadingSpiner";
 const steps = [
   { id: "basic-info", title: "Basic Information" },
   { id: "project-details", title: "Project Details" },
@@ -25,16 +26,32 @@ export default function ProjectForm() {
   const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(0);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
-
+  const [isPublishing, setIsPublishing] = useState(false);
+const {isEditing}=useMyProjectStore()
   const { projectData, setFormData, clearForm } = useFormStore();
   const { id } = useParams();
 
-  useEffect(() => {
-    if (id) {
-      setFormData({ id: id });
-    }
-  }, [id, setFormData]);
+  
 
+  const {data:project,isLoading}= useQuery({
+    queryFn:()=>getProjectsById(id),
+   queryKey:["getprojectbyId"]
+  
+  })
+  useEffect(() => {
+    
+    if (isEditing && id && project?.data) {
+      const { project: projectDetails, roles, techStack } = project.data;
+      setFormData({...projectDetails,roles:roles || [],techStack:techStack||[]});
+    }
+    
+    else if (id && !isEditing) {
+    
+      setFormData({id: id});
+    }
+  }, [isEditing, id, project?.data, setFormData]);
+  
+  
   const { mutate: publish } = useMutation({
     mutationFn: publishProject,
     mutationKey: ["publish"],
@@ -77,6 +94,7 @@ export default function ProjectForm() {
       });
     },
   });
+  
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -102,20 +120,57 @@ export default function ProjectForm() {
     setFormData({ status: "draft" });
     saveDraft(projectData);
   };
-
-  const handlePublish =async () => {
-    if (!projectData?.id) {
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    
+    try {
+      if (!projectData?.id) {
+        toast({
+          title: "Missing Project",
+          description: "Cannot publish without a project ID.",
+          type: "error",
+        });
+        return;
+      }
+      
+      // Create a copy of the project data that we'll modify
+      let updatedData = { ...projectData };
+      
+      // Upload images if they exist
+      if (projectData.bannerFile) {
+        const bannerUrl = await uploadImage(projectData.bannerFile);
+        updatedData = { 
+          ...updatedData, 
+          banner: bannerUrl[0] 
+        };
+      }
+      
+      if (projectData.avatarFile) {
+        const avatarUrl = await uploadImage(projectData.avatarFile);
+        updatedData = { 
+          ...updatedData, 
+          avatar: avatarUrl[0] 
+        };
+      }
+      
+      // Set the status
+      updatedData = { 
+        ...updatedData, 
+        status: "published" 
+      };
+      
+      // Publish with the complete updated data
+      publish(updatedData);
+    } catch (error) {
       toast({
-        title: "Missing Project ",
-        description: "Cannot publish without a project ID.",
+        title: "Publication Failed",
+        description: String(error),
         type: "error",
       });
-      return;
+    } finally {
+      setIsPublishing(false);
     }
-   await setFormData({ status: "published" });
-    publish(projectData);
   };
-
   const renderStep = () => {
     switch (currentStep) {
       case 0:
@@ -133,7 +188,9 @@ export default function ProjectForm() {
 
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
-
+  if(isLoading){
+    return(<LoadingSpinner/>)
+  }
   return (
     <div className="space-y-8">
       {/* Progress Steps */}
@@ -228,11 +285,23 @@ export default function ProjectForm() {
 
           {isLastStep ? (
             <Button
-              disabled={!projectData?.id}
+              disabled={isPublishing}
               onClick={handlePublish}
+              
               className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              
             >
-              Publish
+              {isPublishing ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Publishing...
+              </>
+            ) : (
+              <>
+                <Upload size={16} />
+                Publish
+              </>
+            )}
             </Button>
           ) : (
             <Button

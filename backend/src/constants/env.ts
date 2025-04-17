@@ -13,3 +13,6 @@ export const DATABASE_URI = getenv("DATABASE_URI");
 export const APP_ORIGIN = getenv("APP_ORIGIN");
 export const JWT_SECRET = getenv("JWT_SECRET");
 export const JWT_REFRESH_SECRET = getenv("JWT_REFRESH_SECRET");
+export const CLOUDINARY_CLOUD_NAME=getenv("CLOUDINARY_CLOUD_NAME")
+export const CLOUDINARY_API_KEY=getenv("CLOUDINARY_API_KEY")
+export const CLOUDINARY_API_SECRET=getenv("CLOUDINARY_API_SECRET")

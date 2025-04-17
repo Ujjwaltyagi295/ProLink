@@ -105,6 +105,20 @@ export default function ProjectDetailsStep() {
             className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
           />
         </div>
+        <div className="space-y-2">
+                <Label htmlFor="team size">Team Size</Label>
+                <Input
+                  type="number"
+                 
+                  min={2}
+                  value={projectData.teamSize}
+                  onChange={(e) =>
+                    setFormData({
+                      teamSize: parseInt(e.target.value) || 2,
+                    })
+                  }
+                />
+              </div>
       </motion.div>
     </div>
   )

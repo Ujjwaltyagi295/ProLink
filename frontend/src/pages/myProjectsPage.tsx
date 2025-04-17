@@ -1,124 +1,121 @@
-"use client"
-
-import * as React from "react"
-import { ProjectCard } from "@/components/project-card"
-import { ProjectSidebar } from "@/components/project-sidebar"
-import { Button } from "@/components/ui/button"
-import { PlusCircle } from "lucide-react"
-import ProjectDialog from "@/components/project-createDialog"
-import { useQuery } from "@tanstack/react-query"
-import { getMyProject, getProjectsById } from "@/lib/api"
-import { useMyProjectStore } from "@/store/useProjectStore"
-import { TechStack } from "@/lib/schema"
-
-interface projectCardProps {
-  id: string
-  name: string
-  summary: string
-  createdBy: string
-  updatedAt: string
-}
+import * as React from "react";
+import { ProjectCard } from "@/components/project-card";
+import { ProjectSidebar } from "@/components/project-sidebar";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import ProjectDialog from "@/components/project-createDialog";
+import { useQuery } from "@tanstack/react-query";
+import { getMyProject, getProjectsById } from "@/lib/api";
+import { useFormStore, useMyProjectStore } from "@/store/useProjectStore";
+import { TechStack } from "@/lib/schema";
+import { ProjectCardData } from "@/types/project";
 
 export interface ProjectData {
   project: {
-    id: string
-    ownerId: string
-    name: string
-    summary: string
-    description: string
-    banner: string
-    avatar: string
-    category: string
-    status: string
-    ecosystem: string
-    stage: string
-    liveUrl: string
-    inviteCode: string
-    joinLink: string
-    createdBy: string
-    createdAt: string
-    updatedAt: string
-  },
+    id: string;
+    ownerId: string;
+    name: string;
+    summary: string;
+    description: string;
+    banner: string;
+    avatar: string;
+    category: string;
+    status: string;
+    ecosystem: string;
+    teamSize: number;
+    stage: string;
+    liveUrl: string;
+    inviteCode: string;
+    joinLink: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+  };
   role: {
-    id: string
-    projectId: string
-    role: string
-    description: string
-    count: number
-    isRemote: boolean
-    experienceLevel: string
-  },
-  techStack: TechStack,
+    id: string;
+    projectId: string;
+    role: string;
+    description: string;
+    count: number;
+    isRemote: boolean;
+    experienceLevel: string;
+  }[];
+  techStack: TechStack;
   members: {
-    id: string
-    name:string
-    projectId: string
-    userId: string
-    roleId: string | null
-    isOwner: boolean
-    joinedAt: string
-  }[]
+    id: string;
+    name: string;
+    projectId: string;
+    userId: string;
+    username: string;
+    roleId: string | null;
+    isOwner: boolean;
+    joinedAt: string;
+  }[];
 }
 
 // From the ProjectSidebar component
 type TeamMemberStatus = "online" | "offline" | "away";
 
-export function MyProjectsPage() { 
-   const { isOpen, projectId, onClose } = useMyProjectStore();
-  
-  const { data: singleProjectQuery,isLoading: projectLoading } = useQuery({
+export function MyProjectsPage() {
+  const { isOpen, projectId, onClose } = useMyProjectStore();
+  const { clearForm } = useFormStore();
+  const { data: singleProjectQuery, isLoading: projectLoading } = useQuery({
     queryKey: ["getProjectData", projectId],
     queryFn: () => getProjectsById(projectId),
     enabled: !!projectId,
-    staleTime: Infinity, // Never consider data stale automatically
+    staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
-  })
- 
+  });
+
   const { data: allProjects, isLoading } = useQuery({
     queryKey: ["datacards"],
     queryFn: getMyProject,
-  })
- 
+  });
+
   const selectedProject = singleProjectQuery?.data as ProjectData | undefined;
-  
 
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
-  // Generate a valid status for the team members
   const getRandomStatus = (): TeamMemberStatus => {
     const statuses: TeamMemberStatus[] = ["online", "offline", "away"];
     return statuses[Math.floor(Math.random() * statuses.length)];
-  }
-  
+  };
+
   return (
-    <div className="relative">
+    <div className="relative ">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Projects</h1>
-        <Button onClick={() => setOpen(true)}>
+        <Button
+          onClick={() => {
+            clearForm();
+            setOpen(true);
+          }}
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           New Project
         </Button>
       </div>
-      
+
       <ProjectDialog open={open} onOpenChange={setOpen} />
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {isLoading ? (
+     
+         {isLoading  ? (
           <div>Loading projects...</div>
         ) : (
-          allProjects?.data?.map((project: projectCardProps) => (
+          allProjects?.data.map((project: ProjectCardData) => (
             <div key={project.id}>
               <ProjectCard project={project} />
             </div>
           ))
         )}
+    
       </div>
 
       <ProjectSidebar
         isOpen={isOpen}
         isLoading={projectLoading}
         onClose={onClose}
-
         project={
           selectedProject
             ? {
@@ -127,14 +124,16 @@ export function MyProjectsPage() {
                 description: selectedProject.project.description,
                 startDate: selectedProject.project.createdAt,
                 endDate: selectedProject.project.updatedAt,
-                teamMembers:  selectedProject.members.map((member) => ({
+                teamMembers: selectedProject.members.map((member) => ({
                   id: member.id,
-                  name: member.name,
-                  role: selectedProject.role.role,
+                  name: member.username,
+                  role: "fullstack",
                   avatar: "/placeholder.svg?height=40&width=40",
                   status: getRandomStatus(),
                   ...(Math.random() > 0.5 && {
-                    lastActive: ["5 min ago", "1 hour ago", "2 hours ago"][Math.floor(Math.random() * 3)],
+                    lastActive: ["5 min ago", "1 hour ago", "2 hours ago"][
+                      Math.floor(Math.random() * 3)
+                    ],
                   }),
                 })),
                 applications: [
@@ -182,5 +181,5 @@ export function MyProjectsPage() {
         }
       />
     </div>
-  )
+  );
 }

@@ -17,6 +17,7 @@ export const projectRoles = pgTable(
     id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
     projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
     role: roleEnum("role").notNull(),
+    
     description: text("description").notNull(),
     count: integer("count").default(1).notNull(),
     isRemote: boolean("isRemote").default(false).notNull(),

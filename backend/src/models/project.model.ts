@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { users } from "./user.model";
@@ -21,7 +21,7 @@ export const projects = pgTable("projects", {
   avatar: text("avatar"),
   category: projectCategoryEnum("category"),
   status: projectStatusEnum("status").default("draft").notNull(),
-  
+   teamSize: integer("team_size").default(2).notNull(),
   ecosystem:ecosystemEnum("ecosystem"),
   stage: projectStageEnum("stage"),
   

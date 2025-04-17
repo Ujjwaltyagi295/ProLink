@@ -25,30 +25,34 @@ export default function ProjectDialog({
   open: boolean;
   onOpenChange: (val: boolean) => void;
 }) {
-    const {toast}= useToast()
-  const {projectData,setFormData}=useFormStore()
-    const [joinCode,setJoinCode]=React.useState("")
-    const {mutate:create}= useMutation({
-        mutationKey:["create"],
-        mutationFn:createProject,
-        onSuccess:(data)=>{
-            toast({title:"Project created",type:"success"})
-            navigate(`/dashboard/projects/edit/${data.id}`)
-            setFormData({id:data.id})
-        },
-        onError:(error)=>{
-            toast({title:"Something went wrong", description:`${error}`,type:"error"})
-        }
-    })
-
-  
+  const { toast } = useToast();
+  const { projectData, setFormData } = useFormStore();
+  const [joinCode, setJoinCode] = React.useState("");
+  const { mutate: create } = useMutation({
+    mutationKey: ["create"],
+    mutationFn: createProject,
+    onSuccess: (data) => {
+      toast({ title: "Project created", type: "success" });
+      navigate(`/dashboard/projects/edit/${data.id}`);
+      setFormData({ id: data.id });
+    },
+    onError: (error) => {
+      toast({
+        title: "Something went wrong",
+        description: `${error}`,
+        type: "error",
+      });
+    },
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl bg-[#1c1c1e] border border-[#2c2c2e] shadow-lg text-gray-200">
         <DialogHeader>
           <div className="flex items-center gap-2 text-gray-400 text-sm">
-            <span className="bg-[#2c2c2e] text-blue-500 px-2 py-1 rounded text-xs">ProLink</span>
+            <span className="bg-[#2c2c2e] text-blue-500 px-2 py-1 rounded text-xs">
+              ProLink
+            </span>
             <span className="text-gray-500">›</span>
             <span className="text-white">New Project</span>
           </div>
@@ -78,20 +82,36 @@ export default function ProjectDialog({
             <Input
               placeholder="Project name"
               value={projectData.name}
-              onChange={(e) => setFormData({name:e.target.value})}
+              onChange={(e) => setFormData({ name: e.target.value })}
               className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff]"
             />
 
             <Textarea
               placeholder="Short summary"
               value={projectData.summary}
-              onChange={(e) => setFormData({summary:e.target.value})}
+              onChange={(e) => {
+                setFormData({ summary: e.target.value });
+              }}
               className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff] min-h-[80px]"
             />
 
             <DialogFooter className="mt-6 flex justify-end">
               <Button
-                onClick={()=>create(projectData)}
+                onClick={() => {
+                  if (
+                    projectData.summary.length > 10 &&
+                    projectData.summary.length < 300  && projectData.name.length >4
+                  ) {
+                    create(projectData);
+                  } else {
+                    toast({
+                      title: "Invalid Length",
+                      description: "Summary/Project name must be 10-200 characters.",
+                      type: "error",
+                    });
+                    
+                  }
+                }}
                 className="bg-[#007aff] text-white hover:bg-[#005ecb]"
               >
                 Create project
@@ -106,13 +126,10 @@ export default function ProjectDialog({
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value)}
               className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff]"
-              />
+            />
 
             <DialogFooter className="mt-6 flex justify-end">
-              <Button
-                
-                className="bg-[#007aff] text-white hover:bg-[#005ecb]"
-              >
+              <Button className="bg-[#007aff] text-white hover:bg-[#005ecb]">
                 Join project
               </Button>
             </DialogFooter>

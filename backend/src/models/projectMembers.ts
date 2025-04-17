@@ -9,7 +9,9 @@ export const projectMembers= pgTable("project_member",{
     id:uuid("id").primaryKey().defaultRandom().unique(),
     projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
     userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    
     username:text("username").notNull(),
+   
     roleId: uuid('role_id').references(() => projectRoles.id),
     isOwner: boolean('is_owner').default(false).notNull(),
     joinedAt: timestamp('joined_at').defaultNow().notNull(),
