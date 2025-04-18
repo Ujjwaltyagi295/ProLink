@@ -14,9 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useFormStore } from "@/store/useProjectStore";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
-import { createProject } from "@/lib/api";
-import { navigate } from "@/lib/navigation";
+
+import { useAddProjects } from "@/queryOptions/myProjectQuery";
 
 export default function ProjectDialog({
   open,
@@ -26,25 +25,11 @@ export default function ProjectDialog({
   onOpenChange: (val: boolean) => void;
 }) {
   const { toast } = useToast();
+  const {mutate:create}=useAddProjects()
+  
   const { projectData, setFormData } = useFormStore();
   const [joinCode, setJoinCode] = React.useState("");
-  const { mutate: create } = useMutation({
-    mutationKey: ["create"],
-    mutationFn: createProject,
-    onSuccess: (data) => {
-      toast({ title: "Project created", type: "success" });
-      navigate(`/dashboard/projects/edit/${data.id}`);
-      setFormData({ id: data.id });
-    },
-    onError: (error) => {
-      toast({
-        title: "Something went wrong",
-        description: `${error}`,
-        type: "error",
-      });
-    },
-  });
-
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl bg-[#1c1c1e] border border-[#2c2c2e] shadow-lg text-gray-200">

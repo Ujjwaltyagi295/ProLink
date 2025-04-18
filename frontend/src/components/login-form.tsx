@@ -12,39 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
-import { useMutation } from "@tanstack/react-query";
-import { login } from "@/lib/api";
-import { useLocation, useNavigate } from "react-router-dom";
+
 import { useState } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
+
+import { useLoginQuery } from "@/queryOptions/authQuery";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email,setEmail]=useState("")
-  const [password,setPassword]=useState("")
-  const location = useLocation();
-  const redirectUrl = location.state?.redirectUrl || "/";
-  const setAuth = useAuthStore((state) => state.setAuth);
-
-  const navigate = useNavigate();
- const {
-    mutate: signin,
-    isPending,
-   
-    isError,
-  } = useMutation({
-    mutationFn: login,
-    onSuccess: () => {
-      setAuth(true)
-      navigate(redirectUrl, {
-       
-        replace: true,
-      });
-    },
-  });
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { mutate: signin, isError, isPending } = useLoginQuery();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -55,10 +34,17 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         {isError && (
-          <CardHeader className=" text-red-600 font-semibold text-center">Invalid email or passowrd</CardHeader>
+          <CardHeader className=" text-red-600 font-semibold text-center">
+            Invalid email or passowrd
+          </CardHeader>
         )}
         <CardContent>
-          <form onSubmit={(e)=>{e.preventDefault(); signin({email,password})}}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              signin({ email, password });
+            }}
+          >
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
@@ -67,7 +53,7 @@ export function LoginForm({
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e)=>setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="m@example.com"
                     required
                   />
@@ -88,16 +74,12 @@ export function LoginForm({
                     placeholder="***********"
                     required
                     value={password}
-                    onChange={(e)=>setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  variant="blue1"
-                >
-                  {isPending?"..loading":"Login"}
+                <Button type="submit" className="w-full" variant="blue1">
+                  {isPending ? "..loading" : "Login"}
                 </Button>
               </div>
 

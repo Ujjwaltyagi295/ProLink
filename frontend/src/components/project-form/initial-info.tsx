@@ -1,4 +1,4 @@
-"use client";
+
 
 import { motion } from "framer-motion";
 import { Upload, X } from "lucide-react";
@@ -82,7 +82,7 @@ export default function BasicInfoStep() {
             Summary <span className="text-red-500">*</span>
           </Label>
           <Textarea
-            id="description"
+            id="summary"
             value={projectData.summary}
             placeholder="Describe your project"
             onChange={(e) => setFormData({ summary: e.target.value })}
@@ -120,6 +120,7 @@ export default function BasicInfoStep() {
             {bannerPreview ? (
               <div className="relative">
                 <img
+                id="bannerprev"
                   src={bannerPreview || "/placeholder.svg"}
                   alt="Banner preview"
                   className="w-full h-40 object-cover rounded-md"
@@ -136,7 +137,7 @@ export default function BasicInfoStep() {
               <label className="flex flex-col items-center justify-center h-40 cursor-pointer">
                 <Upload className="w-8 h-8 text-slate-400 mb-2" />
                 <span className="text-sm text-slate-500">Click to upload banner image</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
+                <input id="banner" type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
               </label>
             )}
           </div>
@@ -166,7 +167,7 @@ export default function BasicInfoStep() {
               <label className="flex flex-col items-center justify-center h-40 cursor-pointer">
                 <Upload className="w-8 h-8 text-slate-400 mb-2" />
                 <span className="text-sm text-slate-500">Click to upload avatar image</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                <input id="avatar" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
               </label>
             )}
           </div>

@@ -1,4 +1,3 @@
-"use client"
 
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
@@ -36,7 +35,7 @@ export default function ProjectDetailsStep() {
           <Label htmlFor="category" className="text-slate-700">
             Category <span className="text-red-500">*</span>
           </Label>
-          <Select value={projectData.category} onValueChange={(value) => setFormData({ category: value })}>
+          <Select  value={projectData.category} onValueChange={(value) => setFormData({ category: value })}>
             <SelectTrigger className="border-slate-300 focus:ring-emerald-500">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
@@ -106,10 +105,10 @@ export default function ProjectDetailsStep() {
           />
         </div>
         <div className="space-y-2">
-                <Label htmlFor="team size">Team Size</Label>
+                <Label htmlFor="teamsize">Team Size</Label>
                 <Input
                   type="number"
-                 
+                 id="teamsize"
                   min={2}
                   value={projectData.teamSize}
                   onChange={(e) =>

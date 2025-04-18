@@ -11,10 +11,9 @@ import { User, Settings, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { logout } from "@/lib/api";
-import { useAuthStore } from "@/store/useAuthStore";
+import { Link } from "react-router-dom";
+
+import { useLogoutQuery } from "@/queryOptions/authQuery";
 
 interface SubmenuItem {
   subTitle: string;
@@ -95,18 +94,8 @@ export const MenuHover = ({ menu }: { menu: MenuItem }) => {
 };
 
 export function ProfileDropdown() {
-  const navigate= useNavigate()
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const queryClient = useQueryClient();
-  const { mutate: signOut } = useMutation({
-    mutationFn: logout,
-    onSettled: () => {
-      setAuth(false)
-      queryClient.clear();
-      navigate("/login", { replace: true });
-    },
-  });
-  
+  const { mutate: signOut } = useLogoutQuery();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -127,7 +116,10 @@ export function ProfileDropdown() {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={()=>signOut()} className="text-red-500 focus:text-red-500">
+        <DropdownMenuItem
+          onClick={() => signOut()}
+          className="text-red-500 focus:text-red-500"
+        >
           <LogOut className="w-4 h-4 mr-2" />
           Log out
         </DropdownMenuItem>

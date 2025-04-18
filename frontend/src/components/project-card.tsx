@@ -11,12 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useMyProjectStore } from "@/store/useProjectStore";
+import { useFormStore, useMyProjectStore } from "@/store/useProjectStore";
 import { ProjectCardData } from "@/types/project";
 import { useToast } from "@/hooks/use-toast";
 import { capitalizeFirst, formatDate } from "@/lib/utils";
 import { navigate } from "@/lib/navigation";
-import { deleteProject } from "@/lib/api";
+import { useDeleteProject } from "@/queryOptions/myProjectQuery";
 
 interface ProjectCardProps {
   project: ProjectCardData;
@@ -25,21 +25,20 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const { openProject, setIsEditing } = useMyProjectStore();
   const { toast } = useToast();
-
+  const { clearForm } = useFormStore();
   const stopEvent = (e: React.MouseEvent) => {
-   
     e.stopPropagation();
   };
+  const {mutate:deleteById}= useDeleteProject()
   const handleDelete = () => {
-    deleteProject(project.id)
-    window.location.reload();
-
+    deleteById(project.id)
   };
-  const handleEdit=()=>{
+  const handleEdit = () => {
+    clearForm();
     setIsEditing(true);
-  
+
     navigate(`/dashboard/projects/edit/${project.id}`);
-  }
+  };
   const getInitials = (name: string) =>
     name
       .split(" ")
@@ -58,7 +57,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
     toast({ title: "Invite code copied!" });
   };
   const handleJoinCode = (e: React.MouseEvent) => {
-    console.log(e);
+  
     e.stopPropagation();
     navigator.clipboard.writeText(project.joinLink || "");
     toast({ title: "Join code copied!" });
@@ -152,10 +151,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" onClick={stopEvent}>
-                      <DropdownMenuItem   onClick={(e) => {
+                      <DropdownMenuItem
+                        onClick={(e) => {
                           stopEvent(e);
                           handleEdit();
-                        }}>
+                        }}
+                      >
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem

@@ -7,7 +7,7 @@ import {  useAuthStore } from "@/store/useAuthStore";
 export const Navbar = () => {
  
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
+  
 
   const menu = [
     {

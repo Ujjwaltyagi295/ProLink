@@ -1,43 +1,76 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import queryClient from "./queryClient";
-import { UNAUTHORIZED } from "../constants/http.mjs";
 import { navigate } from "../lib/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const options = {
   baseURL: "http://localhost:8000/api",
   withCredentials: true,
 };
 
-
 const TokenRefreshClient = axios.create(options);
-TokenRefreshClient.interceptors.response.use((response) => response.data);
+TokenRefreshClient.interceptors.response.use((res) => res.data);
 
 const API = axios.create(options);
 
-API.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const { config, response } = error;
-    const { status, data } = response || {};
+let isRefreshing = false;
+let requestQueue: ((token: string | null) => void)[] = [];
 
-    if (status === UNAUTHORIZED && data?.errorCode === "InvalidAccessToken") {
-      try {
-        await TokenRefreshClient.get("/auth/refresh");
-        return TokenRefreshClient(config);
-      } catch (error) {
-        queryClient.clear();
-        navigate("/login", {
-          state: {
-            redirectUrl: window.location.pathname,
-          },
-        });
-        if(error){
-          return error
-        }
-      }
+const waitForTokenRefresh = (): Promise<string | null> => {
+  return new Promise((resolve) => {
+    requestQueue.push(resolve);
+  });
+};
+
+const resolveQueue = (token: string | null) => {
+  requestQueue.forEach((cb) => cb(token));
+  requestQueue = [];
+};
+
+API.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  async (error) => {
+    const originalRequest: AxiosRequestConfig = error.config;
+    const { status, data } = error.response || {};
+ 
+    const { clearAuth, setAuth } = useAuthStore.getState();
+    const isAuthError =status === 401 && data?.errorCode === "InvalidAccessToken";
+
+    if (!isAuthError) {
+      return Promise.reject(error);
     }
 
-    return Promise.reject({ status, ...data });
+    // If a refresh is already in progress
+    if (isRefreshing) {
+      await waitForTokenRefresh();
+      return API(originalRequest);
+    }
+
+    // First to catch the error: start refresh
+    isRefreshing = true;
+
+    try {
+      await TokenRefreshClient.get("/auth/refresh");
+
+      // Mark refresh done & retry queued requests
+      isRefreshing = false;
+      resolveQueue(null);
+      setAuth(true)
+      return API(originalRequest);
+      
+    } catch (refreshError) {
+      isRefreshing = false;
+      resolveQueue(null); // let others continue/fail gracefully
+      clearAuth()
+      queryClient.clear();
+      navigate("/login", {
+        state: {
+          redirectUrl: window.location.pathname,
+        },
+      });
+
+      return Promise.reject(refreshError);
+    }
   }
 );
 

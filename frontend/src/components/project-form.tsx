@@ -8,8 +8,8 @@ import BasicInfoStep from "./project-form/initial-info";
 import ProjectDetailsStep from "./project-form/project-details";
 import TechStackStep from "./project-form/tech-stack";
 import ProjectRolesStep from "./project-form/project-roles";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getProjectsById, publishProject, uploadImage } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { projects } from "@/lib/api";
 import { useFormStore, useMyProjectStore } from "@/store/useProjectStore";
 import { useParams } from "react-router-dom";
 import { navigate } from "@/lib/navigation";
@@ -30,18 +30,20 @@ export default function ProjectForm() {
 const {isEditing}=useMyProjectStore()
   const { projectData, setFormData, clearForm } = useFormStore();
   const { id } = useParams();
-
+  const queryClient = useQueryClient()
   
 
   const {data:project,isLoading}= useQuery({
-    queryFn:()=>getProjectsById(id),
-   queryKey:["getprojectbyId"]
-  
+    queryFn:()=>projects.getById(id),
+    queryKey: ["getprojectbyId", id],
+    staleTime: 0,
+    
   })
   useEffect(() => {
-    
+    clearForm()
     if (isEditing && id && project?.data) {
       const { project: projectDetails, roles, techStack } = project.data;
+   
       setFormData({...projectDetails,roles:roles || [],techStack:techStack||[]});
     }
     
@@ -49,11 +51,11 @@ const {isEditing}=useMyProjectStore()
     
       setFormData({id: id});
     }
-  }, [isEditing, id, project?.data, setFormData]);
+  }, [id, project?.data, isEditing]);
   
   
   const { mutate: publish } = useMutation({
-    mutationFn: publishProject,
+    mutationFn: projects.update,
     mutationKey: ["publish"],
     onError: () => {
       toast({
@@ -69,12 +71,14 @@ const {isEditing}=useMyProjectStore()
         type: "success",
       });
       clearForm();
+
+  queryClient.invalidateQueries({ queryKey:["getprojectbyId"]});
       navigate("/dashboard/projects/find");
     },
   });
 
   const { mutate: saveDraft } = useMutation({
-    mutationFn: publishProject,
+    mutationFn: projects.update,
     mutationKey: ["save-draft"],
     onMutate: () => setIsSavingDraft(true),
     onError: (error) => {
@@ -108,17 +112,54 @@ const {isEditing}=useMyProjectStore()
     }
   };
 
-  const handleSaveDraft = () => {
-    if (!projectData?.id) {
+  const handleSaveDraft = async () => {
+   
+    
+    try {
+      if (!projectData?.id) {
+        toast({
+          title: "Missing Project",
+          description: "Cannot publish without a project ID.",
+          type: "error",
+        });
+        return;
+      }
+      
+      // Create a copy of the project data that we'll modify
+      let updatedData = { ...projectData };
+      
+      // Upload images if they exist
+      if (projectData.bannerFile) {
+        const bannerUrl = await projects.uploadImage(projectData.bannerFile);
+        updatedData = { 
+          ...updatedData, 
+          banner: bannerUrl[0] 
+        };
+      }
+      
+      if (projectData.avatarFile) {
+        const avatarUrl = await projects.uploadImage(projectData.avatarFile);
+        updatedData = { 
+          ...updatedData, 
+          avatar: avatarUrl[0] 
+        };
+      }
+      
+      // Set the status
+      updatedData = { 
+        ...updatedData, 
+        status: "draft" 
+      };
+      
+      // Publish with the complete updated data
+      saveDraft(updatedData);
+    } catch (error) {
       toast({
-        title: "Missing Project ",
-        description: "Please create the project first to save it.",
+        title: "SaveDraft Failed",
+        description: String(error),
         type: "error",
       });
-      return;
     }
-    setFormData({ status: "draft" });
-    saveDraft(projectData);
   };
   const handlePublish = async () => {
     setIsPublishing(true);
@@ -138,7 +179,7 @@ const {isEditing}=useMyProjectStore()
       
       // Upload images if they exist
       if (projectData.bannerFile) {
-        const bannerUrl = await uploadImage(projectData.bannerFile);
+        const bannerUrl = await projects.uploadImage(projectData.bannerFile);
         updatedData = { 
           ...updatedData, 
           banner: bannerUrl[0] 
@@ -146,7 +187,7 @@ const {isEditing}=useMyProjectStore()
       }
       
       if (projectData.avatarFile) {
-        const avatarUrl = await uploadImage(projectData.avatarFile);
+        const avatarUrl = await projects.uploadImage(projectData.avatarFile);
         updatedData = { 
           ...updatedData, 
           avatar: avatarUrl[0] 
@@ -264,7 +305,7 @@ const {isEditing}=useMyProjectStore()
         </Button>
 
         <div className="flex gap-3">
-          <Button
+          {projectData &&projectData.status==="published"?"":<Button
             variant="outline"
             onClick={handleSaveDraft}
             disabled={isSavingDraft}
@@ -282,6 +323,8 @@ const {isEditing}=useMyProjectStore()
               </>
             )}
           </Button>
+
+          }
 
           {isLastStep ? (
             <Button

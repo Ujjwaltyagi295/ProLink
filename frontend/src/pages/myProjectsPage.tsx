@@ -4,74 +4,34 @@ import { ProjectSidebar } from "@/components/project-sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import ProjectDialog from "@/components/project-createDialog";
-import { useQuery } from "@tanstack/react-query";
-import { getMyProject, getProjectsById } from "@/lib/api";
+import {  useQuery  } from "@tanstack/react-query";
+import { projects } from "@/lib/api";
 import { useFormStore, useMyProjectStore } from "@/store/useProjectStore";
-import { TechStack } from "@/lib/schema";
-import { ProjectCardData } from "@/types/project";
 
-export interface ProjectData {
-  project: {
-    id: string;
-    ownerId: string;
-    name: string;
-    summary: string;
-    description: string;
-    banner: string;
-    avatar: string;
-    category: string;
-    status: string;
-    ecosystem: string;
-    teamSize: number;
-    stage: string;
-    liveUrl: string;
-    inviteCode: string;
-    joinLink: string;
-    createdBy: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-  role: {
-    id: string;
-    projectId: string;
-    role: string;
-    description: string;
-    count: number;
-    isRemote: boolean;
-    experienceLevel: string;
-  }[];
-  techStack: TechStack;
-  members: {
-    id: string;
-    name: string;
-    projectId: string;
-    userId: string;
-    username: string;
-    roleId: string | null;
-    isOwner: boolean;
-    joinedAt: string;
-  }[];
-}
+import { ProjectCardData, ProjectData } from "@/types/project";
+
+import { useGetMyProjects } from "@/queryOptions/myProjectQuery";
+
 
 // From the ProjectSidebar component
 type TeamMemberStatus = "online" | "offline" | "away";
 
 export function MyProjectsPage() {
+   
+  
+
   const { isOpen, projectId, onClose } = useMyProjectStore();
   const { clearForm } = useFormStore();
   const { data: singleProjectQuery, isLoading: projectLoading } = useQuery({
     queryKey: ["getProjectData", projectId],
-    queryFn: () => getProjectsById(projectId),
+    queryFn: () => projects.getById(projectId),
     enabled: !!projectId,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
   });
 
-  const { data: allProjects, isLoading } = useQuery({
-    queryKey: ["datacards"],
-    queryFn: getMyProject,
-  });
-
+  const {data:allProjects,isLoading}= useQuery(useGetMyProjects())
+  
   const selectedProject = singleProjectQuery?.data as ProjectData | undefined;
 
   const [open, setOpen] = React.useState(false);
@@ -86,7 +46,7 @@ export function MyProjectsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Projects</h1>
         <Button
-          onClick={() => {
+          onClick={()=> {
             clearForm();
             setOpen(true);
           }}

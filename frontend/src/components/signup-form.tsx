@@ -9,37 +9,20 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
-import { useNavigate } from "react-router-dom";
+
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { register } from "@/lib/api";
-import { useAuthStore } from "@/store/useAuthStore";
+
+import { useSignUpQuery } from "@/queryOptions/authQuery";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const setAuth= useAuthStore((s)=>s.setAuth)
-  const {
-    mutate: signup,
-    isError,
-    
-    error,
-  } = useMutation({
-    mutationFn: register,
-    onSuccess: () => {
-      setAuth(true)
-      navigate("/", {
-        
-        replace: true,
-      });
-    },
-  });
+  const {mutate:signup,isError,error}=useSignUpQuery()
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

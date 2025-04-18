@@ -1,9 +1,9 @@
 // types/user.ts
 export interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    createdAt: string;
+    id: string| null;
+    name: string|null;
+    email: string|null;
+    role: string|null;
+    createdAt: string|null;
   }
   
