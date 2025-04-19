@@ -18,10 +18,8 @@ function App() {
       <Route path="/signup" element={<SignupPage />} />
 
       {/* PROTECTED ROUTES */}
-      <Route element={<ProtectedRoutes />}>
         <Route path="/dashboard/*" element={<DashboardPage />} />
        
-      </Route>
     </Routes>
   );
 }

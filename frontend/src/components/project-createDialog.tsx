@@ -14,8 +14,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useFormStore } from "@/store/useProjectStore";
 import { useToast } from "@/hooks/use-toast";
+import { useMyprojectQuery } from "@/services/myProjectQuery";
 
-import { useAddProjects } from "@/queryOptions/myProjectQuery";
+
 
 export default function ProjectDialog({
   open,
@@ -25,8 +26,8 @@ export default function ProjectDialog({
   onOpenChange: (val: boolean) => void;
 }) {
   const { toast } = useToast();
-  const {mutate:create}=useAddProjects()
-  
+ 
+  const {createProject} = useMyprojectQuery()
   const { projectData, setFormData } = useFormStore();
   const [joinCode, setJoinCode] = React.useState("");
   
@@ -84,17 +85,18 @@ export default function ProjectDialog({
               <Button
                 onClick={() => {
                   if (
-                    projectData.summary.length > 10 &&
-                    projectData.summary.length < 300  && projectData.name.length >4
+                    projectData.summary.length  > 10 &&
+                    projectData.summary.length < 300 &&
+                    projectData.name.length > 4
                   ) {
-                    create(projectData);
+                    createProject(projectData);
                   } else {
                     toast({
                       title: "Invalid Length",
-                      description: "Summary/Project name must be 10-200 characters.",
+                      description:
+                        "Summary/Project name must be 10-200 characters.",
                       type: "error",
                     });
-                    
                   }
                 }}
                 className="bg-[#007aff] text-white hover:bg-[#005ecb]"

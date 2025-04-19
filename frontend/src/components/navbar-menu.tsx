@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { useLogoutQuery } from "@/queryOptions/authQuery";
+import { useLogoutQuery } from "@/services/authQuery";
 
 interface SubmenuItem {
   subTitle: string;

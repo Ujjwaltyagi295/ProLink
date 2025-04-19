@@ -15,7 +15,7 @@ import { Input } from "./ui/input";
 
 import { useState } from "react";
 
-import { useLoginQuery } from "@/queryOptions/authQuery";
+import { useLoginQuery } from "@/services/authQuery";
 
 export function LoginForm({
   className,

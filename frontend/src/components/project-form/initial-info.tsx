@@ -1,54 +1,42 @@
-
-
 import { motion } from "framer-motion";
 import { Upload, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@radix-ui/react-label";
-import { useFormStore } from "@/store/useProjectStore";
 import { useState } from "react";
+import { useFormStore } from "@/store/useProjectStore";
+;
 
 export default function BasicInfoStep() {
-  const { projectData, setFormData } = useFormStore();
-  const [bannerPreview, setBannerPreview] = useState<string | null>(projectData.banner || null)
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(projectData.avatar || null)
+ const {setFormData,projectData} =useFormStore()
+
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
+    
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const result = reader.result as string
-        setBannerPreview(result)
-        setFormData({ bannerFile: file });
-      
-      }
-      reader.readAsDataURL(file)
+      setFormData({bannerFile:file})
+      const reader = new FileReader();
+      reader.onloadend = () => setBannerPreview(reader.result as string);
+      reader.readAsDataURL(file);
     }
-  }
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const result = reader.result as string
-        setFormData({ avatarFile: file });
-        setAvatarPreview(result)
-        
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-   const removeBanner = () => {
-    setBannerPreview(null)
-    setFormData({ banner: "" })
-  }
+  };
 
-  const removeAvatar = () => {
-    setAvatarPreview(null)
-    setFormData({ avatar: "" })
-  }
-  
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData({avatarFile:file})
+      const reader = new FileReader();
+      reader.onloadend = () => setAvatarPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeBanner = () => setBannerPreview(null);
+  const removeAvatar = () => setAvatarPreview(null);
+
   return (
     <div className="space-y-6">
       <motion.h2
@@ -71,27 +59,28 @@ export default function BasicInfoStep() {
           </Label>
           <Input
             id="name"
-            value={projectData.name}
-            onChange={(e) => setFormData({ name: e.target.value })}
+            value={projectData.name }
+            onChange={(e) => setFormData({name:e.target.value})}
             placeholder="Enter project name"
             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="summary" className="text-slate-700">
             Summary <span className="text-red-500">*</span>
           </Label>
           <Textarea
             id="summary"
-            value={projectData.summary}
-            placeholder="Describe your project"
-            onChange={(e) => setFormData({ summary: e.target.value })}
-            rows={4}
-            maxLength={200 }
+            value={projectData.summary }
+            onChange={(e) => setFormData({summary:e.target.value})}
+            placeholder="Short summary of your project"
+            rows={3}
+            maxLength={200}
             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
-    
+
         <div className="space-y-2">
           <Label htmlFor="description" className="text-slate-700">
             Description <span className="text-red-500">*</span>
@@ -99,8 +88,8 @@ export default function BasicInfoStep() {
           <Textarea
             id="description"
             value={projectData.description}
-            placeholder="Describe your project"
-            onChange={(e) => setFormData({ description: e.target.value })}
+            onChange={(e) => setFormData({description:e.target.value})}
+            placeholder="Detailed description of your project"
             rows={4}
             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
           />
@@ -120,8 +109,7 @@ export default function BasicInfoStep() {
             {bannerPreview ? (
               <div className="relative">
                 <img
-                id="bannerprev"
-                  src={bannerPreview || "/placeholder.svg"}
+                  src={bannerPreview}
                   alt="Banner preview"
                   className="w-full h-40 object-cover rounded-md"
                 />
@@ -137,12 +125,16 @@ export default function BasicInfoStep() {
               <label className="flex flex-col items-center justify-center h-40 cursor-pointer">
                 <Upload className="w-8 h-8 text-slate-400 mb-2" />
                 <span className="text-sm text-slate-500">Click to upload banner image</span>
-                <input id="banner" type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleBannerChange}
+                />
               </label>
             )}
           </div>
         </div>
-
 
         {/* Avatar Upload */}
         <div className="space-y-2">
@@ -151,7 +143,7 @@ export default function BasicInfoStep() {
             {avatarPreview ? (
               <div className="relative flex justify-center">
                 <img
-                  src={avatarPreview || "/placeholder.svg"}
+                  src={avatarPreview}
                   alt="Avatar preview"
                   className="w-32 h-32 object-cover rounded-full"
                 />
@@ -167,11 +159,16 @@ export default function BasicInfoStep() {
               <label className="flex flex-col items-center justify-center h-40 cursor-pointer">
                 <Upload className="w-8 h-8 text-slate-400 mb-2" />
                 <span className="text-sm text-slate-500">Click to upload avatar image</span>
-                <input id="avatar" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
               </label>
             )}
           </div>
-          </div>
+        </div>
       </motion.div>
     </div>
   );

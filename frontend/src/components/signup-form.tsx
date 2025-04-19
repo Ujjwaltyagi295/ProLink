@@ -12,7 +12,7 @@ import { Input } from "./ui/input";
 
 import { useState } from "react";
 
-import { useSignUpQuery } from "@/queryOptions/authQuery";
+import { useSignUpQuery } from "@/services/authQuery";
 
 export function SignupForm({
   className,
@@ -22,7 +22,7 @@ export function SignupForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const {mutate:signup,isError,error}=useSignUpQuery()
+  const { mutate: signup, isError, error } = useSignUpQuery();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -35,10 +35,12 @@ export function SignupForm({
         </CardHeader>
         {isError && <CardTitle>{error?.message || "Signup failed"}</CardTitle>}
         <CardContent>
-          <form onSubmit={(e)=>{
-            e.preventDefault()
-            signup({name,email,password,confirmPassword})
-          }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              signup({ name, email, password, confirmPassword });
+            }}
+          >
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">

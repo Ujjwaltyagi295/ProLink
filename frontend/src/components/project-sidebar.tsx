@@ -42,7 +42,7 @@ interface ProjectAnalytics {
 interface ProjectData {
   id: string
   name: string
-  description: string
+  summary: string
   teamMembers: TeamMember[]
   applications: Application[]
   analytics: ProjectAnalytics
@@ -298,7 +298,7 @@ export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: Proj
 
             <div className="p-4">
               <motion.p className="text-muted-foreground mb-4" variants={itemVariants}>
-                {project.description}
+                {project.summary}
               </motion.p>
 
               <motion.div className="flex justify-between text-sm text-muted-foreground mb-6" variants={itemVariants}>

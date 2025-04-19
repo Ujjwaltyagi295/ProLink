@@ -1,6 +1,6 @@
 import { TechStack } from "@/lib/schema";
 
-export interface ProjectCardData{
+export interface ProjectData{
   id: string;
   ownerId: string;
   name: string;
@@ -39,7 +39,7 @@ export interface ProjectCardData{
     joinedAt: string;
   }[];
 }
-export interface ProjectData {
+export interface ProjectResData {
   project: {
     id: string;
     ownerId: string;

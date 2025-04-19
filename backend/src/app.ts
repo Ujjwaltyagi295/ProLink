@@ -21,7 +21,7 @@ app.use(cookieParser())
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user",authenticate,userRoutes)
-app.use("/api/projects",authenticate,projectRoutes)
+app.use("/api/myprojects",authenticate,projectRoutes)
 app.use("/api/sessions", authenticate, sessionRoutes);
 app.use(errorHandler);
 

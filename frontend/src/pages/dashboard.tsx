@@ -11,10 +11,12 @@ import { SearchForm } from "@/components/search-form";
 import { ProjectsPage } from "./projectsPage";
 import { MyProjectsPage } from "./myProjectsPage";
 import ProjectFormPage from "./projectFormPage";
+import { ProtectedRoutes } from "@/components/ProtectedRoutes";
 
 
 function DashboardLayout() {
   return (
+    
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
@@ -39,9 +41,11 @@ export default function DashboardPage() {
     <Routes>
       <Route element={<DashboardLayout />}>
         <Route index path="projects/find" element={<ProjectsPage />} />
-        <Route path="projects" element={<MyProjectsPage/>}/>
+       <Route element={<ProtectedRoutes/>}>
        
+       <Route path="projects" element={<MyProjectsPage/>}/>
         <Route path="projects/edit/:id" element={<ProjectFormPage/>}/>
+        </Route>
       </Route>
     </Routes>
   );

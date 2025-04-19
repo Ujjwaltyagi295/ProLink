@@ -4,49 +4,30 @@ import { ProjectSidebar } from "@/components/project-sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import ProjectDialog from "@/components/project-createDialog";
-import {  useQuery  } from "@tanstack/react-query";
-import { projects } from "@/lib/api";
-import { useFormStore, useMyProjectStore } from "@/store/useProjectStore";
+import { ProjectDataType, useFormStore, useMyProjectStore } from "@/store/useProjectStore";
+import {  ProjectData } from "@/types/project";
+import { useMyprojectQuery } from "@/services/myProjectQuery";
 
-import { ProjectCardData, ProjectData } from "@/types/project";
-
-import { useGetMyProjects } from "@/queryOptions/myProjectQuery";
-
-
-// From the ProjectSidebar component
 type TeamMemberStatus = "online" | "offline" | "away";
 
-export function MyProjectsPage() {
-   
-  
 
+export function MyProjectsPage() {
   const { isOpen, projectId, onClose } = useMyProjectStore();
   const { clearForm } = useFormStore();
-  const { data: singleProjectQuery, isLoading: projectLoading } = useQuery({
-    queryKey: ["getProjectData", projectId],
-    queryFn: () => projects.getById(projectId),
-    enabled: !!projectId,
-    staleTime: Infinity,
-    gcTime: 1000 * 60 * 30,
-  });
-
-  const {data:allProjects,isLoading}= useQuery(useGetMyProjects())
-  
-  const selectedProject = singleProjectQuery?.data as ProjectData | undefined;
-
   const [open, setOpen] = React.useState(false);
-
+  const {projects}= useMyprojectQuery()
   const getRandomStatus = (): TeamMemberStatus => {
     const statuses: TeamMemberStatus[] = ["online", "offline", "away"];
     return statuses[Math.floor(Math.random() * statuses.length)];
   };
+  const selectedProject: ProjectData | undefined =isOpen? projects?.find((p:ProjectDataType)=>p.id===projectId):undefined
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Projects</h1>
         <Button
-          onClick={()=> {
+          onClick={() => {
             clearForm();
             setOpen(true);
           }}
@@ -59,42 +40,35 @@ export function MyProjectsPage() {
       <ProjectDialog open={open} onOpenChange={setOpen} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-     
-         {isLoading  ? (
-          <div>Loading projects...</div>
-        ) : (
-          allProjects?.data.map((project: ProjectCardData) => (
-            <div key={project.id}>
-              <ProjectCard project={project} />
-            </div>
-          ))
-        )}
-    
+        {projects &&  projects?.map((project:ProjectData) => (
+          <div key={project.id}>
+            <ProjectCard project={project} />
+          </div>
+        ))
+      }
       </div>
 
       <ProjectSidebar
         isOpen={isOpen}
-        isLoading={projectLoading}
+        isLoading={false}
         onClose={onClose}
         project={
           selectedProject
             ? {
-                id: selectedProject.project.id,
-                name: selectedProject.project.name,
-                description: selectedProject.project.description,
-                startDate: selectedProject.project.createdAt,
-                endDate: selectedProject.project.updatedAt,
+                id: selectedProject.id,
+                name: selectedProject.name,
+                summary: selectedProject.summary,
+                startDate: selectedProject.createdAt,
+                endDate: selectedProject.updatedAt,
                 teamMembers: selectedProject.members.map((member) => ({
                   id: member.id,
                   name: member.username,
                   role: "fullstack",
                   avatar: "/placeholder.svg?height=40&width=40",
                   status: getRandomStatus(),
-                  ...(Math.random() > 0.5 && {
-                    lastActive: ["5 min ago", "1 hour ago", "2 hours ago"][
-                      Math.floor(Math.random() * 3)
-                    ],
-                  }),
+                  lastActive: ["5 min ago", "1 hour ago", "2 hours ago"][
+                    Math.floor(Math.random() * 3)
+                  ],
                 })),
                 applications: [
                   {

@@ -1,7 +1,7 @@
 import { ExperienceLevel, ProjectStage, ProjectStatus, Role, TechStack } from "@/lib/schema";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-interface RoleFormData {
+export interface RoleFormData {
   id: string
   role: Role | ""
   description: string
@@ -10,24 +10,27 @@ interface RoleFormData {
   experienceLevel: ExperienceLevel | ""
 }
 export interface ProjectDataType {
-    id:string | undefined,
-    name: string;
-    summary:string,
-    description:string;
-    bannerFile?: File; 
-    avatarFile?: File; 
-    banner: string;
-    avatar: string;
-    teamSize:number;
-    category: string;
+   id: string;
     status: ProjectStatus;
     stage: ProjectStage;
-    repoUrl: string;
-    liveUrl: string;
-    ecosystem:string;
+    teamSize: number;
     
-    updatedAt: string;
-    roles:RoleFormData[];
+    // Optional fields use undefined (not null) for cleaner optional chaining
+    name: string;
+    summary: string;
+    description?: string;
+    banner?: string;
+    avatar?: string;
+    category?: string;
+    repoUrl?: string;
+    liveUrl?: string;
+    ecosystem?: string;
+    updatedAt?: string;
+    bannerFile?: File;
+    avatarFile?: File;
+    
+  
+    roles: RoleFormData[];
     techStack: TechStack[];
    
   }
@@ -87,7 +90,7 @@ export interface ProjectDataType {
           })),
       }),
       {
-        name: "project-form-storage", // key for localStorage
+        name: "project-form-storage",
       }
     )
   );
@@ -99,7 +102,6 @@ type ProjectSidebarState = {
   setProjectId: (id: string) => void
   onClose: () => void
   setIsEditing:(data:boolean)=>void
-  // Add a combined action for better reliability
   openProject: (id: string) => void
 }
 

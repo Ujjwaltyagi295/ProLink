@@ -66,7 +66,7 @@ export const projectSchema = z.object({
     z.string().url({ message: "Invalid URL" })
   ]),
   ecosystem: z.enum([
-    'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other'
+    'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other',
   ]).optional(),
   roles: z.array(projectRolesSchema).min(1, { message: "At least one role is required to publish" }).optional(),
   techStack: z.array(z.enum([

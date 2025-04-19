@@ -14,20 +14,23 @@ export const auth = {
 };
 
 // === PROJECTS ===
-export const projects = {
+export const myprojects = {
   create: async (data: object) => {
-    const response = await API.post("/projects/create", data);
+    const response = await API.post("/myprojects/create", data);
     return response.data;
   },
 
-  getMine: () => API.get("/projects"),
+  getMine: async() =>{
+    const response= await API.get("/myprojects")
+    return response.data
+  },
 
-  getById: (id: string | undefined) => API.get(`/projects/${id}`),
+  getById: (id: string | undefined) => API.get(`/myprojects/${id}`),
 
-  delete: (id: string | undefined) => API.delete(`/projects/${id}`),
+  delete: (id: string | undefined) => API.delete(`/myprojects/${id}`),
 
   update: async (data: ProjectDataType) => {
-    const response = await API.put(`/projects/${data.id}`, data);
+    const response = await API.put(`/myprojects/${data.id}`, data);
     return response.data;
   },
 
@@ -35,11 +38,16 @@ export const projects = {
     const formData = new FormData();
     formData.append("images", images);
 
-    const response = await API.post(`/projects/upload`, formData, {
+  try {
+    const response = await API.post(`/myprojects/upload`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
       withCredentials: true,
     });
-
     return response.data.url;
+
+  } catch (error) {
+    console.log(error)
+  }
+   
   },
 };
