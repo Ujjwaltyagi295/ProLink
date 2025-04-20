@@ -20,9 +20,9 @@ export const myprojects = {
     return response.data;
   },
 
-  getMine: async() =>{
-    const response= await API.get("/myprojects")
-    return response.data
+  getMine: async () => {
+    const response = await API.get("/myprojects");
+    return response.data;
   },
 
   getById: (id: string | undefined) => API.get(`/myprojects/${id}`),
@@ -34,23 +34,27 @@ export const myprojects = {
     return response.data;
   },
 
-  uploadImage: async (image: File): Promise<string > => {
+  uploadImage: async (image: File): Promise<string> => {
     const formData = new FormData();
     formData.append("images", image); // If the backend expects "images", keep it as-is
-  
-    
-      const response = await API.post<{ url: string }>(
-        "/myprojects/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
-      return response.data.url[0];
-   
-    }
-  
+
+    const response = await API.post<{ url: string }>(
+      "/myprojects/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data.url[0];
+  },
+};
+
+export const projects = {
+  getAllProjects: async () => {
+   const response= await API.get("/projects/");
+   return response.data
+  },
 };

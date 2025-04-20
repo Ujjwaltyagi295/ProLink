@@ -3,8 +3,8 @@ import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import { HomePage } from "./pages/home";
 import DashboardPage from "./pages/dashboard";
-import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { setNavigate } from "./lib/navigation";
+import { ProjectsPage } from "./pages/projectsPage";
 
 function App() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
-
+      <Route path="/explore"element={<ProjectsPage/>}/>
       {/* PROTECTED ROUTES */}
         <Route path="/dashboard/*" element={<DashboardPage />} />
        

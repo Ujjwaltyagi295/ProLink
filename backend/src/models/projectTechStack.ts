@@ -2,7 +2,7 @@
 import {  pgTable,  uniqueIndex,   uuid } from "drizzle-orm/pg-core";
 import projects from "./project.model";
 import { techStackEnum } from "./projectEnums";
-import { InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 
 export const projectTechStack = pgTable("projectTechStack",{
@@ -15,3 +15,4 @@ export const projectTechStack = pgTable("projectTechStack",{
     ]
 })
 export type NewTechStack= InferInsertModel<typeof projectTechStack>
+export type TechStack= InferSelectModel<typeof projectTechStack>

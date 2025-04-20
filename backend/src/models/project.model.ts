@@ -36,4 +36,5 @@ export const projects = pgTable("projects", {
 export type Project = InferSelectModel<typeof projects>;
 export type NewProject = InferInsertModel<typeof projects>;
 
+
 export default projects;

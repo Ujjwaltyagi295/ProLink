@@ -15,7 +15,7 @@ export interface ProjectDataType {
     stage: ProjectStage|null;
     teamSize: number;
     
-    // Optional fields use undefined (not null) for cleaner optional chaining
+ 
     name: string;
     summary: string;
     description?: string|null;

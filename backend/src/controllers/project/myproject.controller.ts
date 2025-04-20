@@ -24,7 +24,6 @@ import slugify from "slugify";
 import { NewTechStack, projectTechStack } from "../../models/projectTechStack";
 import { NewMember, projectMembers } from "../../models/projectMembers";
 
-// Create Project
 export const createProjectHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { name, summary } = req.body;
@@ -51,10 +50,9 @@ export const createProjectHandler = catchErrors(
   }
 );
 
-export const getAllProjects = catchErrors(async (req: Request, res: Response) => {
+export const getAllMyProjects = catchErrors(async (req: Request, res: Response) => {
   const userId = String(req.userId);
   
-  // 1. Get all projects for this user
   const userProjects = await db
     .select()
     .from(projects)
@@ -203,7 +201,6 @@ export const publishProject = catchErrors(
 export const getProjectsById = catchErrors(async (req, res) => {
   const projectId = req.params.id;
   
-  // First, check if the project exists
   const projectData = await db
     .select()
     .from(projects)
@@ -214,14 +211,13 @@ export const getProjectsById = catchErrors(async (req, res) => {
     return res.status(NOT_FOUND).json({ message: "Project not found" });
   }
   
-  // Get all related data in parallel
+  
   const [roles, techStack, members] = await Promise.all([
     db.select().from(projectRoles).where(eq(projectRoles.projectId, projectId)),
     db.select().from(projectTechStack).where(eq(projectTechStack.projectId, projectId)),
     db.select().from(projectMembers).where(eq(projectMembers.projectId, projectId))
   ]);
   
-  // Construct the response
   const result = {
     project: projectData[0],
     roles: roles,

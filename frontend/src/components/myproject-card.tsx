@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { MoreHorizontal, Share2, Users } from "lucide-react";
+
+import { MoreHorizontal, Share2 } from "lucide-react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
@@ -12,43 +12,56 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { capitalizeFirst, formatDate } from "@/lib/utils";
+import { capitalizeFirst, cn, formatDate } from "@/lib/utils";
 
 import { ProjectData } from "@/types/project";
 import { useMyProjectStore } from "@/store/useProjectStore";
 import { navigate } from "@/lib/navigation";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
 
-// Extracted components for better organization
-const ProjectAvatar = memo(({ name, avatarUrl }: { name: string; avatarUrl?: string }) => {
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-    
-  return (
-    <Avatar className="h-12 w-12 border border-gray-200 shadow-sm rounded-md">
-      <AvatarImage src={avatarUrl || "/placeholder.svg"} alt={name} />
-      <AvatarFallback className="rounded-md">{initials}</AvatarFallback>
-    </Avatar>
-  );
-});
+import { memo } from "react";
+
+const ProjectAvatar = memo(
+  ({ name, avatarUrl }: { name: string; avatarUrl?: string }) => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+
+    const hasAvatar = Boolean(avatarUrl);
+
+    return (
+      <Avatar className="h-12 w-12 border border-gray-200 shadow-sm rounded-md">
+        <AvatarImage src={avatarUrl || ""} alt={name} />
+        <AvatarFallback
+          className={cn(
+            "rounded-md font-medium text-white flex items-center justify-center",
+            !hasAvatar && "bg-blue-300"
+          )}
+        >
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+    );
+  }
+);
+
 
 const TechStack = memo(({ techs }: { techs: string[] }) => {
-  const techStackToShow = techs.slice(0, 4);
+  const techStackToShow = techs.slice(0, 3);
   const remainingTech = techs.length - techStackToShow.length;
   
-  const colors = ["border-purple-500", "border-blue-500", "border-green-500"];
+  const colors = ["bg-purple-500", "bg-blue-500","bg-[lch(47.918_59.303_288.421)]", ];
   
   return (
     <div className="flex flex-wrap gap-1.5 mb-2">
       {techStackToShow.map((tech, idx) => (
         <Badge
           key={tech}
-          className={`text-xs px-1.5 py-0.5 bg-white text-black ${colors[idx % colors.length]}`}
+          className={`text-xs px-2 py-1 text-white bg-white  ${colors[idx % colors.length]}`}
         >
-          {tech}
+          {capitalizeFirst(tech)}
         </Badge>
       ))}
       {remainingTech > 0 && (
@@ -60,25 +73,7 @@ const TechStack = memo(({ techs }: { techs: string[] }) => {
   );
 });
 
-const MemberAvatars = memo(({ members }: { members: { id: string; username: string }[] }) => {
-  return (
-    <div className="flex -space-x-2 max-w-[55%] overflow-hidden">
-      {members.slice(0, 4).map((member) => (
-        <Avatar key={member.id} className="border-2 border-background h-6 w-6">
-          <AvatarImage src={"/placeholder.svg"} alt={member.username} />
-          <AvatarFallback>
-            {member.username.split(" ").map((n) => n[0]).join("").toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-      ))}
-      {members.length > 4 && (
-        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-muted text-xs font-medium">
-          +{members.length - 4}
-        </div>
-      )}
-    </div>
-  );
-});
+
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -90,10 +85,10 @@ export const ProjectCard = memo(({ project}: ProjectCardProps) => {
 const {openProject}= useMyProjectStore()
 const {deleteProject}=useMyprojectQuery()
   const statusColors = {
-    active: "bg-green-500",
+    active: "border-green-500",
     published: "border-blue-500 border text-blue-500",
-    pending: "bg-yellow-500",
-    completed: "bg-purple-500",
+    draft: "border-yellow-500 border text-yellow-600",
+    completed: "border-purple-500",
   };
 
   const handleCopyToClipboard = (text: string, message: string) => (e: React.MouseEvent) => {
@@ -121,7 +116,7 @@ const {deleteProject}=useMyprojectQuery()
 
   return (
     <Card
-      className="overflow-hidden cursor-pointer h-full relative hover:shadow-md transition-shadow"
+      className="overflow-hidden  cursor-pointer h-full relative hover:shadow-md transition-shadow"
       onClick={() => openProject(project.id)}
     >
       {/* Status badge */}
@@ -210,11 +205,8 @@ const {deleteProject}=useMyprojectQuery()
 
       {/* Member Avatars */}
       <div className="border-t py-2 px-4 flex justify-between items-center mt-1">
-        <MemberAvatars members={members} />
-        <div className="flex items-center text-xs text-muted-foreground">
-          <Users className="h-3.5 w-3.5 mr-1" />
-          {members.length}
-        </div>
+    
+        
       </div>
     </Card>
   );

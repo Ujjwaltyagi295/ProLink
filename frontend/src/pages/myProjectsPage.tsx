@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ProjectCard } from "@/components/project-card";
+import { ProjectCard } from "@/components/myproject-card";
 import { ProjectSidebar } from "@/components/project-sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -23,8 +23,10 @@ export function MyProjectsPage() {
   const selectedProject: ProjectData | undefined =isOpen? projects?.find((p:ProjectDataType)=>p.id===projectId):undefined
 
   return (
-    <div className="relative">
+    <div className="relative  inset-0 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+      
       <div className="flex justify-between items-center mb-6">
+      
         <h1 className="text-2xl font-bold">My Projects</h1>
         <Button
           onClick={() => {

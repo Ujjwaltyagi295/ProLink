@@ -7,7 +7,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-import { ProjectsPage } from "./projectsPage";
 import { MyProjectsPage } from "./myProjectsPage";
 import ProjectFormPage from "./projectFormPage";
 import { ProtectedRoutes } from "@/components/ProtectedRoutes";
@@ -39,7 +38,7 @@ export default function DashboardPage() {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
-        <Route index path="projects/find" element={<ProjectsPage />} />
+      
        <Route element={<ProtectedRoutes/>}>
        
        <Route path="projects" element={<MyProjectsPage/>}/>

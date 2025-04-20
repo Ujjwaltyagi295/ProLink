@@ -1,6 +1,7 @@
+import { ExploreProjects } from "@/components/explore-projects"
 
 export const ProjectsPage = () => {
   return (
-    <div></div>
+    <ExploreProjects/>
   )
 }

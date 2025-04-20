@@ -81,3 +81,18 @@ export interface ProjectResData {
     joinedAt: string;
   }[];
 }
+export interface Project {
+  id: string
+  title: string
+  description: string
+  thumbnail?: string
+  skills: string[]
+  teamSize: string
+  timeline: string
+  openPositions: number
+  status?: "New" | "Hot" | "Ending Soon"
+  techStack?: string[]
+  category?: string
+  stage?: string
+  ecosystem?: string
+}
