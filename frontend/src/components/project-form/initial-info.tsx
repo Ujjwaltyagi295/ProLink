@@ -60,7 +60,7 @@ export default function BasicInfoStep() {
           <Input
             id="name"
             value={projectData.name }
-            onChange={(e) => setFormData({name:e.target.value})}
+            onChange={(e) => setFormData({...projectData,name:e.target.value})}
             placeholder="Enter project name"
             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
           />
@@ -73,7 +73,7 @@ export default function BasicInfoStep() {
           <Textarea
             id="summary"
             value={projectData.summary }
-            onChange={(e) => setFormData({summary:e.target.value})}
+            onChange={(e) => setFormData({...projectData,summary:e.target.value})}
             placeholder="Short summary of your project"
             rows={3}
             maxLength={200}
@@ -87,8 +87,8 @@ export default function BasicInfoStep() {
           </Label>
           <Textarea
             id="description"
-            value={projectData.description}
-            onChange={(e) => setFormData({description:e.target.value})}
+            value={projectData.description || ""}
+            onChange={(e) => setFormData({...projectData,description:e.target.value})}
             placeholder="Detailed description of your project"
             rows={4}
             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"

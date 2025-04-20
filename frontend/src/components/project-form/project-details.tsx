@@ -35,7 +35,7 @@ export default function ProjectDetailsStep() {
           <Label htmlFor="category" className="text-slate-700">
             Category <span className="text-red-500">*</span>
           </Label>
-          <Select  value={projectData.category} onValueChange={(value) => setFormData({ category: value })}>
+          <Select  value={projectData.category||""} onValueChange={(value) => setFormData({ ...projectData,category: value })}>
             <SelectTrigger className="border-slate-300 focus:ring-emerald-500">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
@@ -53,7 +53,7 @@ export default function ProjectDetailsStep() {
           <Label htmlFor="ecosystem" className="text-slate-700">
             Ecosystem <span className="text-red-500">*</span>
           </Label>
-          <Select value={projectData.ecosystem} onValueChange={(value) => setFormData({ ecosystem: value })}>
+          <Select value={projectData.ecosystem||""} onValueChange={(value) => setFormData({ ...projectData,ecosystem: value })}>
             <SelectTrigger className="border-slate-300 focus:ring-emerald-500">
               <SelectValue placeholder="Select ecosystem" />
             </SelectTrigger>
@@ -71,7 +71,7 @@ export default function ProjectDetailsStep() {
           <Label htmlFor="stage" className="text-slate-700">
             Project Stage <span className="text-red-500">*</span>
           </Label>
-          <Select value={projectData.stage} onValueChange={(value: ProjectStage) => setFormData({ stage: value })}>
+          <Select value={projectData.stage||""} onValueChange={(value: ProjectStage) => setFormData({...projectData, stage: value })}>
             <SelectTrigger className="border-slate-300 focus:ring-emerald-500">
               <SelectValue placeholder="Select stage" />
             </SelectTrigger>
@@ -98,7 +98,7 @@ export default function ProjectDetailsStep() {
           </Label>
           <Input
             id="liveUrl"
-            value={projectData.liveUrl }
+            value={projectData.liveUrl ||""}
             onChange={(e) => setFormData({ liveUrl: e.target.value })}
             placeholder="https://your-project.com"
             className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
@@ -113,7 +113,7 @@ export default function ProjectDetailsStep() {
                   value={projectData.teamSize}
                   onChange={(e) =>
                     setFormData({
-                      teamSize: parseInt(e.target.value) || 2,
+                      ...projectData, teamSize: parseInt(e.target.value) || 2,
                     })
                   }
                 />

@@ -17,6 +17,7 @@ import { capitalizeFirst, formatDate } from "@/lib/utils";
 import { ProjectData } from "@/types/project";
 import { useMyProjectStore } from "@/store/useProjectStore";
 import { navigate } from "@/lib/navigation";
+import { useMyprojectQuery } from "@/services/myProjectQuery";
 
 // Extracted components for better organization
 const ProjectAvatar = memo(({ name, avatarUrl }: { name: string; avatarUrl?: string }) => {
@@ -87,7 +88,7 @@ interface ProjectCardProps {
 export const ProjectCard = memo(({ project}: ProjectCardProps) => {
   const { toast } = useToast();
 const {openProject}= useMyProjectStore()
-  // Status colors map instead of switch statement
+const {deleteProject}=useMyprojectQuery()
   const statusColors = {
     active: "bg-green-500",
     published: "border-blue-500 border text-blue-500",
@@ -167,6 +168,11 @@ const {openProject}= useMyProjectStore()
                       onClick={handleCopyToClipboard(project.joinLink || "", "Join code copied!")}
                     >
                       Copy Join Code
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={()=>deleteProject(project.id)}
+                    >
+                      Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

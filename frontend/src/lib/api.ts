@@ -34,20 +34,23 @@ export const myprojects = {
     return response.data;
   },
 
-  uploadImage: async (images: File): Promise<string> => {
+  uploadImage: async (image: File): Promise<string > => {
     const formData = new FormData();
-    formData.append("images", images);
-
-  try {
-    const response = await API.post(`/myprojects/upload`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true,
-    });
-    return response.data.url;
-
-  } catch (error) {
-    console.log(error)
-  }
+    formData.append("images", image); // If the backend expects "images", keep it as-is
+  
+    
+      const response = await API.post<{ url: string }>(
+        "/myprojects/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+      return response.data.url[0];
    
-  },
+    }
+  
 };

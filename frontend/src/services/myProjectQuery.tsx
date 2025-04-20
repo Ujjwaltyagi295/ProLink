@@ -29,36 +29,49 @@ export const useMyprojectQuery = () => {
     },
   });
   const updateProjectMutation = useMutation({
-    mutationKey: ["update"],
     mutationFn: myprojects.update,
-    onMutate: async(updatedProject:ProjectDataType) => {
-      await queryClient.cancelQueries({queryKey:["myproject"]})
-      const previousProjects= queryClient.getQueryData<ProjectDataType[]>(["myproject"])
-      queryClient.setQueryData<ProjectDataType[]>(["myproject"],(previousData)=>{
-        if(!previousData) return [updatedProject]
-        console.log(previousData)
-        return previousData.map((project)=>project.id===updatedProject.id?updatedProject:project)
+    onMutate: async (updatedProject: ProjectDataType) => {
+     
+      await queryClient.cancelQueries({ queryKey: ["myproject"] })
+      
+     
+      const previousProjects = queryClient.getQueryData<ProjectDataType[]>(["myproject"])
+   
+      queryClient.setQueryData<ProjectDataType[]>(["myproject"], old => {
+        if (!old) return [updatedProject]
+        return old.map(project => 
+          project.id === updatedProject.id ? updatedProject : project
+        )
       })
-
-      return { previousProjects}
+      return { previousProjects }
     },
-    onSuccess:()=>{
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myproject"] })
       navigate("/dashboard/projects/find")
     },
-    onError:(err,_variables,context:{previousProjects? :ProjectDataType[]}| undefined)=>{
-        if(context?.previousProjects){
-           queryClient.setQueryData<ProjectDataType[]>(["myproject"],context.previousProjects)
-        }
-        console.log(err)
+    onError: (err, _variables, context) => {
+      if (context?.previousProjects) {
+        queryClient.setQueryData(["myproject"], context.previousProjects)
+      }
+      console.error("Update error:", err)
     }
-  });
+  })
+  const deleteProjectMutation = useMutation({
+    mutationFn:myprojects.delete,
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:["myproject"]})
+      toast({title:"Project deleted",type:"success"})
+    }
+  })
   return{
     projects:getMyProject.data ,
     isLoading: getMyProject.isLoading,
     error:getMyProject.error,
     createProject:createProjectMutation.mutate,
     updateProject:updateProjectMutation.mutate,
-    isPending:updateProjectMutation.isPending
-
+    isPending:updateProjectMutation.isPending,
+    deleteProject:deleteProjectMutation.mutate
   }
+
+   
 };

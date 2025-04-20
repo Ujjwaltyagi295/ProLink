@@ -53,12 +53,12 @@ export const projectSchema = z.object({
   category: z.enum([
     "web_app", "mobile_app", "desktop_app", "api", "data_engineering",
     "machine_learning", "devops", "blockchain", "game_development", "other"
-  ]).optional(),
+  ]).optional().nullable(),
   teamSize:z.number().min(2).optional(),
   status: z.enum([ "draft", "published", "completed", "archived" ]),
   stage: z.enum([
     "Idea", "Planning", "Development", "Testing", "Deployment", "Maintenance"
-  ]).optional(),
+  ]).optional().nullable(),
   liveUrl: z.union([
     z.literal(""),
     z.null(),
@@ -67,15 +67,15 @@ export const projectSchema = z.object({
   ]),
   ecosystem: z.enum([
     'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other',
-  ]).optional(),
-  roles: z.array(projectRolesSchema).min(1, { message: "At least one role is required to publish" }).optional(),
+  ]).optional().nullable(),
+  roles: z.array(projectRolesSchema).optional(),
   techStack: z.array(z.enum([
     "react", "vue", "angular", "svelte", "next_js", "tailwind", "typescript",
     "node_js", "express", "django", "flask", "spring", "laravel", "ruby_rails",
     "react_native", "flutter", "swift", "kotlin",
     "postgresql", "mongodb", "mysql", "redis", "dynamodb",
     "aws", "azure", "gcp", "docker", "kubernetes", "terraform", "ci_cd",
-    "graphql", "rest", "websockets", "blockchain", "ai_ml", "other"
-  ])).min(1, { message: "At least one tech stack is required to publish" }).optional(),
+    "graphql", "rest", "websockets", "blockchain", "ai_ml", "other",
+  ])).optional().nullable(),
   members: z.array(projectMembersSchema).optional(),
 });

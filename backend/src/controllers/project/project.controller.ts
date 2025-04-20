@@ -66,7 +66,6 @@ export const getAllProjects = catchErrors(async (req: Request, res: Response) =>
   
   const projectIds = userProjects.map(project => project.id);
   
-  // 2. Get related data with simple queries
   const roles = await db
     .select()
     .from(projectRoles)
@@ -81,8 +80,7 @@ export const getAllProjects = catchErrors(async (req: Request, res: Response) =>
     .select()
     .from(projectMembers)
     .where(inArray(projectMembers.projectId, projectIds));
-    
-  // 3. Construct the result
+ 
   const result = userProjects.map(project => ({
     ...project,
     

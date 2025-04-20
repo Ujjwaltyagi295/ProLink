@@ -25,7 +25,7 @@ export const ExploreIcon = ({ isHover }: ExploreIconProps) => {
       width="32"
       height="32"
       viewBox="0 0 24 24"
-      fill={isHover ? "oklch(90.5% 0.182 98.111)" : "none"}
+      fill={isHover ? "oklch(94.5% 0.129 101.54)" : "none"}
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
@@ -69,7 +69,7 @@ export const ProjectIcon = ({ isHover }: ExploreIconProps) => {
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill={isHover ? "oklch(90.5% 0.182 98.111)" : "none"}
+      fill={isHover ? "oklch(86.5% 0.127 207.078)" : "none"}
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
@@ -140,3 +140,42 @@ export const CreateIcon = ({ isHover }: ExploreIconProps) => {
     </motion.svg>
   );
 };
+
+
+export const CheckCircle = () => {
+  const controls = useAnimation();
+
+  useEffect(() => {
+    controls.start({
+      pathLength: 1,
+      transition: { duration: 0.6, ease: "easeInOut" },
+    });
+  }, [controls]);
+
+  return (
+    <motion.svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-circle-check-big-icon lucide-circle-check-big"
+    >
+      <motion.path
+        initial={{ pathLength: 0 }}
+        animate={controls}
+        d="M21.801 10A10 10 0 1 1 17 3.335"
+      />
+      <motion.path
+        initial={{ pathLength: 0 }}
+        animate={controls}
+        d="M9 11l3 3L22 4"
+      />
+    </motion.svg>
+  );
+};
+

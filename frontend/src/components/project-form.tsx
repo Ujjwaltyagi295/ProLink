@@ -9,9 +9,10 @@ import ProjectDetailsStep from "./project-form/project-details";
 import TechStackStep from "./project-form/tech-stack";
 import ProjectRolesStep from "./project-form/project-roles";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
-import { useFormStore } from "@/store/useProjectStore";
-import { useParams } from "react-router-dom";
+import { ProjectDataType, useFormStore } from "@/store/useProjectStore";
+import { useParams, useNavigate } from "react-router-dom";
 import { myprojects } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 
 const steps = [
@@ -25,49 +26,183 @@ export default function ProjectFormMock() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const {updateProject}= useMyprojectQuery()
-const {projectData,setFormData,clearForm}= useFormStore()
-const {id}= useParams()
-  const handleNext = () => currentStep < steps.length - 1 && setCurrentStep((prev) => prev + 1);
-  const handlePrevious = () => currentStep > 0 && setCurrentStep((prev) => prev - 1);
+  const { updateProject } = useMyprojectQuery();
+  const { projectData, clearForm } = useFormStore();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const {toast}= useToast()
 
-  const handleSaveDraft =async () => {
-    if(id){
+  // Validate current step before proceeding
+  const validateCurrentStep = () => {
+    switch (currentStep) {
+      case 0:
+        // Basic info validation
+        return projectData.name && projectData.description;
+      case 1:
+        // Project details validation
+        return projectData.category && projectData.ecosystem;
+      case 2:
+        // Tech stack validation
+        return projectData.techStack ;
+      case 3:
+        // Project roles validation
+        return projectData.roles && projectData.roles.length > 0;
+      default:
+        return true;
+    }
+  };
+
+  const handleNext = () => {
+    if (!validateCurrentStep()) {
+      toast({
+        title: "Validation Error",
+        description: "Please complete all required fields before proceeding.",
+        type: "error",
+      });
+      return;
+    }
+    
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  // Handle file uploads and return URLs
+  const uploadFiles = async () => {
+    try {
+      let bannerUrl = projectData.banner;
+      let avatarUrl = projectData.avatar;
+
+      if (projectData.bannerFile) {
+        bannerUrl = await myprojects.uploadImage(projectData.bannerFile);
+      }
+
+      if (projectData.avatarFile) {
+        avatarUrl = await myprojects.uploadImage(projectData.avatarFile);
+      }
+
+      return { bannerUrl, avatarUrl };
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      toast({
+        title: "Upload Error",
+        description: "Failed to upload images. Please try again.",
+        type: "error",
+      });
+      throw error;
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    if (!id) {
+      toast({
+        title: "Error",
+        description: "Project ID is missing. Cannot save draft.",
+        type: "error",
+      });
+      return;
+    }
+
+    try {
+      setIsSavingDraft(true);
       
-      setIsSavingDraft(true)
-      if(projectData.bannerFile ){
-        const res=await  myprojects.uploadImage(projectData.bannerFile)
-         setFormData({banner:res})
-       }if(projectData.avatarFile){
-       const res=  await myprojects.uploadImage(projectData.avatarFile)
-         setFormData({avatar:res})
-       }
-        
-      updateProject({...projectData,status:"published",id:id})
-     }
-     
-     setIsSavingDraft(false)
-     clearForm()
+      // Upload files if needed
+      const { bannerUrl, avatarUrl } = await uploadFiles();
 
+      // Update form data with new values
+      const updatedData :ProjectDataType= {
+        ...projectData,
+        banner: bannerUrl,
+        avatar: avatarUrl,
+        status: "draft",
+        id:id
+      };
+
+      // Update project in the database
+      await updateProject(updatedData);
+      
+      toast({
+        title: "Success",
+        description: "Project draft saved successfully.",
+      });console.log(updateProject)
+      
+      clearForm();
+      navigate("/dashboard/projects/");
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      toast({
+        title: "Save Error",
+        description: "Failed to save draft. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setIsSavingDraft(false);
+    }
   };
 
   const handlePublish = async () => {
-   if(id){
-  
-    setIsPublishing(true)
-    console.log(projectData.bannerFile)
-  if(projectData.bannerFile ){
-   const res=await  myprojects.uploadImage(projectData.bannerFile)
-    setFormData({banner:res})
-  }if(projectData.avatarFile){
-  const res=  await myprojects.uploadImage(projectData.avatarFile)
-    setFormData({avatar:res})
-  }
-    updateProject({...projectData,status:"published",id:id})
-   }
-   
-   setIsPublishing(false)
-   clearForm()
+    if (!id) {
+      toast({
+        title: "Error",
+        description: "Project ID is missing. Cannot publish project.",
+        type: "error",
+      });
+      return;
+    }
+
+    // Validate all steps before publishing
+    for (let i = 0; i < steps.length; i++) {
+      setCurrentStep(i);
+      if (!validateCurrentStep()) {
+        toast({
+          title: "Validation Error",
+          description: `Please complete all required fields in ${steps[i].title}.`,
+          type: "error",
+        });
+        return;
+      }
+    }
+
+    try {
+      setIsPublishing(true);
+      
+      const { bannerUrl, avatarUrl } = await uploadFiles();
+
+      const updatedData :ProjectDataType= {
+        ...projectData,
+        banner: bannerUrl,
+        avatar: avatarUrl,
+        status: "published",
+        id:id
+      };
+console.log(updateProject)
+    
+       updateProject(updatedData);
+      
+      toast({
+        title: "Success",
+        description: "Project published successfully.",
+      });
+      
+      // Clear form and navigate back
+      clearForm();
+      navigate("/dashboard/projects/find");
+    } catch (error) {
+      console.error("Error publishing project:", error);
+      toast({
+        title: "Publish Error",
+        description: "Failed to publish project. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const renderStep = () => {
@@ -152,7 +287,7 @@ const {id}= useParams()
           <Button
             variant="outline"
             onClick={handleSaveDraft}
-            disabled={isSavingDraft}
+            disabled={isSavingDraft || !id}
             className="border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center gap-2"
           >
             <FileDown size={16} />
@@ -161,7 +296,7 @@ const {id}= useParams()
 
           {isLastStep ? (
             <Button
-              disabled={isPublishing}
+              disabled={isPublishing || !id}
               onClick={handlePublish}
               className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
             >

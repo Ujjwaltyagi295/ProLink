@@ -65,7 +65,7 @@ export default function ProjectRolesStep() {
       id: crypto.randomUUID(),
     };
 
-    setFormData({ roles: [...projectData.roles, newRoleWithId] });
+    setFormData({...projectData, roles: [...projectData.roles, newRoleWithId] });
 
     setNewRoleData({
       role: "",
@@ -78,7 +78,7 @@ export default function ProjectRolesStep() {
 
   const handleDelete = (id: string) => {
     const updatedRoles = projectData.roles.filter((r) => r.id !== id);
-    setFormData({ roles: updatedRoles });
+    setFormData({...projectData, roles: updatedRoles });
   };
 
   const formatData = (text: string) =>

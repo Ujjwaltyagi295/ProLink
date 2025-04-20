@@ -10,24 +10,24 @@ export interface RoleFormData {
   experienceLevel: ExperienceLevel | ""
 }
 export interface ProjectDataType {
-   id: string;
-    status: ProjectStatus;
-    stage: ProjectStage;
+   id: string |null;
+    status: ProjectStatus|null;
+    stage: ProjectStage|null;
     teamSize: number;
     
     // Optional fields use undefined (not null) for cleaner optional chaining
     name: string;
     summary: string;
-    description?: string;
-    banner?: string;
-    avatar?: string;
-    category?: string;
-    repoUrl?: string;
-    liveUrl?: string;
-    ecosystem?: string;
-    updatedAt?: string;
-    bannerFile?: File;
-    avatarFile?: File;
+    description?: string|null;
+    banner?: string|null;
+    avatar?: string|null;
+    category?: string|null;
+    repoUrl?: string|null;
+    liveUrl?: string|null;
+    ecosystem?: string|null;
+    updatedAt?: string|null;
+    bannerFile?: File|null;
+    avatarFile?: File|null;
     
   
     roles: RoleFormData[];
@@ -42,22 +42,22 @@ export interface ProjectDataType {
     persist(
       (set) => ({
         projectData: {
-          id: "",
+          id: null,
           name: "",
           summary: "",
-          description: "",
-          bannerFile: undefined,
-          avatarFile: undefined,
-          banner: "",
-          avatar: "",
-          category: "",
+          description: null,
+          bannerFile: null,
+          avatarFile: null,
+          banner: null,
+          avatar: null,
+          category: null,
           status: "draft",
           teamSize: 2,
-          ecosystem: "",
-          stage: "Idea",
-          repoUrl: "",
-          liveUrl: "",
-          updatedAt: "",
+          ecosystem: null,
+          stage: null,
+          repoUrl: null,
+          liveUrl: null,
+          updatedAt: null,
           roles: [],
           techStack: [],
         },
@@ -68,22 +68,22 @@ export interface ProjectDataType {
         clearForm: () =>
           set(() => ({
             projectData: {
-              id: "",
+              id: null,
               name: "",
               summary: "",
-              description: "",
-              bannerFile: undefined,
-              avatarFile: undefined,
-              banner: "",
-              avatar: "",
-              category: "",
+              description: null,
+              bannerFile: null,
+              avatarFile: null,
+              banner: null,
+              avatar: null,
+              category: null,
               status: "draft",
               teamSize: 2,
-              ecosystem: "",
-              stage: "Idea",
-              repoUrl: "",
-              liveUrl: "",
-              updatedAt: "",
+              ecosystem: null,
+              stage: null,
+              repoUrl: null,
+              liveUrl: null,
+              updatedAt: null,
               roles: [],
               techStack: [],
             },

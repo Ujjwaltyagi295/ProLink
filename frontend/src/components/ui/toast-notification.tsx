@@ -1,7 +1,8 @@
 "use client"
 
+import { CheckCircle } from "@/assets/icons/icons"
 import { motion } from "framer-motion"
-import { CheckCircle, AlertCircle, Info, AlertTriangle, X } from "lucide-react"
+import {  AlertCircle, Info, AlertTriangle, X } from "lucide-react"
 import { useState, useEffect } from "react"
 
 export type ToastType = "success" | "error" | "info" | "warning"
