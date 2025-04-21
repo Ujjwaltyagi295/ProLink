@@ -187,3 +187,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.hero-gradient {
+  background-image: 
+    radial-gradient(ellipse 50% 80% at 20% 40%, rgba(93, 52, 221, 0.1), transparent),
+    radial-gradient(ellipse 50% 80% at 80% 50%, rgba(120, 119, 198, 0.15), transparent);
+  background-repeat: no-repeat;
+  background-size: cover;
+}

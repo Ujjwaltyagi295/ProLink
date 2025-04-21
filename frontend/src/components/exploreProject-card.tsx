@@ -162,7 +162,7 @@ export const ExploreProjectCard = ({
   }
   return (
     <Card
-      className="relative hover:scale-[1.02] duration-500 ease-in-out transition-all  flex flex-col hover:shadow-md overflow-hidden"
+      className="relative hover:scale-[1.02]  duration-500 ease-in-out transition-all  flex flex-col hover:shadow-md overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

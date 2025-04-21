@@ -1,8 +1,9 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tag,  Code, Rocket, Palette, Megaphone } from 'lucide-react';
+import { Tag, Code, Rocket, Palette, Megaphone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { HeroSvg } from '@/assets/svg';
 
 const categories = [
   { name: 'Design', icon: <Palette className="w-4 h-4" /> },
@@ -14,6 +15,7 @@ const categories = [
 const trendingTags = ['AI/ML', 'Web3', 'Mobile', 'Cloud', 'DevOps'];
 
 const HeroSection = () => {
+  
   const [count, setCount] = useState(0);
   const [currentTagIndex, setCurrentTagIndex] = useState(0);
 
@@ -34,27 +36,31 @@ const HeroSection = () => {
   }, [count]);
 
   return (
-    <section className="border-b   mt-24 ">
- <div className="absolute inset-0 -z-10 h-full w-full  bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
-      <div className="container mx-auto  px-4 py-20 text-center">
+    <section className="border-b  h-[90vh]    relative">
+      <div className="absolute "></div>
+      
+      <div className="container mt-42 mx-auto px-4 py-20 text-center relative">
+        
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl">
+        <HeroSvg/>
+        </div>
+        
         <motion.h1
-          className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-6"
+          className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-6 relative z-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           Discover Collaborative Opportunities
         </motion.h1>
-
+        
         <motion.p
-          className="text-lg md:text-xl text-gray-600 mb-10 max-w-xl mx-auto"
+          className="text-lg md:text-xl text-gray-600 mb-10 max-w-xl mx-auto relative z-10  tracking-wider"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          Find projects that match your skills and interests.
+        >       Find projects that match your skills and interests.
         </motion.p>
-
         <motion.div
           className="flex flex-wrap justify-center gap-3 mb-10"
           initial={{ opacity: 0, y: 20 }}
@@ -68,7 +74,7 @@ const HeroSection = () => {
             </Button>
           ))}
         </motion.div>
-
+    
         <motion.div
           className="mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -95,8 +101,6 @@ const HeroSection = () => {
             </AnimatePresence>
           </div>
         </motion.div>
-
-      
       </div>
     </section>
   );
