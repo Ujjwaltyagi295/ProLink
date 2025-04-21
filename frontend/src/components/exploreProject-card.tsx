@@ -76,10 +76,11 @@ export const ExploreProjectCard = ({
       </div>
     );
     
+    
   if (effectiveViewMode === "list") {
     return (
       <Card
-        className="relative w-full transition-all hover:shadow-md"
+        className="relative w-full border  hover:border-blue-500 transition duration-300 ease-in-out hover:shadow-md"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -150,7 +151,7 @@ export const ExploreProjectCard = ({
                 <div className="text-sm font-medium text-primary">
                   {project.roles.length} open position{project.roles.length !== 1 ? 's' : ''}
                 </div>
-                <Button className="bg-black cursor-pointer text-white hover:bg-gray-800">
+                <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
                   Apply
                 </Button>
               </div>
@@ -162,7 +163,7 @@ export const ExploreProjectCard = ({
   }
   return (
     <Card
-      className="relative hover:scale-[1.02]  duration-500 ease-in-out transition-all  flex flex-col hover:shadow-md overflow-hidden"
+      className="relative     flex flex-col border  hover:border-blue-500 transition duration-300 ease-in-out"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -239,8 +240,8 @@ export const ExploreProjectCard = ({
               </div>
               <div className="flex gap-4 text-xs text-muted-foreground"></div>
             </div>
-            <Button className="bg-black cursor-pointer text-white hover:bg-gray-800">
-              Apply
+            <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
+              Apply 
             </Button>
           </div>
         </CardFooter>

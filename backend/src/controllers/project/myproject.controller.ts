@@ -21,7 +21,7 @@ import { NewRole, projectRoles } from "../../models/projectRoles";
 import { Request, Response } from "express";
 import appAssert from "../../utils/appAssert";
 import slugify from "slugify";
-import { NewTechStack, projectTechStack } from "../../models/projectTechStack";
+import projectTechStack, { NewTechStack } from "../../models/projectTechStack";
 import { NewMember, projectMembers } from "../../models/projectMembers";
 
 export const createProjectHandler = catchErrors(

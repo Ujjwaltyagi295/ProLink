@@ -5,7 +5,7 @@ import { techStackEnum } from "./projectEnums";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 
-export const projectTechStack = pgTable("projectTechStack",{
+ const projectTechStack = pgTable("projectTechStack",{
     id:uuid("id").primaryKey().defaultRandom().unique(),
     projectId:uuid("project_id").notNull().references(()=>projects.id ,{onDelete:"cascade"}),
     techStack:techStackEnum("tech_stack").notNull(),
@@ -16,3 +16,4 @@ export const projectTechStack = pgTable("projectTechStack",{
 })
 export type NewTechStack= InferInsertModel<typeof projectTechStack>
 export type TechStack= InferSelectModel<typeof projectTechStack>
+export default projectTechStack

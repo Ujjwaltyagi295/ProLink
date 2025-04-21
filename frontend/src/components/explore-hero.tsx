@@ -36,7 +36,7 @@ const HeroSection = () => {
   }, [count]);
 
   return (
-    <section className="border-b  h-[90vh]    relative">
+    <section className="border-b  h-[100vh]   relative">
       <div className="absolute "></div>
       
       <div className="container mt-42 mx-auto px-4 py-20 text-center relative">

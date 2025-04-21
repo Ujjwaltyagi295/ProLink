@@ -1,6 +1,7 @@
 // lib/api/index.ts
 import API from "@/config/apiClient";
 import { ProjectDataType } from "@/store/useProjectStore";
+import { ProjectData } from "@/types/project";
 
 // === AUTH ===
 export const auth = {
@@ -58,3 +59,73 @@ export const projects = {
    return response.data
   },
 };
+export interface ProjectFilters {
+  search?: string;
+  categories?: string[];
+  ecosystems?: string[];
+  techStacks?: string[];
+  roles?: string[];
+  page?: number;
+  limit?: number;
+}
+
+export interface ProjectsResponse {
+  projects: ProjectData[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+
+
+export async function searchProjects(filters: ProjectFilters): Promise<ProjectsResponse> {
+  try {
+   
+    const params = new URLSearchParams();
+    
+    if (filters.search) params.append('search', filters.search);
+    
+  
+    if (filters.categories && filters.categories.length > 0) {
+    
+      params.append('categories', filters.categories[0]);
+    }
+    
+    if (filters.ecosystems && filters.ecosystems.length > 0) {
+  
+      params.append('ecosystems', filters.ecosystems[0]);
+    }
+    
+  
+    if (filters.techStacks && filters.techStacks.length > 0) {
+      filters.techStacks.forEach(tech => params.append('techStacks', tech));
+    }
+    
+    if (filters.roles && filters.roles.length > 0) {
+      filters.roles.forEach(role => params.append('roles', role));
+    }
+   
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+    
+    const response = await API.get('/projects', { params });
+    
+    return {
+      projects: response.data.projects || [],
+      total: response.data.total || 0,
+      page: filters.page || 1,
+      limit: filters.limit || 10,
+      totalPages: Math.ceil((response.data.total || 0) / (filters.limit || 10))
+    };
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    return {
+      projects: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+      totalPages: 0
+    };
+  }
+}

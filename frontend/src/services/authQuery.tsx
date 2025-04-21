@@ -13,7 +13,7 @@ export  function useLoginQuery() {
   return useMutation({
     mutationKey: ["login"],
     mutationFn: (data: object) => auth.login(data),
-    onSettled: () => {
+    onSuccess: () => {
       setAuth(true);
       toast({title:"Logged in successfully",type:"success"})
       navigate(redirectUrl, {

@@ -5,6 +5,7 @@ import { HomePage } from "./pages/home";
 import DashboardPage from "./pages/dashboard";
 import { setNavigate } from "./lib/navigation";
 import { ProjectsPage } from "./pages/projectsPage";
+import { ProjectSearch } from "./components/filters";
 
 function App() {
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/explore"element={<ProjectsPage/>}/>
-      {/* PROTECTED ROUTES */}
+      <Route path="/filter" element={<ProjectSearch/>}/>
+   
         <Route path="/dashboard/*" element={<DashboardPage />} />
        
     </Routes>

@@ -10,7 +10,7 @@ export const ExploreProjects = () => {
       <Navbar />
       <div className="flex min-h-screen flex-col">
         <HeroSection />
-        <section className="min-h-screen bg-[#ffffff] text-black p-8">
+        <section className="min-h-screen bg-zinc-50   text-black p-8">
           <div className="max-w-6xl  mx-auto">
             <h1 className="text-5xl font-bold text-center mb-2">Explore</h1>
             <p className="text-xl text-gray-500 text-center mb-16">
@@ -29,8 +29,8 @@ export const ExploreProjects = () => {
             </div>
           </div>
         </section>
-        <div className="">
-        <ProjectsSection />
+        <div className="bg-zinc-50">
+      
         </div>
       </div>
     </div>

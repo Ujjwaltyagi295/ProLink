@@ -6,12 +6,13 @@ import { Grid, List, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProjectQuery } from "@/services/projectQuery";
 import { ProjectData } from "@/types/project";
+import { SkeletonCard } from "./skeleton-cards";
 
 export const ProjectsSection = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
   const [isMobile, setIsMobile] = useState(false);
-  const { getAllProjects } = useProjectQuery();
+  const { getAllProjects, isLoading } = useProjectQuery();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -50,7 +51,7 @@ export const ProjectsSection = () => {
   };
 
   return (
-    <div className="w-full   max-w-6xl mx-auto py-6 px-4 sm:px-6">
+    <div className="w-full mt-4  max-w-6xl mx-auto py-6 px-4 sm:px-6">
       <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <TabsList className="mb-2 sm:mb-0">
@@ -89,7 +90,12 @@ export const ProjectsSection = () => {
         {/* All Projects Tab */}
         <TabsContent value="all">
           <AnimatePresence mode="wait">
-            {getAllProjects ? (
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <SkeletonCard />
+                <SkeletonCard />
+              </div>
+            ) : getAllProjects ? (
               <motion.div
                 key={viewMode}
                 {...fadeMotion}
