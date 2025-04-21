@@ -50,7 +50,7 @@ export const ProjectsSection = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-6 px-4 sm:px-6">
+    <div className="w-full   max-w-6xl mx-auto py-6 px-4 sm:px-6">
       <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <TabsList className="mb-2 sm:mb-0">

@@ -34,7 +34,8 @@ const HeroSection = () => {
   }, [count]);
 
   return (
-    <section className="border-b  mt-24 bg-white">
+    <section className="border-b   mt-24 ">
+ <div className="absolute inset-0 -z-10 h-full w-full  bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
       <div className="container mx-auto  px-4 py-20 text-center">
         <motion.h1
           className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-6"

@@ -52,14 +52,14 @@ const TechStack = memo(({ techs }: { techs: string[] }) => {
   const techStackToShow = techs.slice(0, 3);
   const remainingTech = techs.length - techStackToShow.length;
   
-  const colors = ["bg-purple-500", "bg-blue-500","bg-[lch(47.918_59.303_288.421)]", ];
+  
   
   return (
     <div className="flex flex-wrap gap-1.5 mb-2">
       {techStackToShow.map((tech, idx) => (
         <Badge
-          key={tech}
-          className={`text-xs px-2 py-1 text-white bg-white  ${colors[idx % colors.length]}`}
+          key={idx}
+          className={`text-xs px-2 py-1   bg-slate-100 text-slate-800`}
         >
           {capitalizeFirst(tech)}
         </Badge>

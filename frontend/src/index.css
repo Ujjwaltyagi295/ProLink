@@ -166,3 +166,24 @@
 .editable-div:empty:not(:focus)::before {
   content: attr(data-placeholder);
 }
+
+.animate-slide-out {
+  animation: slideOut 500ms ease-in-out forwards;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 500ms ease-in-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 500ms ease-in-out forwards;
+}
+
+/* For the text fade effect */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

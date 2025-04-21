@@ -1,32 +1,38 @@
-import HeroSection from './explore-hero'
-import { Navbar } from './navbar'
-import { FeaturedProject } from './featured-projects'
-import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
-import { ProjectsSection } from './project-section'
+import HeroSection from "./explore-hero";
+import { Navbar } from "./navbar";
+
+import { ProjectsSection } from "./project-section";
+import ExtensionCarousel from "./featured-cards";
 
 export const ExploreProjects = () => {
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div className="flex min-h-screen flex-col">
-        <HeroSection/>
-        <section className="py-8 bg-white">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Featured Project</h2>
-              <Link to="/projects" className="text-sm text-blue-600 hover:text-blue-800 flex items-center">
-                View all featured
-                <ArrowRight className="ml-1 h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <div className="flex justify-center">
-              <FeaturedProject/>
+        <HeroSection />
+        <section className="min-h-screen bg-[#ffffff] text-black p-8">
+          <div className="max-w-6xl  mx-auto">
+            <h1 className="text-5xl font-bold text-center mb-2">Explore</h1>
+            <p className="text-xl text-gray-500 text-center mb-16">
+            Browse Projects. Find Your Role. Contribute.
+
+
+            </p>
+
+            <div className="mb-16">
+              <h2 className="text-2xl font-bold mb-2">Featured</h2>
+              <p className="text-gray-500 mb-8">
+                Our top picks to get you started
+              </p>
+
+              <ExtensionCarousel />
             </div>
           </div>
         </section>
-        <ProjectsSection/>
+        <div className="">
+        <ProjectsSection />
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
