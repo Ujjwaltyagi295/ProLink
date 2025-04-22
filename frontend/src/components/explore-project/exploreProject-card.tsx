@@ -11,10 +11,12 @@ import { Bookmark } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 
-import { ProjectData } from "@/types/project";
+import { exploreCard } from "@/types/project";
+import { TechStack } from "@/lib/schema";
+import { formatData } from "@/lib/utils";
 
 interface ExploreProjectCardprp {
-  project: ProjectData;
+  project: exploreCard;
   viewMode: "grid" | "list";
 }
 
@@ -28,8 +30,7 @@ export const ExploreProjectCard = ({
   const [effectiveViewMode, setEffectiveViewMode] = useState<"grid" | "list">(
     viewMode
   );
-
-  const techstack = project.techStack.length - 3;
+  const techstack = project.techStacks.length - 3;
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -117,7 +118,7 @@ export const ExploreProjectCard = ({
               </div>
 
               <div className="flex flex-wrap gap-2 mt-1 mb-3">
-                {project.techStack.slice(0, 4).map((tech, index: number) => (
+                {project?.techStacks.slice(0, 4).map((tech:TechStack, index: number) => (
                   <Badge
                     key={index}
                     variant="secondary"
@@ -126,12 +127,12 @@ export const ExploreProjectCard = ({
                     {tech}
                   </Badge>
                 ))}
-                {project.techStack.length > 4 && (
+                {project?.techStacks.length > 4 && (
                   <Badge
                     variant="secondary"
                     className="px-2 py-0.5 rounded-full text-xs font-medium border bg-neutral-100 text-neutral-600 border-neutral-200"
                   >
-                    {`+${project.techStack.length - 4}`}
+                    {`+${project?.techStacks.length - 4}`}
                   </Badge>
                 )}
               </div>
@@ -200,13 +201,13 @@ export const ExploreProjectCard = ({
 
           <CardContent className="pt-4 px-4 pb-2">
             <div className="flex flex-wrap gap-2 mb-4">
-              {project.techStack?.slice(0, 3).map((tech, index) => (
+              {project.techStacks?.slice(0, 3).map((tech, index) => (
                 <Badge
                   key={index}
                   variant="secondary"
                   className="px-2 py-0.5 rounded-full text-xs font-medium border bg-neutral-100 text-neutral-600 border-neutral-200"
                 >
-                  {tech}
+                  {formatData(tech)}
                 </Badge>
               ))}
               {techstack > 0 && (

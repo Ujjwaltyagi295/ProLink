@@ -1,9 +1,9 @@
 import * as React from "react";
-import { ProjectCard } from "@/components/myproject-card";
-import { ProjectSidebar } from "@/components/project-sidebar";
+import { ProjectCard } from "@/components/create-project/myproject-card";
+import { ProjectSidebar } from "@/components/create-project/project-sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import ProjectDialog from "@/components/project-createDialog";
+import ProjectDialog from "@/components/create-project/project-createDialog";
 import { ProjectDataType, useFormStore, useMyProjectStore } from "@/store/useProjectStore";
 import {  ProjectData } from "@/types/project";
 import { useMyprojectQuery } from "@/services/myProjectQuery";

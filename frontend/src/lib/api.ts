@@ -1,7 +1,7 @@
 // lib/api/index.ts
 import API from "@/config/apiClient";
 import { ProjectDataType } from "@/store/useProjectStore";
-import { ProjectData } from "@/types/project";
+import { exploreCard, ProjectData } from "@/types/project";
 
 // === AUTH ===
 export const auth = {
@@ -58,11 +58,10 @@ export const projects = {
    const response= await API.get("/projects/");
    return response.data
   },
-};
-export interface ProjectFilters {
+};export interface ProjectFilters {
   search?: string;
-  categories?: string[];
-  ecosystems?: string[];
+  category?: string; 
+  ecosystem?: string; 
   techStacks?: string[];
   roles?: string[];
   page?: number;
@@ -70,42 +69,37 @@ export interface ProjectFilters {
 }
 
 export interface ProjectsResponse {
-  projects: ProjectData[];
+  projects: exploreCard[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
 }
 
-
-
 export async function searchProjects(filters: ProjectFilters): Promise<ProjectsResponse> {
   try {
-   
     const params = new URLSearchParams();
+    
     
     if (filters.search) params.append('search', filters.search);
     
-  
-    if (filters.categories && filters.categories.length > 0) {
-    
-      params.append('categories', filters.categories[0]);
+    if (filters.category) {
+      params.append('category', filters.category);
     }
     
-    if (filters.ecosystems && filters.ecosystems.length > 0) {
-  
-      params.append('ecosystems', filters.ecosystems[0]);
+    if (filters.ecosystem) {
+      params.append('ecosystem', filters.ecosystem);
     }
     
-  
-    if (filters.techStacks && filters.techStacks.length > 0) {
+   
+    if (filters.techStacks?.length) {
       filters.techStacks.forEach(tech => params.append('techStacks', tech));
     }
     
-    if (filters.roles && filters.roles.length > 0) {
+    if (filters.roles?.length) {
       filters.roles.forEach(role => params.append('roles', role));
     }
-   
+    
     if (filters.page) params.append('page', filters.page.toString());
     if (filters.limit) params.append('limit', filters.limit.toString());
     
@@ -123,8 +117,8 @@ export async function searchProjects(filters: ProjectFilters): Promise<ProjectsR
     return {
       projects: [],
       total: 0,
-      page: 1,
-      limit: 10,
+      page: filters.page || 1,
+      limit: filters.limit || 10,
       totalPages: 0
     };
   }

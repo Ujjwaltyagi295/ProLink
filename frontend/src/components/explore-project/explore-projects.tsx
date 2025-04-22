@@ -1,9 +1,8 @@
 import HeroSection from "./explore-hero";
-import { Navbar } from "./navbar";
+import { Navbar } from "../navbar";
 
 import { ProjectsSection } from "./project-section";
-import ExtensionCarousel from "./featured-cards";
-
+import ExtensionCards from "./featured-cards";
 export const ExploreProjects = () => {
   return (
     <div>
@@ -25,12 +24,12 @@ export const ExploreProjects = () => {
                 Our top picks to get you started
               </p>
 
-              <ExtensionCarousel />
+              <ExtensionCards />
             </div>
           </div>
         </section>
         <div className="bg-zinc-50">
-      
+      <ProjectsSection/>
         </div>
       </div>
     </div>

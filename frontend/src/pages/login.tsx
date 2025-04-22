@@ -1,7 +1,7 @@
 
 import { GalleryVerticalEnd } from "lucide-react";
 import { motion } from "framer-motion";
-import { LoginForm } from "@/components/login-form";
+import { LoginForm } from "@/components/auth/login-form";
 import { Link } from "react-router-dom";
 
 

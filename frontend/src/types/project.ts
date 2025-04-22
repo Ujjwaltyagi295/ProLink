@@ -1,4 +1,4 @@
-import { TechStack } from "@/lib/schema";
+import { Role, TechStack } from "@/lib/schema";
 
 export interface ProjectData{
   id: string;
@@ -95,4 +95,28 @@ export interface Project {
   category?: string
   stage?: string
   ecosystem?: string
+}
+
+
+export interface exploreCard {
+  id: string;
+  ownerId: string;
+  name: string;
+  summary: string;
+  description: string;
+  banner: string;
+  avatar: string;
+  teamSize:number;
+  category: string;
+  status: string;
+  ecosystem: string;
+  stage: string;
+  liveUrl: string;
+  inviteCode: string;
+  joinLink: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  techStacks :TechStack[],
+  roles: Role[]
 }

@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@radix-ui/react-label";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 
 import { useState } from "react";
 

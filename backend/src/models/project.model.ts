@@ -1,6 +1,6 @@
 import { integer, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { users } from "./user.model";
 import {
   ecosystemEnum,
@@ -8,6 +8,8 @@ import {
   projectStageEnum,
   projectStatusEnum,
 } from "./projectEnums";
+import projectTechStack from "./projectTechStack";
+import { projectRoles } from "./projectRoles";
 
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom().unique(),
@@ -32,6 +34,24 @@ export const projects = pgTable("projects", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+export const projectRelations = relations(projects, ({ many }) => ({
+  techStacks: many(projectTechStack),
+  roles: many(projectRoles)
+}));
+
+export const techStackRelations = relations(projectTechStack, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectTechStack.projectId],
+    references: [projects.id]
+  })
+}));
+
+export const roleRelations = relations(projectRoles, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectRoles.projectId],
+    references: [projects.id]
+  })
+}));
 
 export type Project = InferSelectModel<typeof projects>;
 export type NewProject = InferInsertModel<typeof projects>;

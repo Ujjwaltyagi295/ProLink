@@ -4,10 +4,10 @@ import { ChevronLeft, ChevronRight, Upload, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import BasicInfoStep from "./project-form/initial-info";
-import ProjectDetailsStep from "./project-form/project-details";
-import TechStackStep from "./project-form/tech-stack";
-import ProjectRolesStep from "./project-form/project-roles";
+import BasicInfoStep from "./initial-info";
+import ProjectDetailsStep from "./project-details";
+import TechStackStep from "./tech-stack";
+import ProjectRolesStep from "./project-roles";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
 import { ProjectDataType, useFormStore } from "@/store/useProjectStore";
 import { useParams, useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ const steps = [
   { id: "project-roles", title: "Project Roles" },
 ];
 
-export default function ProjectFormMock() {
+export default function ProjectForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);

@@ -1,18 +1,32 @@
 import { useState, useEffect } from "react";
-import { ExploreProjectCard } from "./exploreProject-card";
-import { Button } from "./ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
+import { ExploreProjectCard } from "../explore-project/exploreProject-card";
+import { Button } from "../ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { Grid, List, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useProjectQuery } from "@/services/projectQuery";
-import { ProjectData } from "@/types/project";
-import { SkeletonCard } from "./skeleton-cards";
+
+import { exploreCard } from "@/types/project";
+import { SkeletonCard } from "../skeleton-cards";
+import { useProjectsQuery } from "@/services/projectQuery";
+import { ProjectFilters } from "@/lib/api";
 
 export const ProjectsSection = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
   const [isMobile, setIsMobile] = useState(false);
-  const { getAllProjects, isLoading } = useProjectQuery();
+  const [filters,setFilters]= useState<ProjectFilters>({
+    category:"",
+    ecosystem:"",
+    search:"",
+    limit:0,
+    page:1,
+    roles:[],
+    techStacks:[]
+  })
+ 
+
+  const {data:getAllProjects,isLoading} = useProjectsQuery(filters)
+
 
   useEffect(() => {
     const checkMobile = () => {
@@ -95,13 +109,13 @@ export const ProjectsSection = () => {
                 <SkeletonCard />
                 <SkeletonCard />
               </div>
-            ) : getAllProjects ? (
+            ) : getAllProjects?.projects ? (
               <motion.div
                 key={viewMode}
                 {...fadeMotion}
                 className={getCardContainerClass()}
               >
-                {getAllProjects?.map((project: ProjectData) => (
+                {getAllProjects?.projects.map((project: exploreCard) => (
                   <div
                     key={project.id}
                     className={viewMode === "list" ? "w-full" : ""}

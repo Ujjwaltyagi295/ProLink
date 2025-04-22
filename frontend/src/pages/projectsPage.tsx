@@ -1,4 +1,4 @@
-import { ExploreProjects } from "@/components/explore-projects"
+import { ExploreProjects } from "@/components/explore-project/explore-projects"
 
 export const ProjectsPage = () => {
   return (

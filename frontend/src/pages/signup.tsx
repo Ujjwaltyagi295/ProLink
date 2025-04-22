@@ -2,7 +2,7 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { SignupForm } from "@/components/signup-form";
+import { SignupForm } from "@/components/auth/signup-form";
 import { Link } from "react-router-dom";
 
 export default function SignupPage() {

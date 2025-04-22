@@ -47,7 +47,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <header className="fixed top-0 z-50 h-16 w-full shrink-0 border-b border-b-neutral-200 bg-white px-4 sm:px-10">
+    <header className="fixed top-0  z-50 h-16 w-full shrink-0 border-b border-b-neutral-200 bg-white px-4 sm:px-10">
       <div className="mx-auto flex h-full items-center justify-between max-w-[90rem]">
         <Link to="/" className="flex flex-row items-center">
           <h1 className="text-2xl font-Nunito font-bold font-sans">ProLink</h1>
