@@ -28,7 +28,7 @@ export interface ProjectData{
     isRemote: boolean;
     experienceLevel: string;
   }[];
-  techStack: string[];
+  techStack: TechStack[];
   members: {
     id: string;
     projectId: string;
@@ -69,7 +69,7 @@ export interface ProjectResData {
     isRemote: boolean;
     experienceLevel: string;
   }[];
-  techStack: TechStack;
+  techStack: TechStack[];
   members: {
     id: string;
     name: string;

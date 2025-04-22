@@ -1,7 +1,8 @@
 // lib/api/index.ts
 import API from "@/config/apiClient";
 import { ProjectDataType } from "@/store/useProjectStore";
-import { exploreCard, ProjectData } from "@/types/project";
+import { FilterDataType } from "@/types/project";
+
 
 // === AUTH ===
 export const auth = {
@@ -74,7 +75,7 @@ export interface ProjectFilters {
 }
 
 export interface ProjectsResponse {
-  projects: exploreCard[];
+  projects: FilterDataType[];
   total: number;
   page: number;
   limit: number;
@@ -90,11 +91,11 @@ export async function searchProjects(filters: ProjectFilters): Promise<ProjectsR
     if (filters.search) params.append('search', filters.search);
     
     if (filters.category) {
-      params.append('category', filters.category);
+      filters.category.forEach(c=>params.append("category",c))
     }
     
     if (filters.ecosystem) {
-      params.append('ecosystem', filters.ecosystem);
+      filters.ecosystem.forEach(e=>params.append('ecosystem',e))
     }
     
    

@@ -17,7 +17,7 @@ export const ProjectsSection = () => {
 
  
  const {getAllProjects,isLoading}= useGetAllProjectQuery()
-
+  console.log(getAllProjects)
 
   useEffect(() => {
     const checkMobile = () => {

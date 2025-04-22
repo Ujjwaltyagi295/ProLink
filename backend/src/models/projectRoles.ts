@@ -9,7 +9,9 @@ import {
 } from "drizzle-orm/pg-core";
 import projects from "./project.model";
 import { roleEnum } from "./projectEnums";
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
+import { projectMembers } from "./projectMembers";
+import { projectApplications } from "./projectApplications";
 
 export const projectRoles = pgTable(
   "project_role",
@@ -27,6 +29,11 @@ export const projectRoles = pgTable(
     return [uniqueIndex("project_role_idx").on(table.projectId,table.role)];
   }
 );
+export const projectRoleRelations = relations(projectRoles,({one,many})=>({
+  project: one(projects,{fields:[projectRoles.projectId],references:[projects.id]}),
+  members: many(projectMembers),
+  applications: many(projectApplications)
+}))
 
 export type Role = InferSelectModel<typeof projectRoles>;
 export type NewRole = InferInsertModel<typeof projectRoles>;

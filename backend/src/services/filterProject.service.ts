@@ -133,7 +133,7 @@ async function fetchResultsWithRelations(
   const projectResults: Project[] = await db
     .select()
     .from(projects)
-    .where(whereClause)
+    .where(and(whereClause,eq(projects.status,"published")))
     .orderBy(
       sortOrder === "asc"
         ? sortableColumns[sortBy]

@@ -98,9 +98,7 @@ export const publishProject = catchErrors(
     appAssert(projectId, BAD_REQUEST, "Project ID is required");
 
     const userId = req.userId;
-    const existingProject = await db.query.projects.findFirst({
-      where: eq(projects.id, projectId),
-    });
+    const [existingProject] = await db.select().from(projects).where(eq(projects.id,projectId))
 
     appAssert(existingProject, NOT_FOUND, "Project not found");
     appAssert(

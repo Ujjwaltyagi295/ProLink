@@ -2,7 +2,7 @@ import { boolean, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-or
 import projects from "./project.model";
 import { projectRoles } from "./projectRoles";
 import { users } from "./user.model";
-import { InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, relations } from "drizzle-orm";
 
 
 export const projectMembers= pgTable("project_member",{
@@ -21,4 +21,12 @@ export const projectMembers= pgTable("project_member",{
         uniqueIndex("project_user_idx").on(table.projectId,table.userId)
     ]
 })
+
+export const projectMembersRelations= relations(projectMembers,({one})=>({
+    user: one(users,{fields:[projectMembers.userId],references:[users.id]}),
+    project: one(projects,{fields:[projectMembers.projectId],references:[projects.id]}),
+    role:one(projectRoles,{fields:[projectMembers.roleId],references:[projectRoles.id]})
+}))
+
+
 export type NewMember= InferInsertModel<typeof projectMembers>

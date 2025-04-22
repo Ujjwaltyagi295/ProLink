@@ -30,6 +30,7 @@ export const ExploreProjectCard = ({
   const [effectiveViewMode, setEffectiveViewMode] = useState<"grid" | "list">(
     viewMode
   );
+ 
   const techstack = project?.techStack?.length - 3;
   useEffect(() => {
     const checkMobile = () => {
@@ -52,7 +53,7 @@ export const ExploreProjectCard = ({
     blue: "bg-blue-500",
     indigo: "bg-indigo-500",
   };
- 
+
     const avatarOptions = ["yellow", "blue", "indigo"] as const;
     const avatarColor =
       avatarOptions[project.id.charCodeAt(0) % avatarOptions.length];

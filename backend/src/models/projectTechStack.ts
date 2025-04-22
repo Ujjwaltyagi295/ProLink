@@ -2,7 +2,7 @@
 import {  pgTable,  uniqueIndex,   uuid } from "drizzle-orm/pg-core";
 import projects from "./project.model";
 import { techStackEnum } from "./projectEnums";
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 
 
  const projectTechStack = pgTable("projectTechStack",{
@@ -14,6 +14,11 @@ import { InferInsertModel, InferSelectModel } from "drizzle-orm";
         uniqueIndex("project_tech_idx").on(table.projectId, table.techStack)
     ]
 })
+
+export const projectTechStackRelations= relations(projectTechStack,({one})=>({
+    project: one(projects,{fields:[projectTechStack.projectId],references:[projects.id]}),
+
+}))
 export type NewTechStack= InferInsertModel<typeof projectTechStack>
 export type TechStack= InferSelectModel<typeof projectTechStack>
 export default projectTechStack

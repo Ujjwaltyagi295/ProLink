@@ -1,61 +1,43 @@
-
 import { useState, useEffect, useRef } from "react"
 import { Command } from "cmdk"
 import { FilterSection } from "./filter-section"
 import { FilterProjectCard } from "./filter-card"
 import { projectCategoryEnum, roleEnum, techStackEnum, ecosystemEnum } from "../../lib/schema"
+import { ProjectFilters } from "@/lib/api"
 
+import { useProjectsQuery } from "@/services/projectQuery"
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
-  const [selectedFilters, setSelectedFilters] = useState<{
-    categories: string[]
-    roles: string[]
-    techStack: string[]
-    ecosystem: string[]
-  }>({
-    categories: [],
+  
+  const [selectedFilters, setSelectedFilters] = useState<ProjectFilters>({
+    category: [],
     roles: [],
-    techStack: [],
+    techStacks: [],
     ecosystem: [],
   })
+  
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [isSearching, setIsSearching] = useState(false)
 
-  const projects = [
-    { id: 1, name: "E-commerce Platform", category: "web_app", tech: ["react", "node_js", "mongodb"] },
-    { id: 2, name: "Mobile Banking App", category: "mobile_app", tech: ["react_native", "typescript", "graphql"] },
-    { id: 3, name: "Data Analytics Dashboard", category: "data_engineering", tech: ["vue", "express", "postgresql"] },
-    { id: 4, name: "AI Image Generator", category: "machine_learning", tech: ["python", "tensorflow", "aws"] },
-    { id: 5, name: "DevOps Pipeline", category: "devops", tech: ["docker", "kubernetes", "terraform"] },
-  ]
-
   
-  const filteredProjects = projects.filter((project) => {
- 
-    if (search && !project.name.toLowerCase().includes(search.toLowerCase())) {
-      return false
-    }
+  const searchParams: ProjectFilters = {
+    ...selectedFilters,
+    search: search || undefined
+  }
+  
+  const { data, isLoading } = useProjectsQuery(searchParams)
 
-    if (selectedFilters.categories.length > 0 && !selectedFilters.categories.includes(project.category)) {
-      return false
-    }
+  const projects = data?.projects || []
+  const totalProjects = data ? new Set(data.projects.map(p => p.id)).size : 0
 
-    if (
-      selectedFilters.techStack.length > 0 &&
-      !project.tech.some((tech) => selectedFilters.techStack.includes(tech))
-    ) {
-      return false
-    }
-
-    return true
-  })
+  const filteredProjects = projects
 
   const toggleFilter = (type: keyof typeof selectedFilters, value: string) => {
     setSelectedFilters((prev) => {
-      const current = [...prev[type]]
+      const current = [...(prev[type] || [])]
       const index = current.indexOf(value)
 
       if (index === -1) {
@@ -71,12 +53,11 @@ export function CommandPalette() {
     })
   }
 
-  // Clear all filters
   const clearFilters = () => {
     setSelectedFilters({
-      categories: [],
+      category: [],
       roles: [],
-      techStack: [],
+      techStacks: [],
       ecosystem: [],
     })
     setSearch("")
@@ -89,7 +70,10 @@ export function CommandPalette() {
       .join(" ")
   }
 
-  const totalSelectedFilters = Object.values(selectedFilters).reduce((acc, filters) => acc + filters.length, 0)
+  const totalSelectedFilters = Object.values(selectedFilters).reduce(
+    (acc, filters) => acc + (filters?.length || 0), 
+    0
+  )
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -115,11 +99,11 @@ export function CommandPalette() {
 
   return (
     <div className="relative">
+
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center w-full ] gap-2 p-2 text-sm text-black  rounded-lg bg-neutral-100  border hover:border-blue-500 transition duration-300 ease-in-out hover:shadow-md cursor-pointer "
+        className="flex items-center w-full gap-2 p-2 text-sm text-black rounded-lg bg-neutral-100 border hover:border-blue-500 transition duration-300 ease-in-out hover:shadow-md cursor-pointer"
       >
-       
         <span>
           Search <kbd className="px-1.5 ml-24 py-0.5 text-md bg-neutral-100 rounded">⌘K</kbd> 
         </span>
@@ -145,15 +129,16 @@ export function CommandPalette() {
               isSearching ? "border-blue-500" : "border-neutral-800"
             }`}
           />
-         
 
           <Command.List className="max-h-[80vh] overflow-y-auto p-2">
-         
-          
-            {totalSelectedFilters > 0 && (
+            {isLoading && (
+              <div className="py-6 text-center text-gray-500">Loading projects...</div>
+            )}
+            
+            {!isLoading && totalSelectedFilters > 0 && (
               <div className="mb-2 flex flex-wrap gap-2 p-2 animate-in fade-in-50 duration-300">
                 {Object.entries(selectedFilters).map(([type, values]) =>
-                  values.map((value) => (
+                  values?.map((value:string) => (
                     <span
                       key={`${type}-${value}`}
                       className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-neutral-800 text-gray-200"
@@ -174,8 +159,7 @@ export function CommandPalette() {
               </div>
             )}
 
-            {search ? (
-             
+            {!isLoading && search ? (
               <>
                 <Command.Group heading="Projects">
                   {filteredProjects.length > 0 ? (
@@ -190,7 +174,7 @@ export function CommandPalette() {
                         </div>
                       ))}
                       <Command.Item className="py-2 px-2 cursor-pointer text-sm text-gray-400 hover:bg-neutral-800 rounded-md transition-colors duration-200">
-                        View all {filteredProjects.length} projects
+                        View all {totalProjects} projects
                       </Command.Item>
                     </>
                   ) : (
@@ -199,21 +183,20 @@ export function CommandPalette() {
                 </Command.Group>
               </>
             ) : (
-           
               <>
                 <Command.Group heading="Filters">
                   <FilterSection
                     title="Project Category"
                     options={projectCategoryEnum}
-                    selected={selectedFilters.categories}
-                    onToggle={(value) => toggleFilter("categories", value)}
-                    isOpen={activeSection === "categories"}
-                    onToggleOpen={() => setActiveSection(activeSection === "categories" ? null : "categories")}
+                    selected={selectedFilters.category || []}
+                    onToggle={(value) => toggleFilter("category", value)}
+                    isOpen={activeSection === "category"}
+                    onToggleOpen={() => setActiveSection(activeSection === "category" ? null : "category")}
                   />
                   <FilterSection
                     title="Roles"
                     options={roleEnum}
-                    selected={selectedFilters.roles}
+                    selected={selectedFilters.roles || []}
                     onToggle={(value) => toggleFilter("roles", value)}
                     isOpen={activeSection === "roles"}
                     onToggleOpen={() => setActiveSection(activeSection === "roles" ? null : "roles")}
@@ -221,28 +204,28 @@ export function CommandPalette() {
                   <FilterSection
                     title="Tech Stack"
                     options={techStackEnum}
-                    selected={selectedFilters.techStack}
-                    onToggle={(value) => toggleFilter("techStack", value)}
-                    isOpen={activeSection === "techStack"}
-                    onToggleOpen={() => setActiveSection(activeSection === "techStack" ? null : "techStack")}
+                    selected={selectedFilters.techStacks || []}
+                    onToggle={(value) => toggleFilter("techStacks", value)}
+                    isOpen={activeSection === "techStacks"}
+                    onToggleOpen={() => setActiveSection(activeSection === "techStacks" ? null : "techStacks")}
                   />
                   <FilterSection
                     title="Ecosystem"
                     options={ecosystemEnum}
-                    selected={selectedFilters.ecosystem}
+                    selected={selectedFilters.ecosystem || []}
                     onToggle={(value) => toggleFilter("ecosystem", value)}
                     isOpen={activeSection === "ecosystem"}
                     onToggleOpen={() => setActiveSection(activeSection === "ecosystem" ? null : "ecosystem")}
                   />
                 </Command.Group>
 
-                {totalSelectedFilters > 0 && (
+                {!isLoading && totalSelectedFilters > 0 && (
                   <div className="mt-4 p-2">
                     <button
                       className="w-full py-2 px-4 bg-neutral-800 hover:bg-neutral-700 text-gray-100 rounded-md text-sm font-medium transition-all duration-300 hover:scale-[1.01]"
                       onClick={() => setSearch(" ")} 
                     >
-                      Show {filteredProjects.length} projects
+                      Show {totalProjects} projects
                     </button>
                   </div>
                 )}

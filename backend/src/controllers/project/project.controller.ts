@@ -51,14 +51,14 @@ export const filterProjects = catchErrors(async (req, res) => {
   }
 });
 export const getAllProjects= catchErrors(async(req,res)=>{
-    const allProjects=await  db.select().from(projects);
+    const allProjects=await  db.select().from(projects).where(eq(projects.status,"published"));
   
     const teckStack= await db.select().from(projectTechStack)
     const role= await db.select().from(projectRoles)
     const result=  allProjects.map((p)=>({
       ...p,
-      teckStack : teckStack.filter((tech)=>p.id === tech.projectId),
-      roles : role.filter((role)=>p.id === role.projectId)
+      techStack : teckStack.filter((tech)=>p.id === tech.projectId).map(t=>t.techStack),
+      roles : role.filter((r)=>p.id === r.projectId)
 
     }))
     

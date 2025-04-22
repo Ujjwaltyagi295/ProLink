@@ -1,7 +1,7 @@
 import "dotenv/config"
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import * as schema from '../models/project.model';
+import { schema } from  '../models/index';
 import { DATABASE_URI } from '../constants/env';
 
 const pool = new pg.Pool({
