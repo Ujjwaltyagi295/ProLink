@@ -1,13 +1,19 @@
 import { ecosystemEnum, projectCategoryEnum, roleEnum, techStackEnum } from "../../models/projectEnums";
 import catchErrors from "../../utils/catchErrors";
-import { searchProjects } from "./filterProject.service";
+import { searchProjects } from "../../services/filterProject.service";
+import { db } from "../../config/db";
+import projectTechStack from "../../models/projectTechStack";
+import projects from "../../models/project.model";
+import { eq, inArray } from "drizzle-orm";
+import { projectRoles } from "../../models/projectRoles";
+import { OK } from "../../constants/http";
 
 export const filterProjects = catchErrors(async (req, res) => {
   try {
     const { 
       search, 
-      category,  // Changed from categories
-      ecosystem, // Changed from ecosystems
+      category,  
+      ecosystem,
       techStacks, 
       roles, 
       page, 
@@ -16,8 +22,8 @@ export const filterProjects = catchErrors(async (req, res) => {
 
     const filters = {
       search: search as string | undefined,
-      category: category ? String(category) as typeof projectCategoryEnum.enumValues[number] : undefined,
-      ecosystem: ecosystem ? String(ecosystem) as typeof ecosystemEnum.enumValues[number] : undefined,
+      category: category ? (Array.isArray(category)?category:[category]).map(String) as typeof projectCategoryEnum.enumValues[number][] : undefined,
+      ecosystem: ecosystem ? (Array.isArray(ecosystem)?ecosystem:[ecosystem]).map(String) as typeof ecosystemEnum.enumValues[number][] : undefined,
       techStacks: techStacks 
         ? (Array.isArray(techStacks) 
             ? techStacks 
@@ -44,3 +50,17 @@ export const filterProjects = catchErrors(async (req, res) => {
     });
   }
 });
+export const getAllProjects= catchErrors(async(req,res)=>{
+    const allProjects=await  db.select().from(projects);
+  
+    const teckStack= await db.select().from(projectTechStack)
+    const role= await db.select().from(projectRoles)
+    const result=  allProjects.map((p)=>({
+      ...p,
+      teckStack : teckStack.filter((tech)=>p.id === tech.projectId),
+      roles : role.filter((role)=>p.id === role.projectId)
+
+    }))
+    
+    return res.status(OK).json(result)
+})

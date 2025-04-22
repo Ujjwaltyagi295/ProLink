@@ -37,7 +37,7 @@ export const myprojects = {
 
   uploadImage: async (image: File): Promise<string> => {
     const formData = new FormData();
-    formData.append("images", image); // If the backend expects "images", keep it as-is
+    formData.append("images", image);
 
     const response = await API.post<{ url: string }>(
       "/myprojects/upload",
@@ -54,14 +54,19 @@ export const myprojects = {
 };
 
 export const projects = {
-  getAllProjects: async () => {
-   const response= await API.get("/projects/");
+  getAllProjects: async ()=> {
+   const response= await API.get("/projects");
    return response.data
   },
-};export interface ProjectFilters {
+};
+
+
+
+
+export interface ProjectFilters {
   search?: string;
-  category?: string; 
-  ecosystem?: string; 
+  category?: string[]; 
+  ecosystem?: string[]; 
   techStacks?: string[];
   roles?: string[];
   page?: number;
@@ -75,6 +80,7 @@ export interface ProjectsResponse {
   limit: number;
   totalPages: number;
 }
+
 
 export async function searchProjects(filters: ProjectFilters): Promise<ProjectsResponse> {
   try {
@@ -103,7 +109,7 @@ export async function searchProjects(filters: ProjectFilters): Promise<ProjectsR
     if (filters.page) params.append('page', filters.page.toString());
     if (filters.limit) params.append('limit', filters.limit.toString());
     
-    const response = await API.get('/projects', { params });
+    const response = await API.get('/projects/filter', { params });
     
     return {
       projects: response.data.projects || [],

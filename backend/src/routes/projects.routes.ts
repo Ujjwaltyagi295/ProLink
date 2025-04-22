@@ -1,9 +1,10 @@
 import express from "express"
 
-import { filterProjects } from "../controllers/project/filterProject.controller"
+import { filterProjects, getAllProjects } from "../controllers/project/project.controller"
 
 const router= express.Router()
 
-router.get("/",filterProjects)
+router.get("/filter",filterProjects)
+router.get("/",getAllProjects)
 
 export default router

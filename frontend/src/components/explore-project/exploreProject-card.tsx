@@ -11,12 +11,12 @@ import { Bookmark } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 
-import { exploreCard } from "@/types/project";
-import { TechStack } from "@/lib/schema";
+import {  ProjectData } from "@/types/project";
+
 import { formatData } from "@/lib/utils";
 
 interface ExploreProjectCardprp {
-  project: exploreCard;
+  project: ProjectData;
   viewMode: "grid" | "list";
 }
 
@@ -30,7 +30,7 @@ export const ExploreProjectCard = ({
   const [effectiveViewMode, setEffectiveViewMode] = useState<"grid" | "list">(
     viewMode
   );
-  const techstack = project.techStacks.length - 3;
+  const techstack = project?.techStack?.length - 3;
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -118,7 +118,7 @@ export const ExploreProjectCard = ({
               </div>
 
               <div className="flex flex-wrap gap-2 mt-1 mb-3">
-                {project?.techStacks.slice(0, 4).map((tech:TechStack, index: number) => (
+                {project?.techStack?.slice(0, 4).map((tech, index: number) => (
                   <Badge
                     key={index}
                     variant="secondary"
@@ -127,12 +127,12 @@ export const ExploreProjectCard = ({
                     {tech}
                   </Badge>
                 ))}
-                {project?.techStacks.length > 4 && (
+                {project?.techStack?.length > 4 && (
                   <Badge
                     variant="secondary"
                     className="px-2 py-0.5 rounded-full text-xs font-medium border bg-neutral-100 text-neutral-600 border-neutral-200"
                   >
-                    {`+${project?.techStacks.length - 4}`}
+                    {`+${project?.techStack?.length - 4}`}
                   </Badge>
                 )}
               </div>
@@ -150,7 +150,7 @@ export const ExploreProjectCard = ({
 
               <div className="flex justify-between items-center mt-1">
                 <div className="text-sm font-medium text-primary">
-                  {project.roles.length} open position{project.roles.length !== 1 ? 's' : ''}
+                  {project?.roles?.length} open position{project?.roles?.length !== 1 ? 's' : ''}
                 </div>
                 <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
                   Apply
@@ -201,7 +201,7 @@ export const ExploreProjectCard = ({
 
           <CardContent className="pt-4 px-4 pb-2">
             <div className="flex flex-wrap gap-2 mb-4">
-              {project.techStacks?.slice(0, 3).map((tech, index) => (
+              {project.techStack?.slice(0, 3).map((tech, index) => (
                 <Badge
                   key={index}
                   variant="secondary"
@@ -237,7 +237,7 @@ export const ExploreProjectCard = ({
           <div className="w-full flex justify-between items-center">
             <div>
               <div className="text-sm font-medium">
-                {project.roles.length} open position{project.roles.length !== 1 ? 's' : ''}
+                {project?.roles?.length} open position{project?.roles?.length !== 1 ? 's' : ''}
               </div>
               <div className="flex gap-4 text-xs text-muted-foreground"></div>
             </div>

@@ -5,27 +5,18 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { Grid, List, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { exploreCard } from "@/types/project";
+import {  ProjectData } from "@/types/project";
 import { SkeletonCard } from "../skeleton-cards";
-import { useProjectsQuery } from "@/services/projectQuery";
-import { ProjectFilters } from "@/lib/api";
+import { useGetAllProjectQuery } from "@/services/projectQuery";
+import { CommandPalette } from "../filtered-project/command-palette";
 
 export const ProjectsSection = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
   const [isMobile, setIsMobile] = useState(false);
-  const [filters,setFilters]= useState<ProjectFilters>({
-    category:"",
-    ecosystem:"",
-    search:"",
-    limit:0,
-    page:1,
-    roles:[],
-    techStacks:[]
-  })
- 
 
-  const {data:getAllProjects,isLoading} = useProjectsQuery(filters)
+ 
+ const {getAllProjects,isLoading}= useGetAllProjectQuery()
 
 
   useEffect(() => {
@@ -33,7 +24,6 @@ export const ProjectsSection = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
-      // Automatically switch to list view on mobile
       if (mobile && viewMode === "grid") {
         setViewMode("list");
       }
@@ -75,10 +65,10 @@ export const ProjectsSection = () => {
           </TabsList>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="px-2">
-              <Search className="h-4 w-4 mr-1" />
-              <span className="text-sm">⌘ K</span>
-            </Button>
+            
+               <CommandPalette />
+              
+         
             <div className="border rounded-md flex">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
@@ -109,13 +99,13 @@ export const ProjectsSection = () => {
                 <SkeletonCard />
                 <SkeletonCard />
               </div>
-            ) : getAllProjects?.projects ? (
+            ) : getAllProjects ? (
               <motion.div
                 key={viewMode}
                 {...fadeMotion}
                 className={getCardContainerClass()}
               >
-                {getAllProjects?.projects.map((project: exploreCard) => (
+                {getAllProjects.map((project: ProjectData) => (
                   <div
                     key={project.id}
                     className={viewMode === "list" ? "w-full" : ""}

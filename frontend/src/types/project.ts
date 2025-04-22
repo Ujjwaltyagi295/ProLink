@@ -98,7 +98,7 @@ export interface Project {
 }
 
 
-export interface exploreCard {
+export interface FilterDataType {
   id: string;
   ownerId: string;
   name: string;
