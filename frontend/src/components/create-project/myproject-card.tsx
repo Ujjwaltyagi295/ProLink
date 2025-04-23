@@ -113,7 +113,9 @@ const {deleteProject}=useMyprojectQuery()
   const maxMembers = project.teamSize || 1;
   const roleProgress = Math.min((members.length / maxMembers) * 100, 100);
   const techStack = project.techStack || [];
-
+  const shortSummary = project.summary.length > 20
+  ? project.summary.slice(0, 50) + '...'
+  : project.summary;
   return (
     <Card
       className="overflow-hidden  cursor-pointer h-full relative hover:shadow-md transition-shadow"
@@ -175,7 +177,7 @@ const {deleteProject}=useMyprojectQuery()
             </div>
             
             <CardDescription className="text-xs line-clamp-2 mt-0.5">
-              {project.summary}
+              {shortSummary}
             </CardDescription>
           </div>
         </div>

@@ -142,6 +142,12 @@ export const publishProject = catchErrors(
       stage: data.stage,
       status: data.status,
       ecosystem: data.ecosystem,
+      applicationProcess:data.applicationProcess,
+      meetingFrequency:data.meetingFrequency,
+      hoursPerWeek:data.hoursPerWeek,
+      timeCommitment:data.timeCommitment,
+      timezonePreference:data.timezonePreference,
+      
       inviteCode: `https://localhost:5132/${slug}`,
       updatedAt: new Date(),
     };

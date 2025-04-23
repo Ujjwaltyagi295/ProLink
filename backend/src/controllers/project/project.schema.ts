@@ -55,30 +55,27 @@ export const projectSchema = z.object({
     "machine_learning", "devops", "blockchain", "game_development", "other"
   ]).optional().nullable(),
   status: z.enum(["draft", "published", "completed", "archived"]),
-  teamSize: z.number().min(2).optional(),
+  teamSize: z.number().min(2),
+  
   ecosystem: z.enum([
     'web', 'mobile', 'cloud', 'data', 'devops', 'ai_ml', 'blockchain', 'iot', 'gaming', 'other',
   ]).optional().nullable(),
   stage: z.enum([
     "Idea", "Planning", "Development", "Testing", "Deployment", "Maintenance"
   ]).optional().nullable(),
-  timeCommitment: z.string().max(30).optional().nullable(),
-  applicationProcess: z.string().optional().nullable(),
-  timezonePreference: z.string().max(50).optional().nullable(),
-  meetingFrequency: z.string().max(30).optional().nullable(),
-  hoursPerWeek: z.number().optional(),
+  timeCommitment: z.string().max(30).nullable(),
+  applicationProcess: z.string().nullable(),
+  timezonePreference: z.string().max(50).nullable(),
+  meetingFrequency: z.string().max(30).nullable(),
+  hoursPerWeek: z.number().nullable(),
   liveUrl: z.union([
     z.literal(""),
     z.null(),
     z.undefined(),
     z.string().url({ message: "Invalid URL" })
-  ]).optional().nullable(),
-  inviteCode: z.string().optional().nullable(),
-  joinLink: z.string().url().optional().nullable(),
-  createdBy: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  roles: z.array(projectRolesSchema).optional(),
+  ]).nullable(),
+  
+  roles: z.array(projectRolesSchema),
   techStack: z.array(z.enum([
     "react", "vue", "angular", "svelte", "next_js", "tailwind", "typescript",
     "node_js", "express", "django", "flask", "spring", "laravel", "ruby_rails",

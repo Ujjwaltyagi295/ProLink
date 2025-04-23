@@ -1,13 +1,11 @@
-import ProjectForm from "@/components/project-form/project-form"
+import ProjectForm from "@/components/project-form/projectForm";
 
 
-export default function ProjectFormPage() {
+export default function NewProjectPage() {
   return (
-    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        
-        <ProjectForm/>
-      </div>
+    <div className="container max-w-5xl py-8">
+      <h1 className="text-2xl font-semibold tracking-tight mb-6">Create New Project</h1>
+      <ProjectForm />
     </div>
   )
 }

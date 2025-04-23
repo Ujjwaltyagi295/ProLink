@@ -7,6 +7,7 @@ import { setNavigate } from "./lib/navigation";
 import { ProjectsPage } from "./pages/projectsPage";
 import { ProjectSearch } from "./components/filters";
 import ProjectDetailPage from "./pages/projectDetailPage";
+import NewProjectPage from "./pages/projectFormPage";
 
 function App() {
   const navigate = useNavigate();
@@ -18,11 +19,11 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/explore"element={<ProjectsPage/>}/>
-      <Route path="/filter" element={<ProjectSearch/>}/>
-      <Route path="/projects/details/" element={<ProjectDetailPage/>}/>
-        <Route path="/dashboard/*" element={<DashboardPage />} />
-       
+      <Route path="/explore" element={<ProjectsPage />} />
+      <Route path="/filter" element={<ProjectSearch />} />
+      <Route path="/test" element={<NewProjectPage />} />
+      <Route path="/projects/details/" element={<ProjectDetailPage />} />
+      <Route path="/dashboard/*" element={<DashboardPage />} />
     </Routes>
   );
 }

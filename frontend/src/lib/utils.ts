@@ -12,7 +12,7 @@ export const formatDate = (iso: string) =>
   })
   export const capitalizeFirst = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  export const formatData = (text: string) =>
+  export const formatData = (text: string ) =>
     (text ?? "").split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
   
   

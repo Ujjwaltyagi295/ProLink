@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ExploreProjectCard } from "../explore-project/exploreProject-card";
 import { Button } from "../ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { Grid, List, Search } from "lucide-react";
+import { Grid, List } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import {  ProjectData } from "@/types/project";
