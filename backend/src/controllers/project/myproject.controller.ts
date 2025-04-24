@@ -204,7 +204,7 @@ export const publishProject = catchErrors(
 );
 export const getProjectsById = catchErrors(async (req, res) => {
   const projectId = req.params.id;
-  
+  appAssert(projectId,UNPROCESSABLE_CONTENT,"Details not found")
   const projectData = await db
     .select()
     .from(projects)

@@ -27,7 +27,15 @@ export const myprojects = {
     return response.data;
   },
 
-  getById: (id: string | undefined) => API.get(`/myprojects/${id}`),
+  getById:async (id: string | undefined) => {
+  try {
+    const response= await API.get(`/projects/${id}`)
+   
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+  },
 
   delete: (id: string | undefined) => API.delete(`/myprojects/${id}`),
 
@@ -72,6 +80,7 @@ export interface ProjectFilters {
   roles?: string[];
   page?: number;
   limit?: number;
+  
 }
 
 export interface ProjectsResponse {

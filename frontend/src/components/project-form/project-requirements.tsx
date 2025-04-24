@@ -191,6 +191,7 @@ export  function ProjectRequirementsForm() {
                   placeholder="e.g., Part-time, Weekends only"
                   {...field}
                   value={field.value || ""}
+                  maxLength={30}
                   className="focus-visible:ring-blue-500 transition-all duration-200"
                 />
               </FormControl>

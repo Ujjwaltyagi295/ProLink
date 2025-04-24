@@ -9,13 +9,14 @@ import { formatData } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
 import { useCallback, useState } from "react";
 import { Upload, X } from "lucide-react";
+import { useFormStore } from "@/store/useProjectStore";
 
 export const ProjectDetailsForm = () => {
-  const { control, setValue } = useFormContext()
+  const { control } = useFormContext()
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
-
+  const setFormData = useFormStore(state => state.setFormData);
   const handleFileChange = useCallback(
     (field: "avatar" | "banner") => (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
@@ -26,28 +27,30 @@ export const ProjectDetailsForm = () => {
         const preview = reader.result as string
         if (field === "avatar") {
           setAvatarPreview(preview)
-          setValue("avatar", file)
+          setFormData({avatarFile:file})
+
         } else {
           setBannerPreview(preview)
-          setValue("banner", file)
+          setFormData({bannerFile:file})
         }
       }
       reader.readAsDataURL(file)
     },
-    [setValue]
+    [setFormData]
   )
 
   const removeFile = useCallback(
     (field: "avatar" | "banner") => {
       if (field === "avatar") {
         setAvatarPreview(null)
-        setValue("avatar", null)
+       setFormData({avatarFile:null})
       } else {
         setBannerPreview(null)
-        setValue("banner", null)
+        
+        setFormData({bannerFile:null})
       }
     },
-    [setValue]
+    [setFormData]
   )
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },

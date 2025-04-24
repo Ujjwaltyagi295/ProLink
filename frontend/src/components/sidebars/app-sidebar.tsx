@@ -36,7 +36,7 @@ const data = {
           icon: (hovered: boolean) => <ProjectIcon isHover={hovered} />,
         },
         {
-          title: "Explore Projects",
+          title: "Inbox",
           url: "/dashboard/projects/find",
           icon: (hovered: boolean) => <ExploreIcon isHover={hovered} />,
         },
@@ -49,7 +49,7 @@ const data = {
       url: "",
       items: [
         {
-          title: "Explore Posts",
+          title: " ",
           url: "/dashboard/community",
           icon: () => <File className="size-4 mr-2" />,
         },

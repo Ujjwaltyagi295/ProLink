@@ -11,9 +11,10 @@ import { Bookmark } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 
-import {  ProjectData } from "@/types/project";
+import { ProjectData } from "@/types/project";
 
 import { formatData } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface ExploreProjectCardprp {
   project: ProjectData;
@@ -30,7 +31,7 @@ export const ExploreProjectCard = ({
   const [effectiveViewMode, setEffectiveViewMode] = useState<"grid" | "list">(
     viewMode
   );
- 
+
   const techstack = project?.techStack?.length - 3;
   useEffect(() => {
     const checkMobile = () => {
@@ -54,31 +55,30 @@ export const ExploreProjectCard = ({
     indigo: "bg-indigo-500",
   };
 
-    const avatarOptions = ["yellow", "blue", "indigo"] as const;
-    const avatarColor =
-      avatarOptions[project.id.charCodeAt(0) % avatarOptions.length];
-    
-    const avatarElement = (
-      <div
-        className={`flex-shrink-0 h-16 w-16 items-center justify-center rounded-md border-4 border-gray-500 overflow-hidden flex ${
-          project.avatar ? "" : avatarColors[avatarColor]
-        }`}
-      >
-        {project.avatar ? (
-          <img
-            src={project.avatar}
-            alt={project.name}
-            className="h-full w-full object-cover object-center"
-          />
-        ) : (
-          <span className="m-auto text-lg font-semibold text-white">
-            {project.name.charAt(0).toUpperCase()}
-          </span>
-        )}
-      </div>
-    );
-    
-    
+  const avatarOptions = ["yellow", "blue", "indigo"] as const;
+  const avatarColor =
+    avatarOptions[project.id.charCodeAt(0) % avatarOptions.length];
+
+  const avatarElement = (
+    <div
+      className={`flex-shrink-0 h-16 w-16 items-center justify-center rounded-md border-4 border-gray-500 overflow-hidden flex ${
+        project.avatar ? "" : avatarColors[avatarColor]
+      }`}
+    >
+      {project.avatar ? (
+        <img
+          src={project.avatar}
+          alt={project.name}
+          className="h-full w-full object-cover object-center"
+        />
+      ) : (
+        <span className="m-auto text-lg font-semibold text-white">
+          {project.name.charAt(0).toUpperCase()}
+        </span>
+      )}
+    </div>
+  );
+
   if (effectiveViewMode === "list") {
     return (
       <Card
@@ -101,16 +101,14 @@ export const ExploreProjectCard = ({
             </Button>
           )}
 
-          <div className="flex-shrink-0 mr-4">
-            {avatarElement}
-          </div>
+          <div className="flex-shrink-0 mr-4">{avatarElement}</div>
 
           <div className="flex-grow">
             <div className="flex flex-col">
               <CardTitle className="text-lg font-bold mb-1">
                 {project.name}
               </CardTitle>
-              
+
               <div className="relative mb-3">
                 <CardDescription className="line-clamp-2 text-sm text-muted-foreground">
                   {project.description}
@@ -140,22 +138,29 @@ export const ExploreProjectCard = ({
 
               <div className="flex flex-wrap gap-5 text-sm mb-4">
                 <div>
-                  <span className="text-muted-foreground font-medium">Team Size:</span>{" "}
+                  <span className="text-muted-foreground font-medium">
+                    Team Size:
+                  </span>{" "}
                   <span className="font-semibold">{project.teamSize}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground font-medium">Created By:</span>{" "}
+                  <span className="text-muted-foreground font-medium">
+                    Created By:
+                  </span>{" "}
                   <span className="font-semibold">{project.createdBy}</span>
                 </div>
               </div>
 
               <div className="flex justify-between items-center mt-1">
                 <div className="text-sm font-medium text-primary">
-                  {project?.roles?.length} open position{project?.roles?.length !== 1 ? 's' : ''}
+                  {project?.roles?.length} open position
+                  {project?.roles?.length !== 1 ? "s" : ""}
                 </div>
-                <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
-                  Apply
-                </Button>
+                <Link to={`/projects/details/${project.id}`}>
+                  <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
+                    Apply
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -170,7 +175,7 @@ export const ExploreProjectCard = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-col h-full">
-        {/* Top section with content */}
+     
         <div className="flex-grow overflow-hidden">
           <CardHeader className="flex flex-row items-start gap-4 pb-2 pt-4 px-4">
             {avatarElement}
@@ -238,13 +243,16 @@ export const ExploreProjectCard = ({
           <div className="w-full flex justify-between items-center">
             <div>
               <div className="text-sm font-medium">
-                {project?.roles?.length} open position{project?.roles?.length !== 1 ? 's' : ''}
+                {project?.roles?.length} open position
+                {project?.roles?.length !== 1 ? "s" : ""}
               </div>
               <div className="flex gap-4 text-xs text-muted-foreground"></div>
             </div>
-            <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
-              Apply 
-            </Button>
+            <Link to={`/projects/details/${project.id}`}>
+                  <Button className="border-blue-500 cursor-pointer  bg-white text-blue-500 border hover:text-white hover:bg-blue-500">
+                    Apply
+                  </Button>
+                </Link>
           </div>
         </CardFooter>
       </div>

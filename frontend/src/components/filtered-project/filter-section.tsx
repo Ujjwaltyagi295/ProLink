@@ -1,4 +1,4 @@
-"use client"
+
 import { ChevronDown, Check, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 

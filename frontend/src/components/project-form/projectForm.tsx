@@ -18,6 +18,7 @@ import { ProjectRequirementsForm } from "./project-requirements";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
 import { useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { myprojects } from "@/lib/api";
 
 const steps = [
   { id: "details", title: "Project Details" },
@@ -42,9 +43,19 @@ export default function ProjectForm() {
   const createProject = async (data: z.infer<typeof projectSchema>) => {
     console.log("Form submitted with data:", data);
     setIsSaving(true);
+   
     try {
+      let avatarUrl 
+      let bannerUrl
+      if(projectData.avatarFile){
+      avatarUrl=  await myprojects.uploadImage(projectData.avatarFile)
+
+      }
+      if(projectData.bannerFile){
+         bannerUrl=  await myprojects.uploadImage(projectData.bannerFile)
+        }
       if (id) {
-        updateProject({ ...data, status: "published", id: id });
+        updateProject({ ...data, status: "published", id: id ,banner:bannerUrl,avatar:avatarUrl});
       }
 
       form.reset();
@@ -81,6 +92,8 @@ export default function ProjectForm() {
     switch (currentStep) {
       case 0:
         return formData.description && formData.category;
+       case 1:
+        return formData.roles && formData.roles.length>0
       default:
         return true;
     }
@@ -234,6 +247,7 @@ export default function ProjectForm() {
               ) : (
                 <Button
                   type="submit"
+              
                   className="bg-blue-600 hover:bg-blue-700 transition-all duration-200"
                 >
                   {isSaving ? (

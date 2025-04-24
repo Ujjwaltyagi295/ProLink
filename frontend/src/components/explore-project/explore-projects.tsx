@@ -1,12 +1,11 @@
 import HeroSection from "./explore-hero";
-import { Navbar } from "../navbar";
+
 
 import { ProjectsSection } from "./project-section";
 import ExtensionCards from "./featured-cards";
 export const ExploreProjects = () => {
   return (
     <div>
-      <Navbar />
       <div className="flex min-h-screen flex-col">
         <HeroSection />
         <section className="min-h-screen bg-zinc-50   text-black p-8">

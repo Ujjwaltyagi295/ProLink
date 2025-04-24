@@ -14,7 +14,6 @@ const sortableColumns = {
   name: projects.name,
   createdAt: projects.createdAt,
   updatedAt: projects.updatedAt,
- 
 } as const;
 
 type SortableColumn = keyof typeof sortableColumns;
@@ -29,6 +28,7 @@ export type filterPr = {
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
+  viewAllMode?:boolean
 };
 
 export type ProjectWithRelations = Project & {
@@ -49,11 +49,12 @@ export async function searchProjects(filters: filterPr): Promise<{
     sortBy = "createdAt",
     sortOrder = "desc",
     page = 1,
-    limit = 10
+    limit = 10,
+  
   } = filters;
 
   page = page >= 1 ? page : 1;
-
+  
   const whereConditions = [];
   if (search?.trim()) {
     whereConditions.push(
@@ -64,42 +65,43 @@ export async function searchProjects(filters: filterPr): Promise<{
       )
     );
   }
-  const filteredIds = await getFilteredProjectIds(techStacks, roles,category,ecosystem);
-  if (filteredIds?.length) {
-    whereConditions.push(inArray(projects.id, filteredIds));
-  } else if (filteredIds?.length === 0) {
+
+  if (category?.length) {
+    whereConditions.push(inArray(projects.category, category));
+  }
+
+  if (ecosystem?.length) {
+    whereConditions.push(inArray(projects.ecosystem, ecosystem));
+  }
+  const filteredProjectIdsPromise = getFilteredProjectIds(techStacks, roles)
+  const [filteredProjectIds] = await Promise.all([filteredProjectIdsPromise])
+
+
+  if (filteredProjectIds?.length) {
+    whereConditions.push(inArray(projects.id, filteredProjectIds));
+  } else if (filteredProjectIds?.length === 0 && (techStacks?.length || roles?.length)) {
     return { projects: [], total: 0 };
   }
 
-  const finalWhereClause: SQL | undefined = whereConditions.length > 0 
-    ? and(...whereConditions) 
+  const finalWhereClause: SQL | undefined = whereConditions.length > 0
+    ? and(...whereConditions)
     : undefined;
 
   return fetchResultsWithRelations(finalWhereClause, page, limit, sortBy, sortOrder);
 }
-
 async function getFilteredProjectIds(
   techStacks?: TechStack[],
   roles?: Role[],
-  category?: Category[],
-  ecosystem?: Ecosystem[]
-): Promise<string[] | undefined> {
-  let filteredIds: string[] | undefined;
-  if(category?.length){
-    const categoryResults= await db.select({projectId:projects.id}).from(projects).where(inArray(projects.category,category))
-    filteredIds= categoryResults.map(r=>r.projectId)
-  }
-  if(ecosystem?.length){
-    const ecosystemResult = await db.select({projectId:projects.id}).from(projects).where(inArray(projects.ecosystem,ecosystem))
-    filteredIds= ecosystemResult.map(r=>r.projectId)
-  }
 
+): Promise<string[] | undefined> {
+  let techStackProjectIds: string[] | undefined;
+  let roleProjectIds: string[] | undefined;
   if (techStacks?.length) {
     const techResults = await db
       .select({ projectId: projectTechStack.projectId })
       .from(projectTechStack)
       .where(inArray(projectTechStack.techStack, techStacks));
-    filteredIds = techResults.map(r => r.projectId);
+    techStackProjectIds = techResults.map(r => r.projectId);
   }
 
   if (roles?.length) {
@@ -107,13 +109,19 @@ async function getFilteredProjectIds(
       .select({ projectId: projectRoles.projectId })
       .from(projectRoles)
       .where(inArray(projectRoles.role, roles));
-    const roleProjectIds = roleResults.map(r => r.projectId);
-    filteredIds = filteredIds
-      ? filteredIds.filter(id => roleProjectIds.includes(id))
-      : roleProjectIds;
+    roleProjectIds = roleResults.map(r => r.projectId);
   }
-
-  return filteredIds;
+  if (techStackProjectIds && roleProjectIds) {
+    // Find the intersection of techStackProjectIds and roleProjectIds
+    return techStackProjectIds.filter(id => roleProjectIds?.includes(id));
+  } else if (techStackProjectIds) {
+    return techStackProjectIds;
+  } else if (roleProjectIds) {
+    return roleProjectIds
+  }
+  else {
+    return undefined
+  }
 }
 
 async function fetchResultsWithRelations(
@@ -133,13 +141,12 @@ async function fetchResultsWithRelations(
   const projectResults: Project[] = await db
     .select()
     .from(projects)
-    .where(and(whereClause,eq(projects.status,"published")))
+    .where(and(whereClause, eq(projects.status, "published")))
     .orderBy(
       sortOrder === "asc"
         ? sortableColumns[sortBy]
         : desc(sortableColumns[sortBy])
     )
-    
     .limit(limit)
     .offset((page - 1) * limit);
 

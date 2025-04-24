@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { projects, searchProjects, type ProjectFilters } from '@/lib/api';
+import {  projects, searchProjects, type ProjectFilters } from '@/lib/api';
 
 export function useProjectsQuery(filters: ProjectFilters) {
   const queryKey = ['projects', {
@@ -35,9 +35,11 @@ export const useGetAllProjectQuery=()=>{
       staleTime:1000 * 60 * 5,
       refetchOnWindowFocus: false
   })
+  
   return {
     getAllProjects:getAllProjectQuery.data,
     isLoading:getAllProjectQuery.isLoading,
-    isError:getAllProjectQuery.isError
+    isError:getAllProjectQuery.isError,
+
   }
 }

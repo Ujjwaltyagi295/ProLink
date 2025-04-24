@@ -1,206 +1,264 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronDown, Download, ExternalLink, Github, Link2, MessageSquare, Plus, Share2 } from "lucide-react"
+import React, { Suspense } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ExternalLink, Link, MessageSquare, Share2 } from "lucide-react";
+const ProjectRequirements = React.lazy(
+  () => import("@/components/project-details/project-requirements")
+);
 
-import { ProjectRequirements } from "@/components/project-details/project-requirements"
-import { ProjectTeam } from "@/components/project-details/project-teams"
+const ProjectTeam = React.lazy(
+  () => import("@/components/project-details/project-teams")
+);
+import { RoleCard } from "@/components/project-details/role-card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { myprojects } from "@/lib/api";
+import type { ProjectResData } from "@/types/project";
 
+import LoadingSpinner from "@/components/loadingSpiner";
+import { formatData } from "@/lib/utils";
+import { ProjectSkeleton } from "@/components/skeleton-cards";
 
-export default function ProjectDetailPage() {
+export function ProjectDetailPage() {
+  const { id } = useParams();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["getbyid", id],
+    queryFn: () => myprojects.getById(id),
+    enabled: !!id,
+  });
+
+  const project: ProjectResData = data;
+
+  const handleApplyForRole = (role: string) => {
+    console.log(`Applying for role: ${role}`);
+  };
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError || !project)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Project not found
+      </div>
+    );
+  const avatarColors = {
+    yellow: "bg-amber-500",
+    blue: "bg-blue-500",
+    indigo: "bg-indigo-500",
+  };
+
+  const avatarOptions = ["yellow", "blue", "indigo"] as const;
+  const avatarColor =
+    avatarOptions[project.project.id.charCodeAt(0) % avatarOptions.length];
+
+  const avatarElement = (
+    <div
+      className={`flex-shrink-0 h-24 w-24 items-center justify-center rounded-md border-4 border-gray-500 overflow-hidden flex ${
+        project.project.avatar ? "" : avatarColors[avatarColor]
+      }`}
+    >
+      {project.project.avatar ? (
+        <img
+          loading="lazy"
+          src={project.project.avatar}
+          alt={project.project.name}
+          className="h-full w-full object-cover object-center"
+        />
+      ) : (
+        <span className="m-auto text-lg font-semibold text-white">
+          {project.project.name.charAt(0).toUpperCase()}
+        </span>
+      )}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-white">
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content - 2/3 width on desktop */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Project Header */}
-            <div className="flex flex-col md:flex-row gap-6 items-start">
-              <div className="bg-gray-100 p-4 rounded-xl w-24 h-24 flex items-center justify-center shrink-0">
-                <img
-                  src="/placeholder.svg?height=80&width=80"
-                  alt="Keyboard Win Mac Switch icon"
-                  width={80}
-                  height={80}
-                  className="rounded-md"
-                />
-              </div>
+    <div>
+      <div className="min-h-screen bg-white">
+        <main className="container mx-auto mt-24 px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <div className="flex flex-col md:flex-row gap-6 items-start">
+                <div className=" w-24 h-24 flex items-center justify-center shrink-0">
+                  {avatarElement}
+                </div>
 
-              <div className="flex-1 space-y-2">
-                <h1 className="text-2xl font-bold">Keyboard Win Mac Switch</h1>
-                <p className="text-gray-600">This extension allows you to switch alt and window keys</p>
+                <div className="flex-1 space-y-2">
+                  <h1 className="text-2xl font-bold">{project.project.name}</h1>
+                  <p className="text-gray-600">{project.project.summary}</p>
 
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src="/placeholder.svg?height=24&width=24" alt="@fab_uleuh" />
-                      <AvatarFallback>FU</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm text-gray-600">fab_uleuh</span>
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={"/placeholder.svg"} alt={""} />
+                        <AvatarFallback>
+                          {project.project.createdBy.slice(0, 1).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm text-gray-600">
+                        {project.project.createdBy}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-gray-600 font-semibold">
+                        {project.roles &&
+                          project.roles.reduce(
+                            (total, role) => total + role.count,
+                            0
+                          )}{" "}
+                        Open Positions
+                      </span>
+                    </div>
                   </div>
+                </div>
 
-                  <div className="flex items-center gap-1">
-                    <Download className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">135 Installs</span>
-                  </div>
+                <div className="flex gap-2">
+                  <Button>Apply now</Button>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button>Apply now</Button>
-                <Button variant="outline" size="icon">
-                  <ChevronDown className="h-4 w-4" />
+              <Tabs defaultValue="overview">
+                <TabsList className="bg-gray-100 rounded-full p-1">
+                  <TabsTrigger
+                    value="overview"
+                    className=" cursor-pointer rounded-full"
+                  >
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="requirements"
+                    className="cursor-pointer rounded-full"
+                  >
+                    Requirements
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="team"
+                    className=" cursor-pointer rounded-full"
+                  >
+                    Team
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent
+                  value="overview"
+                  className="mt-6 space-y-6 animate-in fade-in-50 duration-300"
+                >
+                 <Suspense fallback={<ProjectSkeleton/>}>
+                 <div>
+                    <h2 className="text-3xl font-bold mb-4">
+                      {project.project.name}
+                    </h2>
+
+                    <p className="text-gray-700 mb-6">
+                      {project.project.description}
+                    </p>
+                    {project.project.banner && (
+                      <div className="space-y-4  h-[30%] w-[90%] ">
+                        <img
+                          loading="lazy"
+                          className="h-full w-full rounded-md object-cover object-center border-2 rouned-2xl border-neutral-300 "
+                          src={`${project.project.banner}`}
+                          alt={`${project.project.name}`}
+                        />
+                      </div>
+                    ) }
+                  </div>
+                 </Suspense>
+                </TabsContent>
+
+                <TabsContent value="requirements" className="mt-6">
+                  <Suspense fallback={<ProjectSkeleton />}>
+                    <ProjectRequirements />
+                    <div className="mt-8 space-y-4">
+                      <h3 className="text-xl font-semibold">Open Roles</h3>
+                      <div className="grid grid-cols-1  gap-6">
+                        {project.roles &&
+                          project.roles.map((role) => (
+                            <RoleCard
+                              key={role.id}
+                              role={role}
+                              onApply={() => handleApplyForRole(role.role)}
+                            />
+                          ))}
+                      </div>
+                    </div>
+                  </Suspense>
+                </TabsContent>
+
+                  <TabsContent value="team" className="mt-6">
+                  <Suspense fallback={<ProjectSkeleton/>}>
+                  <ProjectTeam member={project.members} />
+                  </Suspense>
+                  </TabsContent>
+            
+              </Tabs>
+            </div>
+
+            <div className="space-y-8 ">
+              <div className="bg-gray-50 p-6 rounded-xl border   hover:border-blue-500 transition duration-300 ease-in-out">
+                <h3 className="text-lg font-medium mb-4"> TechStack</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.techStack &&
+                    project.techStack.map((category, idx) => (
+                      <Badge
+                        key={idx}
+                        variant="secondary"
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800"
+                      >
+                        {formatData(category)}
+                      </Badge>
+                    ))}
+                </div>
+
+                <h3 className="text-lg mt-5  font-medium mb-4">Positions</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.roles &&
+                    project.roles.map((role, idx) => (
+                      <Badge
+                        key={idx}
+                        variant="secondary"
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800"
+                      >
+                        {formatData(role.role)}
+                      </Badge>
+                    ))}
+                </div>
+              </div>
+
+              {project.project.liveUrl && (
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-medium mb-4">LiveUrl</h3>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() =>
+                      window.open(project.project.liveUrl, "_blank")
+                    }
+                  >
+                    <Link className="mr-2 h-4 w-4" />
+                    View LiveLink
+                    <ExternalLink className="ml-auto h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+
+              <div className="bg-gray-50 p-6 rounded-xl space-y-3">
+                <Button variant="outline" className="w-full justify-start">
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Contact Owner
+                </Button>
+
+                <Button variant="outline" className="w-full justify-start">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share
                 </Button>
               </div>
             </div>
-
-            {/* Tabs Navigation */}
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="bg-gray-100 rounded-full p-1">
-                <TabsTrigger value="overview" className="rounded-full">
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger value="requirements" className="rounded-full">
-                  Requirements
-                </TabsTrigger>
-                <TabsTrigger value="team" className="rounded-full">
-                  Team
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Overview Tab Content */}
-              <TabsContent value="overview" className="mt-6 space-y-6 animate-in fade-in-50 duration-300">
-                <div>
-                  <h2 className="text-3xl font-bold mb-4">Keyboard Win Mac switch</h2>
-                  <p className="text-gray-700 mb-6">
-                    This Raycast extension allows you to switch alt and window keys, making it easier for users who work
-                    across different operating systems to maintain consistent keyboard shortcuts.
-                  </p>
-
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-semibold">Features</h3>
-                    <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                      <li>Seamlessly switch between Windows and Mac keyboard layouts</li>
-                      <li>Customize key mappings to your preference</li>
-                      <li>Automatically detect and apply settings based on connected keyboards</li>
-                      <li>Low system resource usage</li>
-                      <li>Works with all major applications</li>
-                    </ul>
-                  </div>
-
-                  <div className="mt-8 space-y-4">
-                    <h3 className="text-xl font-semibold">How it works</h3>
-                    <p className="text-gray-700">
-                      The extension intercepts keyboard inputs and remaps them according to your configuration. This is
-                      particularly useful for users who frequently switch between Windows and Mac environments and want
-                      to maintain muscle memory for keyboard shortcuts.
-                    </p>
-                  </div>
-                </div>
-
-             
-              </TabsContent>
-
-              {/* Requirements Tab Content */}
-              <TabsContent value="requirements" className="mt-6">
-                <ProjectRequirements />
-              </TabsContent>
-
-              {/* Team Tab Content */}
-              <TabsContent value="team" className="mt-6">
-                <ProjectTeam />
-              </TabsContent>
-            </Tabs>
           </div>
-
-          {/* Sidebar - 1/3 width on desktop */}
-          <div className="space-y-8">
-            {/* Categories */}
-            <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="text-lg font-medium mb-4">Categories</h3>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-800">
-                  System
-                </Badge>
-                <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-800">
-                  Productivity
-                </Badge>
-                <Badge variant="secondary" className="bg-gray-100 hover:bg-gray-200 text-gray-800">
-                  Utilities
-                </Badge>
-              </div>
-            </div>
-
-            {/* Source Code */}
-            <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="text-lg font-medium mb-4">Source code</h3>
-              <Button variant="outline" className="w-full justify-start">
-                <Github className="mr-2 h-4 w-4" />
-                View source
-                <ExternalLink className="ml-auto h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Actions */}
-            <div className="bg-gray-50 p-6 rounded-xl space-y-3">
-              <Button variant="outline" className="w-full justify-start">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Report Bug
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Plus className="mr-2 h-4 w-4" />
-                Request Feature
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Link2 className="mr-2 h-4 w-4" />
-                Copy URL
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Share2 className="mr-2 h-4 w-4" />
-                Share
-              </Button>
-            </div>
-
-            {/* People also like */}
-            <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="text-lg font-medium mb-4">People also like</h3>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <Card key={i} className="overflow-hidden">
-                    <CardContent className="p-3">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-gray-100 p-2 rounded-md">
-                          <img
-                            src={`/placeholder.svg?height=32&width=32&text=${i}`}
-                            alt={`Similar project ${i}`}
-                            width={32}
-                            height={32}
-                            className="rounded-sm"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-sm truncate">
-                            {i === 1 ? "Keyboard Maestro" : i === 2 ? "Key Mapper Pro" : "Shortcut Sync"}
-                          </h4>
-                          <p className="text-xs text-gray-500 truncate">
-                            {i === 1
-                              ? "Advanced keyboard customization"
-                              : i === 2
-                                ? "Remap any key on your keyboard"
-                                : "Sync shortcuts across devices"}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
-  )
+  );
 }

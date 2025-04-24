@@ -15,7 +15,7 @@ export const Navbar = () => {
       submenu: [
         {
           subTitle: "Explore Projects",
-          path: "/dashboard/projects/",
+          path: "/explore",
           description: "Access and manage your projects",
         },
         {

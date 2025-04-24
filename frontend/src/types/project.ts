@@ -60,7 +60,7 @@ export interface ProjectResData {
     createdAt: string;
     updatedAt: string;
   };
-  role: {
+  roles: {
     id: string;
     projectId: string;
     role: string;
@@ -119,4 +119,5 @@ export interface FilterDataType {
   updatedAt: string;
   techStacks :TechStack[],
   roles: Role[]
+  
 }

@@ -1,4 +1,3 @@
-"use client"
 
 import * as React from "react"
 import { X, Maximize2, Minimize2, Users, BarChart, FileText, MessageSquare, Check, XIcon } from "lucide-react"

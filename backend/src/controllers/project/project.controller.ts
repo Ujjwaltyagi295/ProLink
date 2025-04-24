@@ -17,27 +17,36 @@ export const filterProjects = catchErrors(async (req, res) => {
       techStacks, 
       roles, 
       page, 
-      limit 
+      limit,
+    
     } = req.query;
 
+    // Proper type conversion and array handling
     const filters = {
       search: search as string | undefined,
-      category: category ? (Array.isArray(category)?category:[category]).map(String) as typeof projectCategoryEnum.enumValues[number][] : undefined,
-      ecosystem: ecosystem ? (Array.isArray(ecosystem)?ecosystem:[ecosystem]).map(String) as typeof ecosystemEnum.enumValues[number][] : undefined,
+      category: category 
+        ? (Array.isArray(category) ? category : [category])
+            .filter(Boolean)
+            .map(String) as typeof projectCategoryEnum.enumValues[number][]
+        : undefined,
+      ecosystem: ecosystem 
+        ? (Array.isArray(ecosystem) ? ecosystem : [ecosystem])
+            .filter(Boolean)
+            .map(String) as typeof ecosystemEnum.enumValues[number][]
+        : undefined,
       techStacks: techStacks 
-        ? (Array.isArray(techStacks) 
-            ? techStacks 
-            : [techStacks]
-          ).map(String) as typeof techStackEnum.enumValues[number][] 
+        ? (Array.isArray(techStacks) ? techStacks : [techStacks])
+            .filter(Boolean)
+            .map(String) as typeof techStackEnum.enumValues[number][]
         : undefined,
       roles: roles 
-        ? (Array.isArray(roles) 
-            ? roles 
-            : [roles]
-          ).map(String) as typeof roleEnum.enumValues[number][] 
+        ? (Array.isArray(roles) ? roles : [roles])
+            .filter(Boolean)
+            .map(String) as typeof roleEnum.enumValues[number][]
         : undefined,
       page: page ? parseInt(page as string, 10) : 1,
       limit: limit ? parseInt(limit as string, 10) : 10,
+     
     };
 
     const results = await searchProjects(filters);
@@ -50,17 +59,26 @@ export const filterProjects = catchErrors(async (req, res) => {
     });
   }
 });
-export const getAllProjects= catchErrors(async(req,res)=>{
-    const allProjects=await  db.select().from(projects).where(eq(projects.status,"published"));
-  
-    const teckStack= await db.select().from(projectTechStack)
-    const role= await db.select().from(projectRoles)
-    const result=  allProjects.map((p)=>({
-      ...p,
-      techStack : teckStack.filter((tech)=>p.id === tech.projectId).map(t=>t.techStack),
-      roles : role.filter((r)=>p.id === r.projectId)
 
-    }))
+export const getAllProjects = catchErrors(async (req, res) => {
+  const allProjects = await db.select()
+    .from(projects)
+    .where(eq(projects.status, "published"));
+
+  const [techStacks, roles] = await Promise.all([
+    db.select().from(projectTechStack),
+    db.select().from(projectRoles)
+  ]);
+
+  const result = allProjects.map((p) => ({
+    ...p,
+    techStack: techStacks
+      .filter((tech) => p.id === tech.projectId)
+      .map(t => t.techStack),
+    roles: roles
+      .filter((r) => p.id === r.projectId)
+      .map(r => r.role)
+  }));
     
-    return res.status(OK).json(result)
-})
+  return res.status(OK).json(result);
+});

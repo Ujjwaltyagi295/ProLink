@@ -67,7 +67,7 @@ export const projectSchema = z.object({
   applicationProcess: z.string().nullable(),
   timezonePreference: z.string().max(50).nullable(),
   meetingFrequency: z.string().max(30).nullable(),
-  hoursPerWeek: z.number().nullable(),
+  hoursPerWeek: z.number().nullable().optional(),
   liveUrl: z.union([
     z.literal(""),
     z.null(),
