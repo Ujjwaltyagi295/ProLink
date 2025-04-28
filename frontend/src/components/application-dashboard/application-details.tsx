@@ -1,70 +1,94 @@
-import { Link, useParams } from "react-router-dom"
-import { ArrowLeft, Calendar, CheckCircle, XCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ApplicationAttachments } from "./application-files"
+import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Calendar, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ApplicationAttachments } from "./application-files";
+import { useGetApplicationByIdQuery } from "@/services/myProjectQuery";
+import { Project } from "@/types/project";
+import { ProjectSkeleton } from "../skeleton-cards";
+import { formatData, formatDate } from "@/lib/utils";
+import { RoleFormData } from "@/store/useProjectStore";
 
-
-// Mock data for a single application
-const getApplication = (id: string | undefined) => {
-  return {
-    id,
-    name: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    project: "Website Redesign",
-    role: "UI/UX Designer",
-    date: "Mar 15, 2025",
-    status: "pending",
-    avatar: "/placeholder.svg?height=80&width=80",
-    resume: "alex_johnson_resume.pdf",
-    joinReason:
-      "I'm excited about this project because it aligns perfectly with my experience in creating user-centered designs. I've worked on similar website redesigns for companies in the same industry, and I believe my approach to UX research and UI implementation would be valuable to your team. I'm particularly interested in the challenge of balancing modern design trends with accessibility and usability principles.",
-    skills: ["UI Design", "UX Research", "Figma", "Adobe XD", "Prototyping", "User Testing"],
-    experience: "5 years",
-    availability: "Immediate",
-    trackedTime: "0h 0m",
-  }
+interface applicationData {
+  project: Project;
+  application: {
+    id: string;
+    roleId: string;
+    projectId: string;
+    fullName: string;
+    userId: string;
+    email: string;
+    joinReason: string;
+    resumeUrl: string;
+    status: string;
+    createdAt: string;
+  };
+  role: RoleFormData;
 }
 
-export default function ApplicationPage( ) {
-  const {id}= useParams()
-  const application= getApplication(id)
+export default function ApplicationPage() {
+  const { id } = useParams();
+  const { data, isError, isLoading } = useGetApplicationByIdQuery(id);
+  const res = data as applicationData;
+
+  if (isLoading) {
+    return <ProjectSkeleton />;
+  }
+  if (isError) {
+    return <div>Something went wrong</div>;
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen ">
       <div className="container mx-auto py-6 max-w-5xl">
         <div className="mb-6">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/" className="flex items-center gap-1 text-slate-700">
+            <Link
+              to="/dashboard/applications"
+              className="flex items-center gap-1 text-slate-700"
+            >
               <ArrowLeft className="h-4 w-4" /> Back to Applications
             </Link>
           </Button>
         </div>
 
         <div className="bg-white rounded-xl border shadow-sm">
-          <div className="p-6">
-            <div className="flex items-start justify-between">
+          <div className="p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex items-start gap-4">
                 <Avatar className="h-16 w-16 border">
-                  <AvatarImage src={application.avatar || "/placeholder.svg"} alt={application.name} />
-                  <AvatarFallback>{application.name.substring(0, 2)}</AvatarFallback>
+                  <AvatarImage
+                    src={"/placeholder.svg"}
+                    alt={res.application.fullName}
+                  />
+                  <AvatarFallback>
+                    {res.application.fullName.substring(0, 2)}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-800">{application.name}</h1>
-                  <p className="text-slate-500">{application.email}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="secondary">{application.role}</Badge>
-                    <Badge variant="outline">{application.project}</Badge>
-                    {application.status === "pending" && (
-                      <Badge variant="outline" className="bg-slate-100 text-slate-700 border-slate-200">
+                  <h1 className="text-2xl font-bold text-slate-800">
+                    {res.application.fullName}
+                  </h1>
+                  <p className="text-slate-500 break-all">
+                    {res.application.email}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <Badge variant="outline">{res.project.name}</Badge>
+                    <Badge variant="outline">{formatData(res.role.role)}</Badge>
+                    {res.application.status === "pending" && (
+                      <Badge
+                        variant="outline"
+                        className="bg-slate-100 text-slate-700 border-slate-200"
+                      >
                         Pending
                       </Badge>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
                 <Button variant="outline" className="gap-2">
                   <XCircle className="h-4 w-4" /> Reject
                 </Button>
@@ -80,70 +104,69 @@ export default function ApplicationPage( ) {
 
           <Separator />
 
-          <div className="grid grid-cols-3 gap-6 p-6">
-            <div className="col-span-2 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 md:p-6">
+            <div className="md:col-span-2 space-y-6">
               <div>
-                <h2 className="text-lg font-semibold text-slate-800 mb-2">Reason for Joining</h2>
-                <p className="text-slate-600">{application.joinReason}</p>
+                <h2 className="text-lg font-semibold text-slate-800 mb-2">
+                  Reason for Joining
+                </h2>
+                <p className="text-slate-600">{res.application.joinReason}</p>
               </div>
 
-              <div>
-                <h2 className="text-lg font-semibold text-slate-800 mb-2">Skills</h2>
-                <div className="flex flex-wrap gap-2">
-                  {application.skills.map((skill) => (
-                    <Badge key={skill} variant="secondary">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <ApplicationAttachments />
+              <ApplicationAttachments resumeUrl={res.application.resumeUrl} />
             </div>
 
             <div className="space-y-6">
               <div className="bg-slate-50 rounded-lg p-4">
-                <h2 className="text-sm font-medium mb-4 text-slate-700">Application Details</h2>
+                <h2 className="text-sm font-medium mb-4 text-slate-700">
+                  Application Details
+                </h2>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Status</span>
-                    <span className="font-medium capitalize text-slate-800">{application.status}</span>
+                    <span className="font-medium capitalize text-slate-800">
+                      {res.application.status}
+                    </span>
                   </div>
+
                   <Separator />
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Date Applied</span>
-                    <span className="font-medium text-slate-800">{application.date}</span>
+                    <span className="text-slate-500">Applied For</span>
+                    <span className="font-medium text-slate-800">
+                      {formatData(res.role.role)}
+                    </span>
                   </div>
+
                   <Separator />
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Experience</span>
-                    <span className="font-medium text-slate-800">{application.experience}</span>
+                    <span className="font-medium text-slate-800">
+                      {formatData(res.role.experienceLevel)}
+                    </span>
                   </div>
                   <Separator />
+
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Availability</span>
-                    <span className="font-medium text-slate-800">{application.availability}</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Tracked time</span>
-                    <span className="font-medium text-slate-800">{application.trackedTime}</span>
+                    <span className="text-slate-500">Date Applied</span>
+                    <span className="font-medium text-slate-800">
+                      {formatDate(res.application.createdAt)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="bg-slate-50 rounded-lg p-4">
-                <h2 className="text-sm font-medium mb-4 text-slate-700">Project Information</h2>
+                <h2 className="text-sm font-medium mb-4 text-slate-700">
+                  Project Information
+                </h2>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Project</span>
-                    <span className="font-medium text-slate-800">{application.project}</span>
+                    <span className="font-medium text-slate-800">
+                      {res.project.name}
+                    </span>
                   </div>
                   <Separator />
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Role</span>
-                    <span className="font-medium text-slate-800">{application.role}</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -151,5 +174,5 @@ export default function ApplicationPage( ) {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,22 +1,12 @@
-"use client"
+
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ArrowDown, ArrowUp, CheckCircle, Clock, XCircle } from "lucide-react"
 import { motion } from "framer-motion"
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts"
+import { useMyprojectQuery } from "@/services/myProjectQuery"
+import { ProjectData } from "@/types/project"
 
-// Mock data for statistics
-const stats = {
-  total: 145,
-  pending: 37,
-  accepted: 89,
-  rejected: 19,
-  totalTrend: 12, // percentage increase
-  pendingTrend: -5, // percentage decrease
-  acceptedTrend: 8, // percentage increase
-  rejectedTrend: -2, // percentage decrease
-}
 
 const weeklyData = [
   { name: "Jun 1", total: 12, accepted: 7 },
@@ -38,6 +28,17 @@ export function StatisticsPanel() {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   }
+const {projects}=useMyprojectQuery()
+
+const data= projects as ProjectData[]
+const totalApplications = data.reduce(
+  (sum, group) => sum + group.applications.length,
+  0
+);
+
+const pendingApplications = (data.map((p)=>p.applications.filter((a)=>a.status==="pending"))).reduce((sum,group)=>sum+group.length,0)
+const acceptedApplication = (data.map((p)=>p.applications.filter((a)=>a.status==="accepted"))).reduce((sum,group)=>sum+group.length,0)
+const rejectApplication = (data.map((p)=>p.applications.filter((a)=>a.status==="rejected"))).reduce((sum,group)=>sum+group.length,0)
 
   return (
     <motion.div
@@ -56,14 +57,14 @@ export function StatisticsPanel() {
         <Card className="overflow-hidden border-slate-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-slate-50">
             <CardTitle className="text-sm font-medium text-slate-700">Total Applications</CardTitle>
-            <div className={`flex items-center text-xs ${stats.totalTrend > 0 ? "text-emerald-600" : "text-rose-600"}`}>
-              {stats.totalTrend > 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-              {Math.abs(stats.totalTrend)}%
+            <div className={`flex items-center text-xs ${totalApplications> 0 ? "text-emerald-600" : "text-rose-600"}`}>
+              {totalApplications> 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+              {Math.abs(totalApplications)}%
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold text-slate-800">{stats.total}</div>
-            <Progress value={(stats.total / 200) * 100} className="h-2 mt-2" />
+            <div className="text-2xl font-bold text-slate-800">{totalApplications}</div>
+            <Progress value={(totalApplications/ 200) * 100} className="h-2 mt-2" />
           </CardContent>
         </Card>
       </motion.div>
@@ -73,14 +74,14 @@ export function StatisticsPanel() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-slate-50">
             <CardTitle className="text-sm font-medium text-slate-700">Pending Review</CardTitle>
             <div
-              className={`flex items-center text-xs ${stats.pendingTrend > 0 ? "text-emerald-600" : "text-rose-600"}`}
+              className={`flex items-center text-xs ${pendingApplications > 0 ? "text-emerald-600" : "text-rose-600"}`}
             >
-              {stats.pendingTrend > 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-              {Math.abs(stats.pendingTrend)}%
+              {pendingApplications > 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+              {Math.abs(pendingApplications)}%
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold text-slate-800">{stats.pending}</div>
+            <div className="text-2xl font-bold text-slate-800">{pendingApplications}</div>
             <div className="flex items-center mt-2 text-xs text-slate-500">
               <Clock className="h-3 w-3 mr-1" /> Awaiting review
             </div>
@@ -93,14 +94,14 @@ export function StatisticsPanel() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-slate-50">
             <CardTitle className="text-sm font-medium text-slate-700">Accepted</CardTitle>
             <div
-              className={`flex items-center text-xs ${stats.acceptedTrend > 0 ? "text-emerald-600" : "text-rose-600"}`}
+              className={`flex items-center text-xs ${acceptedApplication > 0 ? "text-emerald-600" : "text-rose-600"}`}
             >
-              {stats.acceptedTrend > 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-              {Math.abs(stats.acceptedTrend)}%
+              {acceptedApplication> 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+              {Math.abs(acceptedApplication)}%
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold text-slate-800">{stats.accepted}</div>
+            <div className="text-2xl font-bold text-slate-800">{acceptedApplication}</div>
             <div className="flex items-center mt-2 text-xs text-slate-500">
               <CheckCircle className="h-3 w-3 mr-1" /> Approved applications
             </div>
@@ -113,14 +114,14 @@ export function StatisticsPanel() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-slate-50">
             <CardTitle className="text-sm font-medium text-slate-700">Rejected</CardTitle>
             <div
-              className={`flex items-center text-xs ${stats.rejectedTrend > 0 ? "text-emerald-600" : "text-rose-600"}`}
+              className={`flex items-center text-xs ${rejectApplication > 0 ? "text-emerald-600" : "text-rose-600"}`}
             >
-              {stats.rejectedTrend > 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-              {Math.abs(stats.rejectedTrend)}%
+              {rejectApplication > 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+              {Math.abs(rejectApplication)}%
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold text-slate-800">{stats.rejected}</div>
+            <div className="text-2xl font-bold text-slate-800">{rejectApplication}</div>
             <div className="flex items-center mt-2 text-xs text-slate-500">
               <XCircle className="h-3 w-3 mr-1" /> Declined applications
             </div>

@@ -63,6 +63,7 @@ export const useMyprojectQuery = () => {
       toast({title:"Project deleted",type:"success"})
     }
   })
+  
   return{
     projects:getMyProject.data ,
     isLoading: getMyProject.isLoading,
@@ -70,8 +71,13 @@ export const useMyprojectQuery = () => {
     createProject:createProjectMutation.mutate,
     updateProject:updateProjectMutation.mutate,
     isPending:updateProjectMutation.isPending,
-    deleteProject:deleteProjectMutation.mutate
+    deleteProject:deleteProjectMutation.mutate,
+ 
   }
 
    
 };
+export  const useGetApplicationByIdQuery=(id?:string )=> useQuery({
+  queryKey:["getProjectByid",id],
+  queryFn:()=> myprojects.getApplicationById(id)
+})

@@ -7,7 +7,6 @@ import {
   OK,
   UNPROCESSABLE_CONTENT,
   BAD_REQUEST,
-  INTERNAL_SERVER_ERROR,
   FORBIDDEN,
 } from "../../constants/http";
 import { createId } from "@paralleldrive/cuid2";
@@ -89,7 +88,7 @@ export const getAllMyProjects = catchErrors(async (req: Request, res: Response) 
       .filter(tech => tech.projectId === project.id)
       .map(tech => tech.techStack),
     members: members.filter(member => member.projectId === project.id),
-    applictions:applications.filter(a=>a.projectId===project.id)
+    applications:applications.filter(a=>a.projectId===project.id)
   }));
   
   return res.status(OK).json(result);
@@ -219,17 +218,19 @@ export const getProjectsById = catchErrors(async (req, res) => {
   }
   
   
-  const [roles, techStack, members] = await Promise.all([
+  const [roles, techStack, members,applications] = await Promise.all([
     db.select().from(projectRoles).where(eq(projectRoles.projectId, projectId)),
     db.select().from(projectTechStack).where(eq(projectTechStack.projectId, projectId)),
-    db.select().from(projectMembers).where(eq(projectMembers.projectId, projectId))
+    db.select().from(projectMembers).where(eq(projectMembers.projectId, projectId)),
+    db.select().from(projectApplications).where(eq(projectApplications.projectId,projectId))
   ]);
   
   const result = {
     project: projectData[0],
     roles: roles,
     techStack: techStack.map(tech => tech.techStack),
-    members: members
+    members: members,
+    applications:applications
   };
   
   return res.status(OK).json(result);
@@ -239,3 +240,19 @@ export const projectDelete= catchErrors(async(req,res)=>{
   await db.delete(projects).where(eq(projects.id,projectId))
   res.status(OK).json({message:"deleted"})
 })
+
+export const getApplicationById= catchErrors(async(req,res)=>{
+  const id= req.params.id
+  const [application]=await db.select().from(projectApplications).where(eq(projectApplications.userId,id))
+  const [project]=await db.select().from(projects).where(eq(projects.id, application.projectId))
+  const [role]= await db.select().from(projectRoles).where(eq(projectRoles.id,String(application.roleId)))
+      
+     const result ={
+      project:project,
+      application:application,
+      role:role
+     }
+     res.status(OK).json(result)
+
+})
+

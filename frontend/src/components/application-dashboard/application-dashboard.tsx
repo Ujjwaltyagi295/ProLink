@@ -21,9 +21,15 @@ export function ApplicationsDashboard() {
   const [filter, setFilter] = useState("all");
   const [showStats, setShowStats] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
-  const { projects } = useMyprojectQuery();
+  const { projects,isLoading,error } = useMyprojectQuery();
   const projectData = projects as ProjectData[];
-  console.log(projectData);
+
+  if(isLoading){
+    return (<>loading</>)
+  }
+  if(error){
+    return (<div>Something went wrong </div>)
+  }
   return (
     <div className="container mx-auto py-6 max-w-7xl">
       <div className="flex flex-col space-y-6">

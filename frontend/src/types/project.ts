@@ -16,9 +16,11 @@ export interface ProjectData{
   liveUrl: string;
   inviteCode: string;
   joinLink: string;
+  applicationProcess:string
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+
   roles: {
     id: string;
     projectId: string;
@@ -38,7 +40,7 @@ export interface ProjectData{
     isOwner: boolean;
     joinedAt: string;
   }[];
-  application :{
+  applications :{
     id:string,
     roleId:string,
     projectId:string,
@@ -48,8 +50,9 @@ export interface ProjectData{
     joinReason:string,
     resumeUrl:string,
     status:string,
+    createdAt:string,
     
-  }
+  }[]
 }
 export interface ProjectResData {
   project: {
@@ -95,14 +98,14 @@ export interface ProjectResData {
 }
 export interface Project {
   id: string
-  title: string
+  name: string
   description: string
   thumbnail?: string
   skills: string[]
   teamSize: string
   timeline: string
   openPositions: number
-  status?: "New" | "Hot" | "Ending Soon"
+ 
   techStack?: string[]
   category?: string
   stage?: string

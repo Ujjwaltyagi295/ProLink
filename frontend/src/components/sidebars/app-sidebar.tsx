@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {  GalleryVerticalEnd, SettingsIcon, HelpCircleIcon, Inbox } from "lucide-react";
+import {  GalleryVerticalEnd, SettingsIcon, HelpCircleIcon, Inbox,Calendar } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {   ProjectIcon } from "@/assets/icons/icons";
 import { motion } from "framer-motion";
@@ -21,7 +21,7 @@ import { NavSecondary } from "./nav-secondary";
 
 const data = {
   user: {
-    name: "shadcn",
+    name: "User",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
@@ -45,7 +45,7 @@ const data = {
       ],
     },
     {
-      title: "Application",
+      title: "Applications",
       url: "",
       items: [
         {
@@ -53,7 +53,11 @@ const data = {
           url: "/dashboard/applications",
           icon: () => <Inbox className="size-4 mr-2" />,
         },
-      
+        {
+          title: "Schedules",
+          url: "",
+          icon: () => <Calendar className="size-4 mr-2" />,
+        },
       ],
      
     },

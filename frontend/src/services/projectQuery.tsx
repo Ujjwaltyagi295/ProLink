@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {  projects, searchProjects, type ProjectFilters } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,6 +31,7 @@ export function useProjectsQuery(filters: ProjectFilters) {
 
 export const useGetAllProjectQuery=()=>{
   const {toast}= useToast()
+  const queryClient= useQueryClient()
   const getAllProjectQuery= useQuery({
       queryKey:["getproject"],
       queryFn:()=>projects.getAllProjects(),
@@ -41,6 +42,7 @@ export const useGetAllProjectQuery=()=>{
     mutationKey:["submitApplication"],
     mutationFn:projects.applyNow,
     onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:["myproject"]})
       toast({title:"Application Submitted",type:"success"})
     },
     onError:(error)=>{

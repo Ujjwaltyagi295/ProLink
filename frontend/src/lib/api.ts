@@ -33,7 +33,11 @@ export const myprojects = {
     console.log(error)
   }
   },
-
+  getApplicationById :async (id:string | undefined)=>{
+    const response= await API.get(`/myprojects/application/${id}`)
+   
+    return response.data
+  },
   delete: (id: string | undefined) => API.delete(`/myprojects/${id}`),
 
   update: async (data: ProjectDataType) => {
