@@ -8,6 +8,20 @@
       "when": 1745359537724,
       "tag": "0000_classy_chat",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1745670515612,
+      "tag": "0001_young_speed_demon",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745670902766,
+      "tag": "0002_flashy_tattoo",
+      "breakpoints": true
     }
   ]
 }

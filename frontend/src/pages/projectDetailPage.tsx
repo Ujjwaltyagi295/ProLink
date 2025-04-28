@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ExternalLink, Link, MessageSquare, Share2 } from "lucide-react";
 const ProjectRequirements = React.lazy(
@@ -20,6 +20,7 @@ import type { ProjectResData } from "@/types/project";
 import LoadingSpinner from "@/components/loadingSpiner";
 import { formatData } from "@/lib/utils";
 import { ProjectSkeleton } from "@/components/skeleton-cards";
+import { ApplicationDialog } from "@/components/project-details/project-application";
 
 export function ProjectDetailPage() {
   const { id } = useParams();
@@ -32,8 +33,13 @@ export function ProjectDetailPage() {
 
   const project: ProjectResData = data;
 
-  const handleApplyForRole = (role: string) => {
-    console.log(`Applying for role: ${role}`);
+
+
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const handleApplyForRole = () => {
+    setDialogOpen(true);
+   
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -43,6 +49,7 @@ export function ProjectDetailPage() {
         Project not found
       </div>
     );
+
   const avatarColors = {
     yellow: "bg-amber-500",
     blue: "bg-blue-500",
@@ -116,7 +123,7 @@ export function ProjectDetailPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button>Apply now</Button>
+                  <Button onClick={() => setDialogOpen(true)}>Apply now</Button>
                 </div>
               </div>
 
@@ -145,27 +152,27 @@ export function ProjectDetailPage() {
                   value="overview"
                   className="mt-6 space-y-6 animate-in fade-in-50 duration-300"
                 >
-                 <Suspense fallback={<ProjectSkeleton/>}>
-                 <div>
-                    <h2 className="text-3xl font-bold mb-4">
-                      {project.project.name}
-                    </h2>
+                  <Suspense fallback={<ProjectSkeleton />}>
+                    <div>
+                      <h2 className="text-3xl font-bold mb-4">
+                        {project.project.name}
+                      </h2>
 
-                    <p className="text-gray-700 mb-6">
-                      {project.project.description}
-                    </p>
-                    {project.project.banner && (
-                      <div className="space-y-4  h-[30%] w-[90%] ">
-                        <img
-                          loading="lazy"
-                          className="h-full w-full rounded-md object-cover object-center border-2 rouned-2xl border-neutral-300 "
-                          src={`${project.project.banner}`}
-                          alt={`${project.project.name}`}
-                        />
-                      </div>
-                    ) }
-                  </div>
-                 </Suspense>
+                      <p className="text-gray-700 mb-6">
+                        {project.project.description}
+                      </p>
+                      {project.project.banner && (
+                        <div className="space-y-4  h-[30%] w-[90%] ">
+                          <img
+                            loading="lazy"
+                            className="h-full w-full rounded-md object-cover object-center border-2 rouned-2xl border-neutral-300 "
+                            src={`${project.project.banner}`}
+                            alt={`${project.project.name}`}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </Suspense>
                 </TabsContent>
 
                 <TabsContent value="requirements" className="mt-6">
@@ -179,7 +186,7 @@ export function ProjectDetailPage() {
                             <RoleCard
                               key={role.id}
                               role={role}
-                              onApply={() => handleApplyForRole(role.role)}
+                              onApply={() => handleApplyForRole()}
                             />
                           ))}
                       </div>
@@ -187,15 +194,18 @@ export function ProjectDetailPage() {
                   </Suspense>
                 </TabsContent>
 
-                  <TabsContent value="team" className="mt-6">
-                  <Suspense fallback={<ProjectSkeleton/>}>
-                  <ProjectTeam member={project.members} />
+                <TabsContent value="team" className="mt-6">
+                  <Suspense fallback={<ProjectSkeleton />}>
+                    <ProjectTeam member={project.members} />
                   </Suspense>
-                  </TabsContent>
-            
+                </TabsContent>
               </Tabs>
             </div>
-
+            <ApplicationDialog
+              roleData={project.roles}
+              open={dialogOpen}
+              onOpenChange={setDialogOpen}
+            />
             <div className="space-y-8 ">
               <div className="bg-gray-50 p-6 rounded-xl border   hover:border-blue-500 transition duration-300 ease-in-out">
                 <h3 className="text-lg font-medium mb-4"> TechStack</h3>

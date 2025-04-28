@@ -6,7 +6,10 @@ import projectTechStack from "../../models/projectTechStack";
 import projects from "../../models/project.model";
 import { eq, inArray } from "drizzle-orm";
 import { projectRoles } from "../../models/projectRoles";
-import { OK } from "../../constants/http";
+import { OK, UNPROCESSABLE_CONTENT } from "../../constants/http";
+import { applicationSchema } from "./project.schema";
+import { NewProjectApplication } from "../../models";
+import appAssert from "../../utils/appAssert";
 
 export const filterProjects = catchErrors(async (req, res) => {
   try {
@@ -82,3 +85,20 @@ export const getAllProjects = catchErrors(async (req, res) => {
     
   return res.status(OK).json(result);
 });
+
+export const submitApplication = catchErrors(async(req,res)=>{
+  const data= applicationSchema.parse({...req.body})
+  appAssert(data,UNPROCESSABLE_CONTENT,"Data required")
+  const newApplication :NewProjectApplication = {
+    email:data.email,
+    fullName:data.fullname,
+    joinReason:data.joinReason,
+    projectId:data.projectId,
+    userId:req.userId,
+    resumeUrl:data.resumeUrl,
+    status:"pending",
+    roleId:data.roleId
+  }
+  res.status(OK).json(newApplication)
+  
+})

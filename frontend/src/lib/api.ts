@@ -1,10 +1,8 @@
-// lib/api/index.ts
+
 import API from "@/config/apiClient";
 import { ProjectDataType } from "@/store/useProjectStore";
 import { FilterDataType } from "@/types/project";
 
-
-// === AUTH ===
 export const auth = {
   login: (data: object) => API.post("/auth/login", data),
   register: (data: object) => API.post("/auth/signup", data),
@@ -15,7 +13,6 @@ export const auth = {
   },
 };
 
-// === PROJECTS ===
 export const myprojects = {
   create: async (data: object) => {
     const response = await API.post("/myprojects/create", data);
@@ -67,6 +64,10 @@ export const projects = {
    const response= await API.get("/projects");
    return response.data
   },
+  applyNow:async (data:object)=>{
+   const res= await API.post("/projects/apply",data)
+   return res.data
+  }
 };
 
 

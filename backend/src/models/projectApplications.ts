@@ -17,7 +17,7 @@ export const projectApplications = pgTable("project_applications", {
     roleId: uuid("role_id")
       .references(() => projectRoles.id),
     fullName: text("full_name").notNull(),
-   email: text("email").notNull(),
+     email: text("email").notNull(),
     resumeUrl:text("resume_url").notNull(),
     joinReason: text("join_reason").notNull(),
     status: applicationStatusEnum("appl_status").default("pending").notNull(),

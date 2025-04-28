@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nameSchema } from "../auth/auth.schema";
+import { emailSchema, nameSchema } from "../auth/auth.schema";
 
 // Role schema for project roles (existing)
 export const projectRolesSchema = z.object({
@@ -87,3 +87,12 @@ export const projectSchema = z.object({
   members: z.array(projectMembersSchema).optional(),
 });
 
+export const applicationSchema= z.object({
+   fullname: z.string(),
+   email:emailSchema,
+   roleId: z.string(),
+   joinReason:z.string(),
+   resumeUrl:z.string(),
+   projectId:z.string()
+   
+})

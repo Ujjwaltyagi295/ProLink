@@ -34,9 +34,10 @@ function App() {
       <Route path="/filter" element={<ProjectSearch />} />
       <Route path="/projects/test" element={<SearchPage />} />
       <Route path="/projects/details/:id" element={<ProjectDetailPage />} />
+
     </Route>
 
-    
+        
       <Route path="/dashboard/*" element={<DashboardPage />} />
     </Routes>
   );

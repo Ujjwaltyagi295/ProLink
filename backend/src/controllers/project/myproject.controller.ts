@@ -185,7 +185,7 @@ export const publishProject = catchErrors(
         await tx.insert(projectTechStack).values(techStackData);
       }
     
-      const newMember: NewMember = {
+      const newMember:  NewMember = {
         userId: req.userId,
         username: updatedProject.createdBy,
        

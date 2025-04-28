@@ -12,9 +12,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { File, GalleryVerticalEnd, BookText, PencilLine, SettingsIcon, HelpCircleIcon } from "lucide-react";
+import {  GalleryVerticalEnd, SettingsIcon, HelpCircleIcon, Inbox, MessageSquare, Clock, CheckCircle, XCircle, Archive } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import {  ExploreIcon, ProjectIcon } from "@/assets/icons/icons";
+import {   ProjectIcon } from "@/assets/icons/icons";
 import { motion } from "framer-motion";
 import { NavUser } from "./nav-user";
 import { NavSecondary } from "./nav-secondary";
@@ -35,33 +35,48 @@ const data = {
           url: "/dashboard/projects",
           icon: (hovered: boolean) => <ProjectIcon isHover={hovered} />,
         },
-        {
-          title: "Inbox",
-          url: "/dashboard/projects/find",
-          icon: (hovered: boolean) => <ExploreIcon isHover={hovered} />,
-        },
+        // {
+        //   title: "",
+        //   url: "/dashboard/projects/find",
+        //   icon: (hovered: boolean) => <ExploreIcon isHover={hovered} />,
+        // },
        
        
       ],
     },
     {
-      title: "Community",
+      title: "Application",
       url: "",
       items: [
         {
-          title: " ",
-          url: "/dashboard/community",
-          icon: () => <File className="size-4 mr-2" />,
+          title: "All Application",
+          url: "/dashboard/inbox",
+          icon: () => <Inbox className="size-4 mr-2" />,
         },
         {
-          title: "My Posts",
+          title: "Unread",
           url: "/dashboard/community/my-posts",
-          icon: () => <BookText className="size-4 mr-2" />,
+          icon: () => <MessageSquare className="size-4 mr-2" />,
         },
         {
-          title: "Create Post",
+          title: "Pending Review",
           url: "/dashboard/community/create",
-          icon: () => <PencilLine className="size-4 mr-2" />,
+          icon: () => <Clock className="size-4 mr-2" />,
+        },
+        {
+          title: "Approved",
+          url: "/dashboard/community/create",
+          icon: () => <CheckCircle className="size-4 mr-2" />,
+        },
+        {
+          title: "Rejected",
+          url: "/dashboard/community/create",
+          icon: () => <XCircle className="size-4 mr-2" />,
+        },
+        {
+          title: "Archived",
+          url: "/dashboard/community/create",
+          icon: () => <Archive className="size-4 mr-2" />,
         },
       ],
      

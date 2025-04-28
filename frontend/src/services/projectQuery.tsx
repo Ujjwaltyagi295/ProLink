@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import {  projects, searchProjects, type ProjectFilters } from '@/lib/api';
 
 export function useProjectsQuery(filters: ProjectFilters) {
@@ -35,11 +35,15 @@ export const useGetAllProjectQuery=()=>{
       staleTime:1000 * 60 * 5,
       refetchOnWindowFocus: false
   })
+  const submitApplicationQuery= useMutation({
+    mutationKey:["submitApplication"],
+    mutationFn:projects.applyNow
+  })
   
   return {
     getAllProjects:getAllProjectQuery.data,
     isLoading:getAllProjectQuery.isLoading,
     isError:getAllProjectQuery.isError,
-
+    submitApplication:submitApplicationQuery.mutate
   }
 }

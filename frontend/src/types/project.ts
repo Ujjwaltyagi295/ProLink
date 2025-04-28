@@ -1,4 +1,4 @@
-import { Role, TechStack } from "@/lib/schema";
+import { ExperienceLevel, Role, TechStack } from "@/lib/schema";
 
 export interface ProjectData{
   id: string;
@@ -63,11 +63,11 @@ export interface ProjectResData {
   roles: {
     id: string;
     projectId: string;
-    role: string;
+    role: Role;
     description: string;
     count: number;
     isRemote: boolean;
-    experienceLevel: string;
+    experienceLevel: ExperienceLevel;
   }[];
   techStack: TechStack[];
   members: {
