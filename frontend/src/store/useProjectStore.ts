@@ -8,6 +8,7 @@ export interface RoleFormData {
   description: string;
   count: number;
   isRemote: boolean;
+  projectId:string
   experienceLevel: ExperienceLevel | null;
 }
 
@@ -39,6 +40,7 @@ export interface ProjectDataType {
   hoursPerWeek: number | null;
   roles?: RoleFormData[] | null;
   techStack?: TechStack[] | null;
+ 
 }
 interface FormStore {
   projectData: ProjectDataType;

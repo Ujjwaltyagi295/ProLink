@@ -8,7 +8,7 @@ import { eq, inArray } from "drizzle-orm";
 import { projectRoles } from "../../models/projectRoles";
 import { OK, UNPROCESSABLE_CONTENT } from "../../constants/http";
 import { applicationSchema } from "./project.schema";
-import { NewProjectApplication } from "../../models";
+import { NewProjectApplication, projectApplications } from "../../models";
 import appAssert from "../../utils/appAssert";
 
 export const filterProjects = catchErrors(async (req, res) => {
@@ -24,7 +24,6 @@ export const filterProjects = catchErrors(async (req, res) => {
     
     } = req.query;
 
-    // Proper type conversion and array handling
     const filters = {
       search: search as string | undefined,
       category: category 
@@ -87,11 +86,12 @@ export const getAllProjects = catchErrors(async (req, res) => {
 });
 
 export const submitApplication = catchErrors(async(req,res)=>{
-  const data= applicationSchema.parse({...req.body})
+  const data= applicationSchema.parse(req.body)
   appAssert(data,UNPROCESSABLE_CONTENT,"Data required")
+
   const newApplication :NewProjectApplication = {
     email:data.email,
-    fullName:data.fullname,
+    fullName:data.fullName,
     joinReason:data.joinReason,
     projectId:data.projectId,
     userId:req.userId,
@@ -99,6 +99,8 @@ export const submitApplication = catchErrors(async(req,res)=>{
     status:"pending",
     roleId:data.roleId
   }
-  res.status(OK).json(newApplication)
+ const application= await db.insert(projectApplications).values(newApplication).returning()
+
+  res.status(OK).json(application)
   
 })

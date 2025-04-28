@@ -28,15 +28,15 @@ function App() {
       {/* PUBLIC ROUTES */}
     <Route element={<NavbarLayout/>}>
     <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/explore" element={<ProjectsPage />} />
+         <Route path="/explore" element={<ProjectsPage />} />
       <Route path="/filter" element={<ProjectSearch />} />
       <Route path="/projects/test" element={<SearchPage />} />
       <Route path="/projects/details/:id" element={<ProjectDetailPage />} />
 
     </Route>
-
+    <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+  
         
       <Route path="/dashboard/*" element={<DashboardPage />} />
     </Routes>

@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import {  projects, searchProjects, type ProjectFilters } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
 export function useProjectsQuery(filters: ProjectFilters) {
   const queryKey = ['projects', {
@@ -29,6 +30,7 @@ export function useProjectsQuery(filters: ProjectFilters) {
 
 
 export const useGetAllProjectQuery=()=>{
+  const {toast}= useToast()
   const getAllProjectQuery= useQuery({
       queryKey:["getproject"],
       queryFn:()=>projects.getAllProjects(),
@@ -37,13 +39,21 @@ export const useGetAllProjectQuery=()=>{
   })
   const submitApplicationQuery= useMutation({
     mutationKey:["submitApplication"],
-    mutationFn:projects.applyNow
+    mutationFn:projects.applyNow,
+    onSuccess:()=>{
+      toast({title:"Application Submitted",type:"success"})
+    },
+    onError:(error)=>{
+      console.log(error)
+    }
+    
   })
   
   return {
     getAllProjects:getAllProjectQuery.data,
     isLoading:getAllProjectQuery.isLoading,
     isError:getAllProjectQuery.isError,
-    submitApplication:submitApplicationQuery.mutate
+    submitApplication:submitApplicationQuery.mutate,
+    applicationPending:submitApplicationQuery.isPending
   }
 }

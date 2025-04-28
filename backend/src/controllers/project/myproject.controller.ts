@@ -23,6 +23,7 @@ import appAssert from "../../utils/appAssert";
 import slugify from "slugify";
 import projectTechStack, { NewTechStack } from "../../models/projectTechStack";
 import { NewMember, projectMembers } from "../../models/projectMembers";
+import { projectApplications } from "../../models";
 
 export const createProjectHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -78,6 +79,7 @@ export const getAllMyProjects = catchErrors(async (req: Request, res: Response) 
     .select()
     .from(projectMembers)
     .where(inArray(projectMembers.projectId, projectIds));
+    const applications= await  db.select().from(projectApplications).where(inArray(projectApplications.projectId,projectIds))
  
   const result = userProjects.map(project => ({
     ...project,
@@ -86,7 +88,8 @@ export const getAllMyProjects = catchErrors(async (req: Request, res: Response) 
     techStack: techStack
       .filter(tech => tech.projectId === project.id)
       .map(tech => tech.techStack),
-    members: members.filter(member => member.projectId === project.id)
+    members: members.filter(member => member.projectId === project.id),
+    applictions:applications.filter(a=>a.projectId===project.id)
   }));
   
   return res.status(OK).json(result);

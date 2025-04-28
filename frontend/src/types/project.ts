@@ -38,6 +38,18 @@ export interface ProjectData{
     isOwner: boolean;
     joinedAt: string;
   }[];
+  application :{
+    id:string,
+    roleId:string,
+    projectId:string,
+    fullName:string,
+    userId:string,
+    email:string,
+    joinReason:string,
+    resumeUrl:string,
+    status:string,
+    
+  }
 }
 export interface ProjectResData {
   project: {

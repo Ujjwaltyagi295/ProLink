@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {  GalleryVerticalEnd, SettingsIcon, HelpCircleIcon, Inbox, MessageSquare, Clock, CheckCircle, XCircle, Archive } from "lucide-react";
+import {  GalleryVerticalEnd, SettingsIcon, HelpCircleIcon, Inbox } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {   ProjectIcon } from "@/assets/icons/icons";
 import { motion } from "framer-motion";
@@ -49,35 +49,11 @@ const data = {
       url: "",
       items: [
         {
-          title: "All Application",
-          url: "/dashboard/inbox",
+          title: "Application",
+          url: "/dashboard/applications",
           icon: () => <Inbox className="size-4 mr-2" />,
         },
-        {
-          title: "Unread",
-          url: "/dashboard/community/my-posts",
-          icon: () => <MessageSquare className="size-4 mr-2" />,
-        },
-        {
-          title: "Pending Review",
-          url: "/dashboard/community/create",
-          icon: () => <Clock className="size-4 mr-2" />,
-        },
-        {
-          title: "Approved",
-          url: "/dashboard/community/create",
-          icon: () => <CheckCircle className="size-4 mr-2" />,
-        },
-        {
-          title: "Rejected",
-          url: "/dashboard/community/create",
-          icon: () => <XCircle className="size-4 mr-2" />,
-        },
-        {
-          title: "Archived",
-          url: "/dashboard/community/create",
-          icon: () => <Archive className="size-4 mr-2" />,
-        },
+      
       ],
      
     },

@@ -3,7 +3,7 @@
  
 import express from "express"
 import { createProjectHandler, getAllMyProjects, projectDelete, publishProject } from "../controllers/project/myproject.controller"
-import { upload, uploadToCloudinary } from "../controllers/project/imageUpload.controller"
+import { upload, uploadToCloudinary } from "../controllers/project/fileUpload.controller"
 import { cloudWare } from "../middlewares/cloudinary"
 
 const projectRoutes= express.Router()

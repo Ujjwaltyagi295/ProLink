@@ -12,6 +12,8 @@ import { MyProjectsPage } from "./myProjectsPage";
 import { ProtectedRoutes } from "@/components/ProtectedRoutes";
 import NewProjectPage from "./projectFormPage";
 import { ProfilePage } from "./profilePage";
+import { ApplicationsDashboard } from "@/components/application-dashboard/application-dashboard";
+import ApplicationPage from "@/components/application-dashboard/application-details";
 
 function DashboardLayout() {
   return (
@@ -38,6 +40,8 @@ export default function DashboardPage() {
           <Route path="/profile" element={<ProfilePage/>}/>
           <Route path="projects" element={<MyProjectsPage />} />
           <Route path="projects/edit/:id" element={<NewProjectPage />} />
+          <Route path="applications" element={<ApplicationsDashboard/>}/>
+          <Route path="/applications/:id" element={<ApplicationPage />}/>
         </Route>
       </Route>
     </Routes>

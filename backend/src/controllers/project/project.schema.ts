@@ -88,7 +88,7 @@ export const projectSchema = z.object({
 });
 
 export const applicationSchema= z.object({
-   fullname: z.string(),
+   fullName: nameSchema,
    email:emailSchema,
    roleId: z.string(),
    joinReason:z.string(),
