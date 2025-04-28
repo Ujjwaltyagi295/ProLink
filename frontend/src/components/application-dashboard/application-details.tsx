@@ -5,11 +5,15 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ApplicationAttachments } from "./application-files";
-import { useGetApplicationByIdQuery } from "@/services/myProjectQuery";
+import {
+  useGetApplicationByIdQuery,
+  useMyprojectQuery,
+} from "@/services/myProjectQuery";
 import { Project } from "@/types/project";
 import { ProjectSkeleton } from "../skeleton-cards";
 import { formatData, formatDate } from "@/lib/utils";
 import { RoleFormData } from "@/store/useProjectStore";
+import { useToast } from "@/hooks/use-toast";
 
 interface applicationData {
   project: Project;
@@ -30,8 +34,25 @@ interface applicationData {
 
 export default function ApplicationPage() {
   const { id } = useParams();
+  const { toast } = useToast();
   const { data, isError, isLoading } = useGetApplicationByIdQuery(id);
   const res = data as applicationData;
+  const applicationData = {
+    id:res?.application.userId,
+    userId: res?.application.userId,
+    status: "",
+    roleId: res?.application.roleId,
+    projectId: res?.application.projectId,
+  };
+  const { manageApplication } = useMyprojectQuery();
+  const handleAccept = async () => {
+    await manageApplication({ ...applicationData, status: "accepted", });
+    toast({ title: "Application accepted", type: "success" });
+  };
+  const handleReject = async () => {
+    await manageApplication({ ...applicationData, status: "rejected" });
+    toast({ title: "Application rejected", type: "success" });
+  };
 
   if (isLoading) {
     return <ProjectSkeleton />;
@@ -89,12 +110,36 @@ export default function ApplicationPage() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-                <Button variant="outline" className="gap-2">
-                  <XCircle className="h-4 w-4" /> Reject
-                </Button>
-                <Button variant="outline" className="gap-2">
-                  <CheckCircle className="h-4 w-4" /> Accept
-                </Button>
+                {res.application.status === "rejected" ? (
+                  <Button
+                    variant="outline"
+                    className="gap-2 border border-red-500 "
+                  >
+                    <XCircle className="h-4 w-4 text-red-500" /> Rejected
+                  </Button>
+                ) : res.application.status === "accepted" ? (
+                  <Button variant="outline" className="gap-2 border-emerald-400 ">
+                    <CheckCircle className="h-4 w-4 text-emerald-500" /> Accepted
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      onClick={handleReject}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <XCircle className="h-4 w-4" /> Reject
+                    </Button>
+                    <Button
+                      onClick={handleAccept}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <CheckCircle className="h-4 w-4" /> Accept
+                    </Button>
+                  </>
+                )}
+
                 <Button className="gap-2">
                   <Calendar className="h-4 w-4" /> Schedule Meeting
                 </Button>

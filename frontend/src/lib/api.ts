@@ -39,7 +39,10 @@ export const myprojects = {
     return response.data
   },
   delete: (id: string | undefined) => API.delete(`/myprojects/${id}`),
-
+  manageApplication :async (data:object)=>{
+    const response =await API.post("/myprojects/manage/application/",data)
+    return response.data
+  },
   update: async (data: ProjectDataType) => {
     const response = await API.put(`/myprojects/${data.id}`, data);
     return response.data;

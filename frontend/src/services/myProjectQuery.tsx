@@ -5,6 +5,13 @@ import { ProjectDataType } from "@/store/useProjectStore";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+interface MyVariables {
+  id: string;
+  userId: string,
+  status: string,
+  roleId: string,
+  projectId: string,
+}
 export const useMyprojectQuery = () => {
   const queryClient = useQueryClient();
   const {toast}= useToast()
@@ -58,12 +65,19 @@ export const useMyprojectQuery = () => {
   })
   const deleteProjectMutation = useMutation({
     mutationFn:myprojects.delete,
-    onSuccess:()=>{
+    onSettled:()=>{
       queryClient.invalidateQueries({queryKey:["myproject"]})
       toast({title:"Project deleted",type:"success"})
     }
   })
-  
+  const manageApplicationMutation = useMutation({
+    mutationFn:myprojects.manageApplication,
+    onSettled: (_data,_error, variables:MyVariables) => {
+      queryClient.invalidateQueries({ queryKey: ["getProjectByid", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["myproject"] });
+      
+    },
+  })
   return{
     projects:getMyProject.data ,
     isLoading: getMyProject.isLoading,
@@ -72,12 +86,13 @@ export const useMyprojectQuery = () => {
     updateProject:updateProjectMutation.mutate,
     isPending:updateProjectMutation.isPending,
     deleteProject:deleteProjectMutation.mutate,
- 
+    manageApplication: manageApplicationMutation.mutate
   }
 
    
 };
 export  const useGetApplicationByIdQuery=(id?:string )=> useQuery({
   queryKey:["getProjectByid",id],
-  queryFn:()=> myprojects.getApplicationById(id)
+  queryFn:()=> myprojects.getApplicationById(id),
+  enabled: !!id,
 })

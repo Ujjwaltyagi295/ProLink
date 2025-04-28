@@ -240,19 +240,3 @@ export const projectDelete= catchErrors(async(req,res)=>{
   await db.delete(projects).where(eq(projects.id,projectId))
   res.status(OK).json({message:"deleted"})
 })
-
-export const getApplicationById= catchErrors(async(req,res)=>{
-  const id= req.params.id
-  const [application]=await db.select().from(projectApplications).where(eq(projectApplications.userId,id))
-  const [project]=await db.select().from(projects).where(eq(projects.id, application.projectId))
-  const [role]= await db.select().from(projectRoles).where(eq(projectRoles.id,String(application.roleId)))
-      
-     const result ={
-      project:project,
-      application:application,
-      role:role
-     }
-     res.status(OK).json(result)
-
-})
-
