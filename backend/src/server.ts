@@ -26,6 +26,9 @@ app.use("/api/user",authenticate,userRoutes)
 app.use("/api/myprojects",authenticate,myprojectRoutes)
 app.use("/api/sessions", authenticate, sessionRoutes);
 app.use("/api/projects",projectRoutes)
+app.get("/",(req,res)=>{
+  res.send("welcome to prolink")
+})
 app.use(errorHandler);
 
 const start = async () => {
