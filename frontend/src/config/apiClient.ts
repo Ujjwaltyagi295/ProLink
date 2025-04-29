@@ -4,7 +4,7 @@ import { navigate } from "../lib/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const options = {
-  baseURL: "http://localhost:8000/api",
+  baseURL: `${import.meta.env.VITE_API_URI}/api`,
   withCredentials: true,
 };
 
