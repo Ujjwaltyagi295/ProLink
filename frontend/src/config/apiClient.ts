@@ -9,7 +9,6 @@ const options = {
   baseURL: `${VITE_API_URI}/api`,
   withCredentials: true,
 };
-console.log(VITE_API_URI)
 const TokenRefreshClient = axios.create(options);
 TokenRefreshClient.interceptors.response.use((res) => res.data);
 
