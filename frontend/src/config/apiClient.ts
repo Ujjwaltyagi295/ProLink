@@ -1,3 +1,4 @@
+import "dotenv/config"
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import queryClient from "./queryClient";
 import { navigate } from "../lib/navigation";
@@ -7,7 +8,7 @@ const options = {
   baseURL: `${import.meta.env.VITE_API_URI}/api`,
   withCredentials: true,
 };
-
+console.log(import.meta.env.VITE_API_URI)
 const TokenRefreshClient = axios.create(options);
 TokenRefreshClient.interceptors.response.use((res) => res.data);
 
