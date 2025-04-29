@@ -3,7 +3,8 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import queryClient from "./queryClient";
 import { navigate } from "../lib/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
-const VITE_API_URI=process.env.VITE_API_URI
+const VITE_API_URI = import.meta.env.VITE_API_URI;
+
 const options = {
   baseURL: `${VITE_API_URI}/api`,
   withCredentials: true,
