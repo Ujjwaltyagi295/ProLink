@@ -10,7 +10,7 @@ type cookieParams = {
 
 const secure = process.env.NODE_ENV != "development";
 const defaults: CookieOptions = {
-  sameSite: "strict",
+  sameSite:secure? "none": "lax",
   httpOnly: true,
   secure,
 };
