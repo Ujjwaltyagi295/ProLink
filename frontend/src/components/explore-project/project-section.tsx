@@ -37,7 +37,7 @@ export const ProjectsSection = () => {
 
     // Cleanup
     return () => window.removeEventListener("resize", checkMobile);
-  }, [viewMode]);
+  }, [viewMode,activeTab]);
 
   const fadeMotion = {
     initial: { opacity: 0, y: 20 },

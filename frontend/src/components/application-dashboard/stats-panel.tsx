@@ -8,21 +8,6 @@ import { useMyprojectQuery } from "@/services/myProjectQuery"
 import { ProjectData } from "@/types/project"
 
 
-const weeklyData = [
-  { name: "Jun 1", total: 12, accepted: 7 },
-  { name: "Jun 3", total: 19, accepted: 11 },
-  { name: "Jun 5", total: 15, accepted: 9 },
-  { name: "Jun 7", total: 22, accepted: 14 },
-  { name: "Jun 9", total: 18, accepted: 10 },
-  { name: "Jun 12", total: 24, accepted: 16 },
-  { name: "Jun 15", total: 20, accepted: 12 },
-  { name: "Jun 18", total: 26, accepted: 18 },
-  { name: "Jun 21", total: 28, accepted: 19 },
-  { name: "Jun 24", total: 25, accepted: 17 },
-  { name: "Jun 27", total: 22, accepted: 15 },
-  { name: "Jun 30", total: 18, accepted: 12 },
-]
-
 export function StatisticsPanel() {
   const item = {
     hidden: { opacity: 0, y: 20 },

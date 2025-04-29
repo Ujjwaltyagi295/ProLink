@@ -56,98 +56,6 @@ interface ProjectSidebarProps {
   isLoading:boolean
 }
 
-// Sample data
-const sampleProject: ProjectData = {
-  id: "1",
-  name: "Website Redesign",
-  description: "Complete overhaul of the company website with new branding and improved UX",
-  startDate: "2023-07-01",
-  endDate: "2023-09-30",
-  teamMembers: [
-    {
-      id: "1",
-      name: "John Wilson",
-      role: "UI/UX Designer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      status: "online",
-    },
-    {
-      id: "2",
-      name: "Sofia Harris",
-      role: "Frontend Developer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      status: "away",
-      lastActive: "2 hours ago",
-    },
-    {
-      id: "3",
-      name: "Daniel Hill",
-      role: "Project Manager",
-      avatar: "/placeholder.svg?height=40&width=40",
-      status: "online",
-    },
-    {
-      id: "4",
-      name: "Eva Smith",
-      role: "Backend Developer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      status: "offline",
-      lastActive: "1 day ago",
-    },
-  ],
-  applications: [
-    {
-      id: "a1",
-      userId: "u1",
-      name: "Alex Johnson",
-      role: "Frontend Developer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      appliedDate: "2023-07-15",
-      status: "pending",
-      experience: "3 years",
-    },
-    {
-      id: "a2",
-      userId: "u2",
-      name: "Maria Garcia",
-      role: "UI/UX Designer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      appliedDate: "2023-07-12",
-      status: "pending",
-      experience: "5 years",
-    },
-    {
-      id: "a3",
-      userId: "u3",
-      name: "Thomas Lee",
-      role: "Backend Developer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      appliedDate: "2023-07-10",
-      status: "accepted",
-      experience: "4 years",
-    },
-    {
-      id: "a4",
-      userId: "u4",
-      name: "Sarah Williams",
-      role: "QA Engineer",
-      avatar: "/placeholder.svg?height=40&width=40",
-      appliedDate: "2023-07-08",
-      status: "rejected",
-      experience: "2 years",
-    },
-  ],
-  analytics: {
-    views: 1245,
-    applications: 28,
-    rolesFilled: 4,
-    totalRoles: 6,
-    viewsHistory: [120, 145, 165, 135, 190, 210, 280],
-    applicationsHistory: [3, 5, 4, 2, 6, 4, 4],
-  },
- 
-}
-
 export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: ProjectSidebarProps) {
   const [isFullScreen, setIsFullScreen] = React.useState(false)
 
@@ -221,26 +129,6 @@ export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: Proj
     },
   }
 
-  const cardContainerVariants = {
-    expanded: {
-      flexDirection: "row",
-      alignItems: "center",
-      transition: {
-        type: "spring",
-        damping: 25,
-        stiffness: 300,
-      },
-    },
-    normal: {
-      flexDirection: "column",
-      alignItems: "flex-start",
-      transition: {
-        type: "spring",
-        damping: 25,
-        stiffness: 300,
-      },
-    },
-  }
   if (isLoading) {
     return (
       <motion.div className="fixed top-0 right-0 h-full bg-background border-l z-50 w-full sm:w-[400px] p-4">
@@ -405,7 +293,7 @@ export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: Proj
                       >
                         <motion.div
                           className="flex items-start gap-4"
-                          variants={cardContainerVariants}
+                         
                           animate={isFullScreen ? "expanded" : "normal"}
                         >
                           <Avatar className="h-10 w-10">
@@ -454,7 +342,7 @@ export function ProjectSidebar({ isOpen, onClose, project,isLoading=false}: Proj
                                   </Button>
                                 </>
                               ) : (
-                                <Badge variant={application.status === "accepted" ? "success" : "destructive"}>
+                                <Badge >
                                   {application.status === "accepted" ? "Accepted" : "Rejected"}
                                 </Badge>
                               )}

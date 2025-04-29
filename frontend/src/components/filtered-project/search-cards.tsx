@@ -39,7 +39,7 @@ export const SearchCard = ({
     window.addEventListener("resize", checkMobile);
 
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  }, [isMobile]);
 
   const avatarColors = {
     yellow: "bg-amber-500",

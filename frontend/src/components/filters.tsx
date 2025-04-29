@@ -55,8 +55,8 @@ export function ProjectSearch() {
 
   const [filters, setFilters] = useState({
     search: "",
-    category: "", // Changed from categories[]
-    ecosystem: "", // Changed from ecosystems[]
+    category: [] as string[],
+    ecosystem: [] as string[], 
     techStacks: [] as string[],
     roles: [] as string[],
     page: 1,
@@ -75,12 +75,12 @@ export function ProjectSearch() {
   };
 
   // Updated handlers for single select fields
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters((prev) => ({ ...prev, category: e.target.value, page: 1 }));
+  const handleCategoryChange = (values: string[]) => {
+    setFilters((prev) => ({ ...prev, category: values, page: 1 }));
   };
 
-  const handleEcosystemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters((prev) => ({ ...prev, ecosystem: e.target.value, page: 1 }));
+  const handleEcosystemChange = (values: string[]) => {
+    setFilters((prev) => ({ ...prev, ecosystem:values, page: 1 }));
   };
 
   // Multiselect handlers remain the same
@@ -118,7 +118,9 @@ export function ProjectSearch() {
           <label className="block mb-1">Category</label>
           <select
             value={filters.category}
-            onChange={handleCategoryChange}
+            onChange={(e)=>{const value= Array.from(e.target.selectedOptions,(options)=>options.value)
+              handleCategoryChange(value)
+            }}
             className="w-full p-2 border rounded"
           >
             <option value="">All Categories</option>
@@ -135,7 +137,9 @@ export function ProjectSearch() {
           <label className="block mb-1">Ecosystem</label>
           <select
             value={filters.ecosystem}
-            onChange={handleEcosystemChange}
+            onChange={(e)=>{const value= Array.from(e.target.selectedOptions,(options)=>options.value)
+              handleEcosystemChange(value)
+            }}
             className="w-full p-2 border rounded"
           >
             <option value="">All Ecosystems</option>
@@ -233,10 +237,10 @@ export function ProjectSearch() {
                     ))}
                     {project.roles?.map((role) => (
                       <span
-                        key={role.id}
+                        key={role}
                         className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm"
                       >
-                        {formatData(role.roles)}
+                        {formatData(role)}
                       </span>
                     ))}
                   </div>

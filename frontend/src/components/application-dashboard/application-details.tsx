@@ -97,7 +97,7 @@ export default function ApplicationPage() {
                   </p>
                   <div className="flex flex-wrap items-center gap-2 mt-2">
                     <Badge variant="outline">{res.project.name}</Badge>
-                    <Badge variant="outline">{formatData(res.role.role)}</Badge>
+                    <Badge variant="outline">{res.role.role?formatData(res.role.role):""}</Badge>
                     {res.application.status === "pending" && (
                       <Badge
                         variant="outline"
@@ -178,7 +178,7 @@ export default function ApplicationPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Applied For</span>
                     <span className="font-medium text-slate-800">
-                      {formatData(res.role.role)}
+                      {res.role.role?formatData(res.role.role):""}
                     </span>
                   </div>
 
@@ -186,7 +186,7 @@ export default function ApplicationPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Experience</span>
                     <span className="font-medium text-slate-800">
-                      {formatData(res.role.experienceLevel)}
+                      {res.role.experienceLevel?formatData(res.role.experienceLevel):""}
                     </span>
                   </div>
                   <Separator />

@@ -4,12 +4,12 @@ import { persist } from "zustand/middleware";
 
 export interface RoleFormData {
   id: string;
-  role: Role;
+  role: Role | null;
   description: string;
   count: number;
   isRemote: boolean;
-  projectId:string
-  experienceLevel: ExperienceLevel ;
+  projectId?:string
+  experienceLevel: ExperienceLevel |null;
 }
 
 export interface ProjectDataType {
