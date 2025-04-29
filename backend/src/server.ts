@@ -12,6 +12,9 @@ import userRoutes from "./routes/user.routes";
 import sessionRoutes from "./routes/session.route";
 import myprojectRoutes from "./routes/myproject.routes";
 import projectRoutes from "./routes/projects.routes"
+
+import { VercelRequest, VercelResponse } from '@vercel/node';
+
 const app = express();
 
 app.use(urlencoded({ extended: true }));
@@ -28,9 +31,7 @@ app.use("/api/sessions", authenticate, sessionRoutes);
 app.use("/api/projects",projectRoutes)
 app.use(errorHandler);
 
-const start = async () => {
- 
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+export default (req: VercelRequest, res: VercelResponse) => {
+  app(req, res);
 };
 
-start();
