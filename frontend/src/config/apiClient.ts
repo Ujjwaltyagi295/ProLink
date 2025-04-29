@@ -3,12 +3,12 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import queryClient from "./queryClient";
 import { navigate } from "../lib/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
-
+const VITE_API_URI=process.env.VITE_API_URI
 const options = {
-  baseURL: `${import.meta.env.VITE_API_URI}/api`,
+  baseURL: `${VITE_API_URI}/api`,
   withCredentials: true,
 };
-console.log(import.meta.env.VITE_API_URI)
+console.log(VITE_API_URI)
 const TokenRefreshClient = axios.create(options);
 TokenRefreshClient.interceptors.response.use((res) => res.data);
 
