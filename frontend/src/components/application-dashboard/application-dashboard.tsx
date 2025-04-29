@@ -16,13 +16,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
 import { ProjectData } from "@/types/project";
 import { formatData } from "@/lib/utils";
-
+import useAuth from "@/hooks/useAuth";
+interface userData{
+  id:string
+}
 export function ApplicationsDashboard() {
   const [filter, setFilter] = useState("all");
   const [showStats, setShowStats] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const { projects,isLoading,error } = useMyprojectQuery();
-  const projectData = projects as ProjectData[];
+  const {user}= useAuth()
+  const userId = user as userData
+ 
+    const projectData = projects as ProjectData[];
+    const visibleProjects = projectData?.filter(project => {
+  
+      if (project.ownerId === userId.id) return true;
+    
+      const isMember = project.members.some(m => m.userId === userId.id);
+    
+      return !isMember;
+    });
 
   if(isLoading){
     return (<>loading</>)
@@ -46,7 +60,7 @@ export function ApplicationsDashboard() {
 
               <SelectContent>
                 <SelectItem value="all">All Projects</SelectItem>
-                {projectData?.map((p) => (
+                {visibleProjects?.map((p) => (
                   <SelectItem key={p.id} value={p.name || ""}>
                     {formatData(p.name)}
                   </SelectItem>
@@ -117,16 +131,16 @@ export function ApplicationsDashboard() {
                 transition={{ duration: 0.2 }}
               >
                 {activeTab === "all" && (
-                  <ApplicationsTable filter={filter} status="all" />
+                  <ApplicationsTable projects={visibleProjects} filter={filter} status="all" />
                 )}
                 {activeTab === "pending" && (
-                  <ApplicationsTable filter={filter} status="pending" />
+                  <ApplicationsTable projects={visibleProjects} filter={filter} status="pending" />
                 )}
                 {activeTab === "accepted" && (
-                  <ApplicationsTable filter={filter} status="accepted" />
+                  <ApplicationsTable projects={visibleProjects} filter={filter} status="accepted" />
                 )}
                 {activeTab === "rejected" && (
-                  <ApplicationsTable filter={filter} status="rejected" />
+                  <ApplicationsTable  projects={visibleProjects} filter={filter} status="rejected" />
                 )}
               </motion.div>
             </AnimatePresence>

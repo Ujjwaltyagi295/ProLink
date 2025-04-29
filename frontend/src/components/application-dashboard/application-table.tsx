@@ -6,20 +6,20 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useMyprojectQuery } from "@/services/myProjectQuery"
+
 import { ProjectData } from "@/types/project"
 import { formatData, formatDate } from "@/lib/utils"
 
 
 interface ApplicationsTableProps {
   filter: string
-  status: string
+  status: string,
+  projects:ProjectData[]
 }
 
-export function ApplicationsTable({ filter, status }: ApplicationsTableProps) {
-  const {projects ,isLoading,error} = useMyprojectQuery() 
-  const projectsData= projects as  ProjectData[]
-  const allApplicationsWithProject = projectsData.flatMap(project =>
+export function ApplicationsTable({ filter, status,projects }: ApplicationsTableProps) {
+
+  const allApplicationsWithProject = projects.flatMap(project =>
     project.applications.map(app => ({
       ...app,
       project, 
@@ -31,12 +31,7 @@ export function ApplicationsTable({ filter, status }: ApplicationsTableProps) {
     return matchesFilter && matchesStatus
   })
  
-  if(isLoading){
-    return (<>loading</>)
-  }
-  if(error){
-    return (<div>Something went wrong </div>)
-  }
+
   return (
     <div className="rounded-md border border-slate-200 bg-white overflow-hidden shadow-sm">
       <Table>
