@@ -13,6 +13,7 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 
 import { useSignUpQuery } from "@/services/authQuery";
+import { Loader2 } from "lucide-react";
 
 export function SignupForm({
   className,
@@ -22,7 +23,7 @@ export function SignupForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { mutate: signup, isError, error } = useSignUpQuery();
+  const { mutate: signup, isError, error,isPending } = useSignUpQuery();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -98,7 +99,7 @@ export function SignupForm({
               <div className="text-center text-sm">
                 Already have an account?{" "}
                 <a href="/login" className="underline underline-offset-4">
-                  Login
+                {isPending?<span><Loader2/>Signing up</span>:"Sign up"}
                 </a>
               </div>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

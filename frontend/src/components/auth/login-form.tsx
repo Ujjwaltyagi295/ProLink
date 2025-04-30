@@ -15,6 +15,7 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 
 import { useLoginQuery } from "@/services/authQuery";
+import { Loader2 } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -22,6 +23,7 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const { mutate: signin, isError, isPending } = useLoginQuery();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -78,7 +80,7 @@ export function LoginForm({
                 </div>
 
                 <Button type="submit" className="w-full" variant="blue1">
-                  {isPending ? "..loading" : "Login"}
+                  {isPending ? <span><Loader2 className="animate-spin"/>Signing in</span> : "Sign in"}
                 </Button>
               </div>
 

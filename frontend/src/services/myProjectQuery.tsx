@@ -54,7 +54,7 @@ export const useMyprojectQuery = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myproject"] })
-      navigate("/dashboard/projects")
+     
     },
     onError: (err, _variables, context) => {
       if (context?.previousProjects) {

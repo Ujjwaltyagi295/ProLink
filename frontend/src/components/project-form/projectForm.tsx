@@ -19,6 +19,7 @@ import { useMyprojectQuery } from "@/services/myProjectQuery";
 import { useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { myprojects } from "@/lib/api";
+import { navigate } from "@/lib/navigation";
 
 const steps = [
   { id: "details", title: "Project Details" },
@@ -55,7 +56,9 @@ export default function ProjectForm() {
          bannerUrl=  await myprojects.uploadImage(projectData.bannerFile)
         }
       if (id) {
-        updateProject({ ...data, status: "published", id: id ,banner:bannerUrl,avatar:avatarUrl});
+       await updateProject({ ...data, status: "published", id: id ,banner:bannerUrl,avatar:avatarUrl});
+       toast({title:"Project published",type:"success"})
+       navigate("/dashboard/projects")
       }
 
       form.reset();
