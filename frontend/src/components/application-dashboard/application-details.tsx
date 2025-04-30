@@ -55,7 +55,7 @@ export default function ApplicationPage() {
   };
 
   if (isLoading) {
-    return <ProjectSkeleton />;
+    return <div className="min-h-screen"><ProjectSkeleton /></div>;
   }
   if (isError) {
     return <div>Something went wrong</div>;
