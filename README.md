@@ -12,7 +12,7 @@ ProLink is a platform built for developers to find or create teams and collabora
 To run this project locally:
 1. Clone the repo
 2. Run `npm install`
-3. Run `npm start`
+3. Run `npm dev`
 
 ## Status
 This project is currently under active development.
