@@ -4,10 +4,9 @@ import { z } from "zod";
 import AppError from "../utils/AppError";
 import { clearAuthCookies, getAccessTokenCookiesOptions, REFRESH_PATH } from "../utils/cookies";
 
-// Helper function to handle Zod validation errors
 const handleZodError = (res: Response, error: z.ZodError) => {
   const errors = error.issues.map((err) => {
-    // Handling each error issue, creating user-friendly messages
+   
     let errorMessage = "";
 
     switch (err.code) {
@@ -45,7 +44,6 @@ const handleAppError = (res: Response, error: AppError) => {
   });
 };
 
-// Main error handler
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   console.log(`PATH ${req.path}`, error);
 

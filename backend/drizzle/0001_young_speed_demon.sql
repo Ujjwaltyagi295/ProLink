@@ -1,1 +1,0 @@
-ALTER TABLE "profiles" RENAME COLUMN "website" TO "resumeUrl";

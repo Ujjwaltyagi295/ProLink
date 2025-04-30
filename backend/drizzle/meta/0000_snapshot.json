@@ -1,5 +1,5 @@
 {
-  "id": "29ef6c4a-dce5-4512-9403-7ad552227c9d",
+  "id": "b811ee4d-b41c-4e73-bbdb-4c3ef5e76b60",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -828,8 +828,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "website": {
-          "name": "website",
+        "resumeUrl": {
+          "name": "resumeUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "portfolio": {
+          "name": "portfolio",
           "type": "text",
           "primaryKey": false,
           "notNull": false

@@ -17,6 +17,7 @@
     "@paralleldrive/cuid2": "^2.2.2",
     "@types/multer": "^1.4.12",
     "@vercel/node": "^5.1.14",
+    "@vercel/postgres": "^0.10.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
     "cookie-parser": "^1.4.7",
