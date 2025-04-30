@@ -1,7 +1,7 @@
 import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
-import { HomePage } from "./pages/home";
+
 import DashboardPage from "./pages/dashboard";
 import { setNavigate } from "./lib/navigation";
 import { ProjectsPage } from "./pages/projectsPage";
@@ -26,8 +26,8 @@ function App() {
   return (
     <Routes>
     <Route element={<NavbarLayout/>}>
-    <Route path="/" element={<HomePage />} />
-         <Route path="/explore" element={<ProjectsPage />} />
+    <Route path="/" element={<ProjectsPage />} />
+        
       <Route path="/filter" element={<ProjectSearch />} />
       <Route path="/projects/test" element={<SearchPage />} />
       <Route path="/projects/details/:id" element={<ProjectDetailPage />} />
