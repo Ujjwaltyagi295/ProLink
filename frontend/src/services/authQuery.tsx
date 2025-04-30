@@ -41,7 +41,7 @@ export  function useSignUpQuery() {
         });
       },
       onError:(error)=>{
-        toast({title:"Unable to Signup",description:`${error}`,type:"error"})
+        console.log(error)
       }
     });
   }
