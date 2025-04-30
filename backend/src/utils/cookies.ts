@@ -30,7 +30,8 @@ export const setAuthCookies = ({ res, accessToken, refreshToken }: Params) =>
     .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
     .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions());
 
-export const clearAuthCookies = (res: Response) =>
-  res
-    .clearCookie("accessToken")
-    .clearCookie("refreshToken", { path: "/" });
+    export const clearAuthCookies = (res: Response) =>
+      res
+        .clearCookie("accessToken", { path: "/", httpOnly: true, sameSite: "none", secure: true })
+        .clearCookie("refreshToken", { path: "/", httpOnly: true, sameSite: "none", secure: true });
+    

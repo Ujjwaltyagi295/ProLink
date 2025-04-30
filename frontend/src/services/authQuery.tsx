@@ -54,7 +54,7 @@ export  function useSignUpQuery() {
     return useMutation({
         mutationFn: auth.logout,
         mutationKey:["logout"],
-        onSuccess: () => {
+        onSettled: () => {
           setAuth(false)
           toast({title:"Logged out successfully",type:"success"})
           queryClient.clear();
