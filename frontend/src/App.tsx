@@ -15,7 +15,7 @@ function NavbarLayout() {
   return (
     <>
       <Navbar />
-      <Outlet /> {/* Renders the component for the current route */}
+      <Outlet /> 
     </>
   );
 }
@@ -25,6 +25,7 @@ function App() {
 
   return (
     <Routes>
+        
     <Route element={<NavbarLayout/>}>
     <Route path="/" element={<ProjectsPage />} />
         
