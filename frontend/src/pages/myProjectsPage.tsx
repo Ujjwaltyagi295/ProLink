@@ -19,7 +19,7 @@ export function MyProjectsPage() {
   const { isOpen, projectId, onClose } = useMyProjectStore();
   const { clearForm } = useFormStore();
   const [open, setOpen] = React.useState(false);
-  const { projects, isLoading, isFetching } = useMyprojectQuery();
+  const { projects, isLoading } = useMyprojectQuery();
   const getRandomStatus = (): TeamMemberStatus => {
     const statuses: TeamMemberStatus[] = ["online", "offline", "away"];
     return statuses[Math.floor(Math.random() * statuses.length)];
@@ -27,7 +27,8 @@ export function MyProjectsPage() {
   const selectedProject: ProjectData | undefined = isOpen
     ? projects?.find((p: ProjectDataType) => p.id === projectId)
     : undefined;
-  const showLoading = isLoading || isFetching;
+    const showLoading = isLoading && (!projects || projects.length === 0);
+
 
   return (
     <div className="relative inset-0 h-full w-full bg-white">

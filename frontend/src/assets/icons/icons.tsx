@@ -25,7 +25,7 @@ export const ExploreIcon = ({ isHover }: ExploreIconProps) => {
       width="32"
       height="32"
       viewBox="0 0 24 24"
-      fill={isHover ? "oklch(94.5% 0.129 101.54)" : "none"}
+      fill={isHover ? "oklch(87.9% 0.169 91.605)" : "none"}
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
@@ -69,7 +69,7 @@ export const ProjectIcon = ({ isHover }: ExploreIconProps) => {
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill={isHover ? "oklch(86.5% 0.127 207.078)" : "none"}
+      fill={isHover ? "oklch(92.4% 0.12 95.746)" : "none"}
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"

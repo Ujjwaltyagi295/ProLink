@@ -65,6 +65,24 @@ export const useMyprojectQuery = () => {
   })
   const deleteProjectMutation = useMutation({
     mutationFn:myprojects.delete,
+    onMutate: async (deletedProjectId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["myproject"] });
+  
+      const previousProjects = queryClient.getQueryData<ProjectDataType[]>(["myproject"]);
+  
+      queryClient.setQueryData<ProjectDataType[]>(["myproject"], (old = []) =>
+        old ? old.filter((proj) => proj.id !== deletedProjectId) : []
+      )
+      return { previousProjects };
+    },
+    onError: (_err, _deletedProjectId, context) => {
+    
+      if (context?.previousProjects) {
+        queryClient.setQueryData(["myproject"], context.previousProjects);
+      }
+      toast({ title: "Failed to delete project", type: "error" });
+    },
+  
     onSettled:()=>{
       queryClient.invalidateQueries({queryKey:["myproject"]})
       toast({title:"Project deleted",type:"success"})
@@ -83,7 +101,8 @@ export const useMyprojectQuery = () => {
     isLoading: getMyProject.isLoading,
     isFetching: getMyProject.isFetching,
     error:getMyProject.error,
-    createProject:createProjectMutation.mutate,
+    createProject: createProjectMutation.mutateAsync,
+
     updateProject:updateProjectMutation.mutate,
     isPending:updateProjectMutation.isPending,
     deleteProject:deleteProjectMutation.mutate,

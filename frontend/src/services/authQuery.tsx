@@ -33,7 +33,7 @@ export  function useSignUpQuery() {
     return useMutation({
       mutationKey: ["signup"],
       mutationFn: (data: object) => auth.register(data),
-      onSettled: () => {
+      onSuccess: () => {
         toast({title:"Account created successfully",type:"success"})
         setAuth(true);
         navigate(redirectUrl, {

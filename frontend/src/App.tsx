@@ -25,7 +25,6 @@ function App() {
 
   return (
     <Routes>
-      {/* PUBLIC ROUTES */}
     <Route element={<NavbarLayout/>}>
     <Route path="/" element={<HomePage />} />
          <Route path="/explore" element={<ProjectsPage />} />
