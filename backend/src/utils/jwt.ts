@@ -1,8 +1,9 @@
-import jwt, { SignOptions, VerifyOptions } from "jsonwebtoken";
-import { User } from "../models/user.model";
+import { SignOptions, VerifyOptions } from "jsonwebtoken";
+import { User } from "../models";
 import { Session } from "../models/session.model";
-import Audience from "../constants/audience";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env";
+import Audience from "../constants/audience";
+import jwt from "jsonwebtoken"
 
 export type accessTokenPayload = {
   userId: User["id"];
