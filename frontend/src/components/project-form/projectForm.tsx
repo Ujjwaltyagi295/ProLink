@@ -74,14 +74,15 @@ export default function ProjectForm() {
   const handleSaveDraft = async () => {
     setIsDraftSaving(true);
     try {
-      const isValid = await form.trigger();
-      if (!isValid) return;
+    
 
       const formData = form.getValues();
       console.log(formData);
       setFormData({ ...formData, status: "draft" });
       if (id) {
-        updateProject({ ...formData, status: "draft", id: id });
+      await  updateProject({ ...formData, status: "draft", id: id });
+      toast({title:"Saved draft",type:"success"})
+        navigate("/dashboard/projects")
       }
     } catch (error) {
       console.error("Draft save failed:", error);
@@ -169,8 +170,9 @@ export default function ProjectForm() {
             <Button
               variant="outline"
               size="sm"
+            
               onClick={handleSaveDraft}
-              disabled={isDraftSaving}
+              disabled={isDraftSaving }
               className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
             >
               {isDraftSaving ? (
@@ -250,7 +252,7 @@ export default function ProjectForm() {
               ) : (
                 <Button
                   type="submit"
-              
+                disabled={isSaving || isDraftSaving}
                   className="bg-blue-600 hover:bg-blue-700 transition-all duration-200"
                 >
                   {isSaving ? (

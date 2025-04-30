@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
   Dialog,
@@ -14,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useFormStore } from "@/store/useProjectStore";
 import { useToast } from "@/hooks/use-toast";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
-
-
+import { Loader2 } from "lucide-react";
 
 export default function ProjectDialog({
   open,
@@ -25,10 +23,37 @@ export default function ProjectDialog({
   onOpenChange: (val: boolean) => void;
 }) {
   const { toast } = useToast();
- 
-  const {createProject} = useMyprojectQuery()
+  const { createProject } = useMyprojectQuery();
   const { projectData, setFormData } = useFormStore();
+  const handleCreate=async () => {
+    setIsCreating(true);
+    if (
+      projectData.summary.length > 10 &&
+      projectData.summary.length <= 130 &&
+      projectData.name.length > 4 &&
+      projectData.name.length <= 30
+    ) {
+      try {
+        await createProject(projectData);
+        
+        onOpenChange(false); 
+        
+      } catch (err) {
+        toast({title:"Cannot create project"})
+         console.log(err)
+      }
+    } else {
+      toast({
+        title: "Invalid Length",
+        description:
+          "Project name must be 5-30 characters and summary must be 10-130 characters.",
+        type: "error",
+      });
+    }
+    setIsCreating(false);
+  }
   const [joinCode, setJoinCode] = React.useState("");
+  const [isCreating,setIsCreating]= React.useState(false)
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -64,55 +89,60 @@ export default function ProjectDialog({
 
           {/* Create Tab */}
           <TabsContent value="create" className="mt-4 space-y-4">
-            <Input
-              placeholder="Project name"
-              value={projectData.name}
-              onChange={(e) => setFormData({ name: e.target.value })}
-              className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff]"
-            />
+            <div className="space-y-1">
+              <Input
+                placeholder="Project name"
+                value={projectData.name}
+                maxLength={30}
+                onChange={(e) => setFormData({ name: e.target.value })}
+                className="bg-[#1c1c1e] border border-gray-600 text-white placeholder-gray-500 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:border-blue-400"
+              />
+              <div className="text-xs text-gray-500 text-right">
+                {projectData.name.length}/30
+              </div>
+            </div>
 
-            <Textarea
-              placeholder="Short summary"
-              value={projectData.summary}
-              onChange={(e) => {
-                setFormData({ summary: e.target.value });
-              }}
-              className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff] min-h-[80px]"
-            />
+            <div className="space-y-1">
+              <Textarea
+                placeholder="Short summary"
+                value={projectData.summary}
+                onChange={(e) => {
+                  setFormData({ summary: e.target.value });
+                }}
+                maxLength={130}
+                className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff] min-h-[80px] w-[44rem] resize-none overflow-auto"
+                style={{ wordWrap: "break-word" }}
+              />
+              <div className="text-xs text-gray-500 text-right">
+                {projectData.summary.length}/130
+              </div>
+            </div>
 
             <DialogFooter className="mt-6 flex justify-end">
               <Button
-                onClick={() => {
-                  if (
-                    projectData.summary.length  > 10 &&
-                    projectData.summary.length < 300 &&
-                    projectData.name.length > 4
-                  ) {
-                    createProject(projectData);
-                  } else {
-                    toast({
-                      title: "Invalid Length",
-                      description:
-                        "Summary/Project name must be 10-200 characters.",
-                      type: "error",
-                    });
-                  }
-                }}
+              disabled={isCreating}
+                onClick={handleCreate}
                 className="bg-[#007aff] text-white hover:bg-[#005ecb]"
               >
-                Create project
+               {isCreating?<><Loader2 className="animate-spin h-4 w-4"/>Creating project</>:"Create project"}
               </Button>
             </DialogFooter>
           </TabsContent>
 
           {/* Join Tab */}
           <TabsContent value="join" className="mt-4 space-y-4">
-            <Input
-              placeholder="Join via code"
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value)}
-              className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff]"
-            />
+            <div className="space-y-1">
+              <Input
+                placeholder="Join via code"
+                value={joinCode}
+                maxLength={30}
+                onChange={(e) => setJoinCode(e.target.value)}
+                className="bg-[#1c1c1e] border border-[#2c2c2e] text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#007aff]"
+              />
+              <div className="text-xs text-gray-500 text-right">
+                {joinCode.length}/30
+              </div>
+            </div>
 
             <DialogFooter className="mt-6 flex justify-end">
               <Button className="bg-[#007aff] text-white hover:bg-[#005ecb]">

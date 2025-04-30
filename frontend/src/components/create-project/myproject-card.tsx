@@ -105,7 +105,6 @@ const {deleteProject}=useMyprojectQuery()
     e.stopPropagation();
     navigate(`/dashboard/projects/edit/${project.id}`)
   };
-  const isOwner= project.members.find((p)=>p.projectId === project.id)?.isOwner
  
   const status = capitalizeFirst(project.status || "new");
   const statusColor = statusColors[status.toLowerCase() as keyof typeof statusColors] || "bg-gray-500";
@@ -124,7 +123,7 @@ const {deleteProject}=useMyprojectQuery()
       {/* Status badge */}
       <div className={`absolute top-2 right-2 px-2 py-0.5 rounded-sm text-xs font-medium ${statusColor}`}
            role="status" aria-label={`Status: ${status}`}>
-        {isOwner?status:"Joined"}
+        {status}
       </div>
 
       <div className="p-4 pb-2">
@@ -134,7 +133,7 @@ const {deleteProject}=useMyprojectQuery()
           {/* Title and Actions */}
           <div className="flex-1">
             <div className="flex justify-between items-start">
-              <CardTitle className="text-base font-semibold">{project.name}</CardTitle>
+              <CardTitle className="text-base font-semibold">{project.name.slice(0,16)}</CardTitle>
 
               <div className="flex items-start gap-1 ml-2">
                 <Button
@@ -149,7 +148,7 @@ const {deleteProject}=useMyprojectQuery()
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                  {isOwner?  <Button
+                 <Button
                       size="sm"
                       variant="ghost"
                       className="h-7 w-7 p-0"
@@ -157,7 +156,7 @@ const {deleteProject}=useMyprojectQuery()
                       aria-label="More options"
                     >
                       <MoreHorizontal className="h-3.5 w-3.5" />
-                    </Button>:""}
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>

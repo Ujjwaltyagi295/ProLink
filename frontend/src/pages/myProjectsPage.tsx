@@ -4,29 +4,34 @@ import { ProjectSidebar } from "@/components/create-project/project-sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import ProjectDialog from "@/components/create-project/project-createDialog";
-import { ProjectDataType, useFormStore, useMyProjectStore } from "@/store/useProjectStore";
-import {  ProjectData } from "@/types/project";
+import {
+  ProjectDataType,
+  useFormStore,
+  useMyProjectStore,
+} from "@/store/useProjectStore";
+import { ProjectData } from "@/types/project";
 import { useMyprojectQuery } from "@/services/myProjectQuery";
-
+import noProjectImg from "../assets/images/library2.png";
+import { SkeletonCard } from "@/components/skeleton-cards";
 type TeamMemberStatus = "online" | "offline" | "away";
-
 
 export function MyProjectsPage() {
   const { isOpen, projectId, onClose } = useMyProjectStore();
   const { clearForm } = useFormStore();
   const [open, setOpen] = React.useState(false);
-  const {projects}= useMyprojectQuery()
+  const { projects, isLoading, isFetching } = useMyprojectQuery();
   const getRandomStatus = (): TeamMemberStatus => {
     const statuses: TeamMemberStatus[] = ["online", "offline", "away"];
     return statuses[Math.floor(Math.random() * statuses.length)];
   };
-  const selectedProject: ProjectData | undefined =isOpen? projects?.find((p:ProjectDataType)=>p.id===projectId):undefined
+  const selectedProject: ProjectData | undefined = isOpen
+    ? projects?.find((p: ProjectDataType) => p.id === projectId)
+    : undefined;
+  const showLoading = isLoading || isFetching;
 
   return (
-    <div className="relative  inset-0 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
-      
+    <div className="relative inset-0 h-full w-full bg-white">
       <div className="flex justify-between items-center mb-6">
-      
         <h1 className="text-2xl font-bold">My Projects</h1>
         <Button
           onClick={() => {
@@ -41,14 +46,26 @@ export function MyProjectsPage() {
 
       <ProjectDialog open={open} onOpenChange={setOpen} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects &&  projects?.map((project:ProjectData) => (
-          <div key={project.id}>
-            <ProjectCard project={project} />
-          </div>
-        ))
-      }
-      </div>
+      {showLoading ? (
+        <SkeletonCard />
+      ) : projects && projects.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project: ProjectData) => (
+            <div key={project.id}>
+              <ProjectCard project={project} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center mt-44">
+          <img
+            src={noProjectImg}
+            alt="No projects"
+            className="w-32 h-32 opacity-70  object-contain mb-4"
+          />
+          <p className="text-gray-500 text-lg">No projects available</p>
+        </div>
+      )}
 
       <ProjectSidebar
         isOpen={isOpen}

@@ -79,8 +79,8 @@ export function LoginForm({
                   />
                 </div>
 
-                <Button type="submit" className="w-full" variant="blue1">
-                  {isPending ? <span><Loader2 className="animate-spin"/>Signing in</span> : "Sign in"}
+                <Button disabled={isPending} type="submit" className="w-full" variant="blue1">
+                  {isPending ? <><Loader2 className="mr-2 h-3 w-3 animate-spin" />Signing in</> : "Sign in"}
                 </Button>
               </div>
 

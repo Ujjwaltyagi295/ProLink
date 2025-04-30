@@ -81,6 +81,7 @@ export const useMyprojectQuery = () => {
   return{
     projects:getMyProject.data ,
     isLoading: getMyProject.isLoading,
+    isFetching: getMyProject.isFetching,
     error:getMyProject.error,
     createProject:createProjectMutation.mutate,
     updateProject:updateProjectMutation.mutate,
