@@ -18,7 +18,7 @@ import { useLogoutQuery } from "@/services/authQuery";
 interface SubmenuItem {
   subTitle: string;
   path: string;
-  description?: string; // Optional description
+  description?: string; 
 }
 
 interface MenuItem {
