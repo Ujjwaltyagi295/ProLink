@@ -58,10 +58,11 @@ export  function useSignUpQuery() {
           setAuth(false)
           toast({title:"Logged out successfully",type:"success"})
           queryClient.clear();
-          window.location.reload();
+         
 
         
           navigate("/login", { replace: true });
+          window.location.reload();
         }, 
         onError:(error)=>{
           toast({title:"Unable to logout",description:`${error}`,type:"error"})
