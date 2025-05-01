@@ -110,7 +110,12 @@ export function ApplicationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] bg-neutral-100 border-gray-200 text-gray-800 p-0 overflow-hidden rounded-lg w-[calc(100%-2rem)]">
+    <DialogContent className="
+  sm:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px]
+  bg-neutral-100 border-gray-200 text-gray-800 p-0 overflow-hidden rounded-lg w-[calc(100%-2rem)]
+  max-h-[90vh] overflow-y-auto hide-scrollbar
+">
+
         <DialogHeader className="border-b border-gray-100 pb-4 p-6">
           <div className="flex items-center">
             <div className="text-blue-600 text-sm mr-2">Application</div>

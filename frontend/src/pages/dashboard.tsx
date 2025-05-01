@@ -11,7 +11,7 @@ import { MyProjectsPage } from "./myProjectsPage";
 
 import { ProtectedRoutes } from "@/components/ProtectedRoutes";
 import NewProjectPage from "./projectFormPage";
-import { ProfilePage } from "./profilePage";
+
 import { ApplicationsDashboard } from "@/components/application-dashboard/application-dashboard";
 import ApplicationPage from "@/components/application-dashboard/application-details";
 
@@ -37,7 +37,7 @@ export default function DashboardPage() {
     <Routes>
       <Route element={<DashboardLayout />}>
         <Route element={<ProtectedRoutes />}>
-          <Route path="/profile" element={<ProfilePage/>}/>
+       
           <Route path="projects" element={<MyProjectsPage />} />
           <Route path="projects/edit/:id" element={<NewProjectPage />} />
           <Route path="applications" element={<ApplicationsDashboard/>}/>
