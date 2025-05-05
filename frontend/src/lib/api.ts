@@ -8,8 +8,12 @@ export const auth = {
   register: (data: object) => API.post("/auth/signup", data),
   logout: () => API.get("/auth/logout"),
   getUser: async () => {
+   try {
     const response = await API.get("/user");
     return response.data;
+   } catch (error) {
+    console.log(error)
+   }
   },
 };
 

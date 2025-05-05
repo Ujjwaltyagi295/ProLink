@@ -10,6 +10,7 @@ import { ProjectSearch } from "./components/filters";
 import SearchPage from "./pages/searchPage";
 import { ProjectDetailPage } from "./pages/projectDetailPage";
 import { Navbar } from "./components/navbar";
+import { ProtectedRoutes } from "./components/ProtectedRoutes";
 
 function NavbarLayout() {
   return (
@@ -37,8 +38,9 @@ function App() {
     <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
   
-        
+      <Route element={<ProtectedRoutes />}>   
       <Route path="/dashboard/*" element={<DashboardPage />} />
+      </Route>
     </Routes>
   );
 }

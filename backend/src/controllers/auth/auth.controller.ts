@@ -1,12 +1,27 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../config/db";
-import { BAD_REQUEST, CREATED, NOT_FOUND, OK, UNAUTHORIZED } from "../../constants/http";
+import {
+  BAD_REQUEST,
+  CREATED,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from "../../constants/http";
 import sessions from "../../models/session.model";
 import catchErrors from "../../utils/catchErrors";
-import { clearAuthCookies, getAccessTokenCookieOptions, getRefreshTokenCookieOptions, setAuthCookies } from "../../utils/cookies";
+import {
+  clearAuthCookies,
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+  setAuthCookies,
+} from "../../utils/cookies";
 import { verifyToken } from "../../utils/jwt";
 import { loginSchema, signupSchema } from "./auth.schema";
-import { createAccount, loginAccount, refreshUserAccessToken } from "./auth.service";
+import {
+  createAccount,
+  loginAccount,
+  refreshUserAccessToken,
+} from "../../services/auth.service";
 import appAssert from "../../utils/appAssert";
 import { users } from "../../models/user.model";
 import { omitPassword } from "../../utils/omitPassword";
@@ -18,7 +33,11 @@ export const signupHandler = catchErrors(async (req, res) => {
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
-  appAssert(data.password===data.confirmPassword,BAD_REQUEST,"Confirm Password dont match")
+  appAssert(
+    data.password === data.confirmPassword,
+    BAD_REQUEST,
+    "Confirm Password dont match"
+  );
   const { user, accessToken, refreshToken } = await createAccount(data);
   return setAuthCookies({ res, accessToken, refreshToken })
     .status(CREATED)
@@ -28,7 +47,7 @@ export const signupHandler = catchErrors(async (req, res) => {
 export const loginHandler = catchErrors(async (req, res) => {
   const data = loginSchema.parse({
     ...req.body,
-    userAgent:req.headers["user-agent"]
+    userAgent: req.headers["user-agent"],
   });
   const { refreshToken, accessToken } = await loginAccount(data);
   return setAuthCookies({ res, accessToken, refreshToken })
@@ -37,27 +56,29 @@ export const loginHandler = catchErrors(async (req, res) => {
 });
 
 export const logoutHandler = catchErrors(async (req, res) => {
-  const accessToken = req.cookies.accessToken ;
+  const accessToken = req.cookies.accessToken;
   const { payload } = verifyToken(accessToken);
- 
+
   if (payload) {
     await db.delete(sessions).where(eq(sessions.id, payload.sessionId));
-   
-
   }
   return clearAuthCookies(res)
     .status(OK)
     .json({ message: "Logged out successfully" });
 });
 
-export const refreshHandler= catchErrors(async(req,res)=>{
-   const refreshToken = req.cookies.refreshToken as string | undefined;
- 
-   appAssert(refreshToken,UNAUTHORIZED,"Missing refresh token")
-   const {accessToken,newRefreshToken}= await refreshUserAccessToken(refreshToken)
-   if(newRefreshToken){
-      res.cookie("refreshToken",newRefreshToken,getRefreshTokenCookieOptions())
-   }
-   return res.status(OK) .cookie("accessToken", accessToken, getAccessTokenCookieOptions()).json({message:"Access token refreshed"})
-})
- 
+export const refreshHandler = catchErrors(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken as string | undefined;
+
+  appAssert(refreshToken, UNAUTHORIZED, "Missing refresh token");
+  const { accessToken, newRefreshToken } = await refreshUserAccessToken(
+    refreshToken
+  );
+  if (newRefreshToken) {
+    res.cookie("refreshToken", newRefreshToken, getRefreshTokenCookieOptions());
+  }
+  return res
+    .status(OK)
+    .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+    .json({ message: "Access token refreshed" });
+});
