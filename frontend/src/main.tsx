@@ -7,11 +7,10 @@ import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import queryClient from "./config/queryClient.ts";
 import { Toaster } from "sonner";
-import { Analytics } from '@vercel/analytics/react';
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-    <Analytics />
+
       <Command>
         <Toaster />
       
