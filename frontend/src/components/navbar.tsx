@@ -25,7 +25,7 @@ export const Navbar = () => {
         },
       ],
     },
-    {
+   {/* {
       title: "Workspace",
       submenu: [
         {
@@ -43,7 +43,7 @@ export const Navbar = () => {
     {
       title: "About",
       submenu: [],
-    },
+    },*/}
   ];
 
   return (
