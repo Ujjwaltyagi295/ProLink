@@ -25,9 +25,10 @@ export const Navbar = () => {
         },
       ],
     },
-   {/* {
+  {
       title: "Workspace",
-      submenu: [
+    submenu: [],
+      {/*  submenu: [
         {
           subTitle: "Team Dashboard",
           path: "/teams/:teamId/workspace",
@@ -38,12 +39,12 @@ export const Navbar = () => {
           path: "/projects/:projectId/board",
           description: "Track progress and tasks",
         },
-      ],
+      ],*/}
     },
     {
       title: "About",
       submenu: [],
-    },*/}
+    },
   ];
 
   return (
