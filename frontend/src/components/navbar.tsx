@@ -28,18 +28,7 @@ export const Navbar = () => {
   {
       title: "Workspace",
     submenu: [],
-      {/*  submenu: [
-        {
-          subTitle: "Team Dashboard",
-          path: "/teams/:teamId/workspace",
-          description: "Collaborate with your team",
-        },
-        {
-          subTitle: "Project Board",
-          path: "/projects/:projectId/board",
-          description: "Track progress and tasks",
-        },
-      ],*/}
+     
     },
     {
       title: "About",
@@ -82,6 +71,18 @@ export const Navbar = () => {
     </header>
   );
 };
+ {/*  submenu: [
+        {
+          subTitle: "Team Dashboard",
+          path: "/teams/:teamId/workspace",
+          description: "Collaborate with your team",
+        },
+        {
+          subTitle: "Project Board",
+          path: "/projects/:projectId/board",
+          description: "Track progress and tasks",
+        },
+      ],*/}
 
 {
   /* <div className="relative rounded-full p-1.5 text-neutral-600 outline-none transition-colors duration-200 hover:bg-neutral-100 max-sm:hidden">
