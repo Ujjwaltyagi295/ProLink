@@ -121,24 +121,24 @@ export const ProjectsSection = () => {
         </TabsContent>
 
         {/* Recent Tab */}
-        <TabsContent value="recent">
+        {/* <TabsContent value="recent">
           <motion.div
             {...fadeMotion}
             className="text-center py-8 text-muted-foreground"
           >
             Most recent projects will appear here
           </motion.div>
-        </TabsContent>
+        </TabsContent> */}
 
         {/* Saved Tab */}
-        <TabsContent value="saved">
+        {/* <TabsContent value="saved">
           <motion.div
             {...fadeMotion}
             className="text-center py-8 text-muted-foreground"
           >
             Your saved projects will appear here
           </motion.div>
-        </TabsContent>
+        </TabsContent>*/}
       </Tabs>
     </div>
   );
